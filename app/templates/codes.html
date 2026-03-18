@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Error Codes | Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                        yellow100: '#FEF3C7',
+                        yellow800: '#92400E',
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Simple fade-in animation for cards */
+        .card-animate {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #000000;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-left a {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .topbar-right a {
+            display: flex;
+            align-items: center;
+            color: #4B5563;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .topbar-right a:hover {
+            color: #2563EB;
+        }
+
+        @media (max-width: 1023px) {
+            .topbar-right a:not(#cart-icon-wrapper):not([href="/login"]) {
+                display: none;
+            }
+
+            .topbar #search-bar-container {
+                display: none;
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block;
+            }
+
+            body {
+                padding-top: 72px;
+            }
+
+            #dashboard-header {
+                margin-top: 0;
+            }
+
+            .main-content-area {
+                padding-top: 0;
+            }
+        }
+
+        @media (max-width: 556px) {
+            .topbar #search-bar-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                padding: 0.75rem 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                animation: slideDown 0.3s ease-out forwards;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .topbar #search-bar-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .topbar #search-bar-container input {
+                width: 100%;
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block;
+                cursor: pointer;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles (copied from garage.html for reuse) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        .mobile-menu-overlay-blurred {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        #appointmentModal .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #menu-toggle {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #menu-toggle.is-open {
+            transform: translateX(40px) rotate(45deg);
+        }
+
+        #main-content-wrapper {
+            transition: transform 0.3s ease-in-out;
+            margin-top: auto;
+        }
+
+        #main-content-wrapper.sidebar-open {
+            transform: translateX(16rem);
+        }
+
+        body.sidebar-open {
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 1023px) {
+            .topbar {
+                display: flex !important;
+            }
+        }
+
+        /* Error Codes Specific Styles */
+        .error-code-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            width: 100%; /* Ensure it takes full width of its container */
+            max-width: 800px; /* Limit max width for a single card */
+            margin-left: auto; /* Center the card */
+            margin-right: auto; /* Center the card */
+        }
+
+        .error-code-card.expanded .code-description {
+            max-height: 500px;
+            /* Adjust as needed */
+            opacity: 1;
+            padding-top: 1rem;
+        }
+
+        .error-code-card .code-description {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out, padding-top 0.5s ease-out;
+        }
+
+        .error-code-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .error-code-card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            /* gray-900 */
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            color: #6b7280;
+            /* gray-500 */
+            transition: transform 0.3s ease;
+        }
+
+        .error-code-card.expanded .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .search-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+            max-width: 800px; /* Match single card width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen flex-col">
+
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <div class="topbar" id="main-topbar">
+        <div class="topbar-left">
+            <button id="menu-toggle" class="text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md lg:hidden">
+                <i class="fa-solid fa-ellipsis-vertical fa-xl" style="color: #ffffff; margin-right: 30px;"></i>
+            </button>
+            <a href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="RideRescue Logo" style="height: 30px;">
+            </a>
+        </div>
+
+        <div class="topbar-right">
+            <button id="search-magnifier-icon" class="p-2 text-gray-600 focus:outline-none hidden">
+                <i class="fa-solid fa-magnifying-glass fa-lg" style="color: #ffffff;"></i>
+            </button>
+
+            <div id="search-bar-container" class="relative hidden sm:block">
+                <input type="text" placeholder="Search..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-64">
+            </div>
+            <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                <span id="cart-count" style="
+                        position: absolute;
+                        top: -8px;
+                        right: -10px;
+                        background: red;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        padding: 2px 6px;
+                        display: none;
+                    ">0</span>
+            </div>
+
+            <a href="/dashboard">
+                <i class="fa-solid fa-chart-simple fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+            </a>
+            <img id="topbar-avatar"
+                src="{{ url_for('static', filename='avatars/' + (user.profile_image if user and user.profile_image else 'default_avatar.png')) }}"
+                alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+            <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col lg:flex-row">
+        <aside id="sidebar"
+            class="w-80 bg-gray-900 text-white flex flex-col p-4 shadow-xl fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-center mb-8">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Vehicle Manager Logo" class="h-10 mr-3">
+                <span class="text-2xl font-bold">Manager</span>
+            </div>
+            <button id="close-sidebar-button"
+                class="text-gray-400 hover:text-white focus:outline-none focus:bg-gray-700 rounded-md lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <nav class="flex-grow">
+                <ul>
+                    <li class="mb-2">
+                        <a href="/dashboard"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <i class="fa-solid fa-chart-simple fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="mb-2">
+                        <a href="/garage"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <i class="fa-solid fa-warehouse fa-md" style="color: #ffffff; margin-right: 10px;"></i>
+                            My Garage
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/appointments"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <i class="fa-solid fa-calendar-day fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                            Appointments
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/history"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <i class="fa-solid fa-clock-rotate-left fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                            History
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/codes"
+                            class="flex items-center p-3 rounded-lg bg-gray-800 text-blue-300 font-semibold">
+                            <i class="fa-solid fa-triangle-exclamation fa-lg"
+                                style="color: #ffbb00; margin-right: 10px;"></i>
+                            Error Codes
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <a href="/"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <i class="fa-solid fa-house fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                    Home
+                </a>
+                <a href="/settings"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <i class="fa-solid fa-circle-user fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                    Account
+                </a>
+                <a href="/logout"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <i class="fa-solid fa-right-from-bracket fa-lg" style="color: #ff0000; margin-right: 10px;"></i>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <div id="main-content-wrapper" class="flex-grow">
+            <main class="p-4 sm:p-8 overflow-y-auto main-content-area">
+                <div id="toast" class="text-white"></div>
+                <h1 class="mb-6 text-2xl font-bold text-gray-900 text-center">📟 Vehicle Error Code Lookup</h1>
+
+                <div class="search-card">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Search Error Codes</h2>
+                    <div class="relative">
+                        <input type="text" id="code-search-input" placeholder="Enter a code (e.g., P0420) or description..."
+                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-full">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="error-codes-container">
+                    <p class="text-gray-500 text-center">Start typing in the search box above to find an error code.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="w-full bg-white py-4 mt-auto">
+        <div class="max-w-md mx-auto text-center text-gray-500 text-sm">
+            <p>&copy; 2025 RideRescue. All rights reserved.</p>
+            <p class="font-medium mt-1">Auto repair. Handled.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Sidebar and Mobile Menu Toggle Logic ---
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const closeSidebarButton = document.getElementById('close-sidebar-button');
+        const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileMenuOverlay.classList.toggle('hidden');
+            menuToggle.classList.toggle('is-open');
+            mainContentWrapper.classList.toggle('sidebar-open');
+            document.body.classList.toggle('sidebar-open');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        mobileMenuOverlay.addEventListener('click', toggleSidebar);
+        closeSidebarButton.addEventListener('click', toggleSidebar);
+
+
+        // --- Topbar Search (Mobile) Toggle ---
+        const topbarSearchInput = document.querySelector('#search-bar-container input');
+        const searchMagnifierIcon = document.getElementById('search-magnifier-icon');
+        const searchBarContainer = document.getElementById('search-bar-container');
+
+        searchMagnifierIcon.addEventListener('click', () => {
+            searchBarContainer.classList.toggle('active');
+            if (searchBarContainer.classList.contains('active')) {
+                topbarSearchInput.focus();
+            }
+        });
+
+
+        // --- Cart Functionality (Dummy) ---
+        function toggleCartVisibility() {
+            const cartCountSpan = document.getElementById('cart-count');
+            let currentCartCount = parseInt(cartCountSpan.textContent);
+            currentCartCount++;
+            cartCountSpan.textContent = currentCartCount;
+
+            if (currentCartCount > 0) {
+                cartCountSpan.style.display = 'block';
+            } else {
+                cartCountSpan.style.display = 'none';
+            }
+            showToast('Item added to cart!', 'green');
+        }
+
+        // --- Avatar Upload (Dummy) ---
+        const topbarAvatar = document.getElementById('topbar-avatar');
+        const avatarInput = document.getElementById('avatar-input');
+
+        if (topbarAvatar && avatarInput) {
+            topbarAvatar.addEventListener('click', () => {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        topbarAvatar.src = e.target.result;
+                        showToast('Avatar updated!', 'green');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+
+        // --- Toast Notification Function ---
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'text-white';
+
+            if (type === 'success') {
+                toast.style.backgroundColor = 'green';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = 'red';
+            } else {
+                toast.style.backgroundColor = '#333';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- Error Code Search and Display Logic for a single card ---
+        const searchInput = document.getElementById('code-search-input');
+        const errorCodesContainer = document.getElementById('error-codes-container');
+        let allErrorCodes = []; // To store all fetched error codes
+
+        function displayErrorCodeCard(codeData) {
+            errorCodesContainer.innerHTML = ''; // Clear previous content
+
+            if (!codeData) {
+                errorCodesContainer.innerHTML = '<p class="text-gray-500 text-center">No error code found matching your search.</p>';
+                return;
+            }
+
+            const card = document.createElement('div');
+            card.classList.add('error-code-card', 'card-animate');
+
+            // Generate causes and fixes lists
+            const causesList = codeData.causes && codeData.causes.length > 0
+                ? codeData.causes.map(cause => `<li>${cause}</li>`).join('')
+                : '<li>No specific causes listed.</li>';
+            const fixesList = codeData.fixes && codeData.fixes.length > 0
+                ? codeData.fixes.map(fix => `<li>${fix}</li>`).join('')
+                : '<li>No specific fixes listed.</li>';
+
+            card.innerHTML = `
+                <div class="error-code-card-header" onclick="toggleExpand(this)">
+                    <h3>${codeData.code} - ${codeData.description}</h3>
+                    <i class="fa-solid fa-plus toggle-icon"></i>
+                </div>
+                <div class="code-description">
+                    <p class="text-gray-700 mt-2"><strong>Category:</strong> ${codeData.category || 'N/A'}</p>
+                    <p class="text-gray-700 mt-2"><strong>Severity:</strong> <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        codeData.severity === 'High' ? 'bg-red-100 text-red-800' :
+                        codeData.severity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                    }">${codeData.severity || 'N/A'}</span></p>
+                    <h4 class="font-semibold text-gray-800 mt-4 mb-2">Possible Causes:</h4>
+                    <ul class="list-disc pl-5 text-gray-700">
+                        ${causesList}
+                    </ul>
+                    <h4 class="font-semibold text-gray-800 mt-4 mb-2">Possible Fixes:</h4>
+                    <ul class="list-disc pl-5 text-gray-700">
+                        ${fixesList}
+                    </ul>
+                </div>
+            `;
+            errorCodesContainer.appendChild(card);
+        }
+
+        function filterAndDisplaySingleCode() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let foundCode = null;
+
+            if (searchTerm.length > 0) { // Only search if there's a term
+                foundCode = allErrorCodes.find(code => {
+                    const codeMatch = code.code ? code.code.toLowerCase().includes(searchTerm) : false;
+                    const descriptionMatch = code.description ? code.description.toLowerCase().includes(searchTerm) : false;
+                    const categoryMatch = code.category ? code.category.toLowerCase().includes(searchTerm) : false;
+
+                    const causesMatch = code.causes ? code.causes.some(cause => cause.toLowerCase().includes(searchTerm)) : false;
+                    const fixesMatch = code.fixes ? code.fixes.some(fix => fix.toLowerCase().includes(searchTerm)) : false;
+
+                    return codeMatch || descriptionMatch || categoryMatch || causesMatch || fixesMatch;
+                });
+            }
+            displayErrorCodeCard(foundCode); // Display the found code or null
+        }
+
+
+        function toggleExpand(headerElement) {
+            const card = headerElement.closest('.error-code-card');
+            const icon = headerElement.querySelector('.toggle-icon');
+            card.classList.toggle('expanded');
+            if (card.classList.contains('expanded')) {
+                icon.classList.replace('fa-plus', 'fa-minus');
+            } else {
+                icon.classList.replace('fa-minus', 'fa-plus');
+            }
+        }
+
+        // Fetch error codes from JSON file on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('{{ url_for("static", filename="error_codes.json") }}')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allErrorCodes = data; // Assign fetched data to allErrorCodes
+                    // No initial display of all codes, only show prompt
+                    errorCodesContainer.innerHTML = '<p class="text-gray-500 text-center">Start typing in the search box above to find an error code.</p>';
+                })
+                .catch(error => {
+                    console.error('There was a problem fetching the error codes:', error);
+                    errorCodesContainer.innerHTML = '<p class="text-red-500 text-center">Failed to load error codes. Please ensure "static/error_codes.json" exists and is accessible.</p>';
+                });
+
+            searchInput.addEventListener('keyup', filterAndDisplaySingleCode); // Use the new single display function
+        });
+    </script>
+</body>
+
+</html>

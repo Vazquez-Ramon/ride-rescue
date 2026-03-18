@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Simple fade-in animation for cards */
+        .card-animate {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust delays for staggered effect */
+        .card-animate:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card-animate:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card-animate:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card-animate:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card-animate:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .card-animate:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        /* Add more as needed for more cards */
+
+        /* === Topbar === */
+        .topbar {
+            background-color: #000000; /* gray900 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            position: fixed;
+            width: 100%;
+            top: 0; /* <<< ADD THIS LINE */
+            z-index: 101; /* Higher z-index than navbar */
+        }
+
+        .topbar-left {
+        display: flex; /* Already present, but ensure it's flex */
+        align-items: center; /* This will vertically align items */
+        }
+
+        .topbar-left a {
+            display: flex;
+            align-items: center;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .topbar-right a {
+            display: flex;
+            align-items: center;
+            color: #4B5563; /* gray-600 */
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .topbar-right a:hover {
+            color: #2563EB; /* primary blue */
+        }
+
+        @media (max-width: 1023px) { /* Tailind's 'lg' breakpoint is 1024px */
+            .topbar-right a:not(#cart-icon-wrapper):not([href="/login"]) { /* Hide regular nav links on mobile */
+                display: none;
+            }
+            /* Hide search bar in the new top bar on mobile by default.
+               It will be toggled by JS on click. */
+            .topbar #search-bar-container {
+                display: none; /* Hidden by default on smaller screens */
+            }
+            .topbar #search-magnifier-icon {
+                display: block; /* Show magnifier icon on smaller screens */
+            }
+            /* Adjust the header in dashboard.html to account for the new fixed topbar */
+            body {
+                padding-top: 72px; /* Height of the new topbar, adjust as needed */
+            }
+            #dashboard-header {
+                margin-top: 0; /* Remove top margin if it was pushing content down */
+            }
+            .main-content-area {
+                padding-top: 0; /* Adjust padding if needed */
+            }
+        }
+
+        /* New media query for search bar visibility below 556px */
+        @media (max-width: 556px) {
+            .topbar #search-bar-container {
+                /* Initially hidden below 556px, will be shown by JS on click */
+                display: none;
+                position: absolute;
+                top: 100%; /* Position below the top bar */
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                padding: 0.75rem 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                animation: slideDown 0.3s ease-out forwards;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .topbar #search-bar-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .topbar #search-bar-container input {
+                width: 100%; /* Full width for the search input when open */
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block; /* Always show magnifier icon below 556px */
+                cursor: pointer;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles (copied from garage.html for reuse) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        /* --- ADD THIS NEW CSS RULE --- */
+/* Override for the Garage Modal to make it wider */
+#garageModal .modal-content {
+    max-width: 90%; /* Allow it to be wider, e.g., 90% of screen width */
+    width: auto; /* Allow width to adjust based on content up to max-width */
+    /* You might even set a specific larger width like: */
+    /* width: 1000px; */
+    /* Or keep it fluid with a larger max-width */
+    max-height: 90vh; /* Optional: Constrain height and make it scrollable if content is very long */
+    overflow-y: auto; /* Optional: Add scrollbar if content exceeds max-height */
+}
+
+/* Optional: Adjust padding for the content inside the modal if it's too tight */
+#garageModal .main-content-area-modal {
+    padding: 0; /* Remove default padding if modal-content padding is enough */
+    /* or adjust as needed */
+}
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+    #appointmentModal .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    }
+
+     /* New CSS for the main content wrapper to push it when sidebar is open */
+    #main-content-wrapper {
+        transition: transform 0.3s ease-in-out; /* Smooth transition for the content wrapper */
+        margin-top: auto;
+    }
+
+    #main-content-wrapper.sidebar-open {
+        transform: translateX(16rem); /* Matches the width of w-64 (16rem = 256px) */
+    }
+
+    /* Prevent horizontal scrolling when the content is pushed */
+    body.sidebar-open {
+        overflow-x: hidden;
+    }
+
+    /* Ensure the topbar remains visible on mobile (overrides any hidden class) */
+    @media (max-width: 1023px) {
+        .topbar {
+            display: flex !important;
+        }
+    }
+
+    /* Ensure the topbar remains visible on mobile so the button can animate */
+    @media (max-width: 1023px) {
+        .topbar {
+            display: flex !important; /* Ensures the topbar is always displayed on mobile */
+        }
+        /* No need to hide the topbar anymore when the sidebar opens, as the overlay handles it */
+    }
+
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen flex-col">
+
+    <div class="topbar" id="main-topbar">
+        <div class="topbar-left">
+            <button id="menu-toggle" class="text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md lg:hidden">
+               <i class="fa-solid fa-ellipsis-vertical fa-xl" style="color: #ffffff; margin-right: 30px;"></i>
+        </button>
+            <a href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="RideRescue Logo" style="height: 30px;">
+            </a>
+        </div>
+                
+        <div class="topbar-right">
+            <button id="search-magnifier-icon" class="p-2 text-gray-600 focus:outline-none hidden">
+                <i class="fa-solid fa-magnifying-glass fa-lg" style="color: #ffffff;"></i>
+            </button>
+
+            <div id="search-bar-container" class="relative hidden sm:block">
+                <input type="text" placeholder="Search..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-64">
+            </div>
+            <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                <span id="cart-count" style="
+                        position: absolute;
+                        top: -8px;
+                        right: -10px;
+                        background: red;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        padding: 2px 6px;
+                        display: none;
+                    ">0</span>
+            </div>
+            
+            <a href="/dashboard">
+                <i class="fa-solid fa-chart-simple fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+            </a>
+    <img id="topbar-avatar" src="{{ url_for('static', filename='avatars/' + (user.profile_image or 'default_avatar.png')) }}" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+        <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+
+                </div>
+            </div>
+        </div>
+        
+            <div id="main-content-wrapper" class="flex-grow">
+        <main class="p-4 sm:p-8 overflow-y-auto main-content-area">
+                    <div id="toast" class="text-white"></div>
+<h1 class="mb-6 text-3xl font-bold text-gray-900" id="dashboard-header">Welcome, <span id="user-greeting"></span>!</h1>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div
+                        class="bg-gradient-to-r from-blue600 to-primary text-white p-6 rounded-xl shadow-lg flex items-center justify-between card-animate">
+                        <div>
+                            <p class="text-lg font-medium">Total Vehicles</p>
+                            <p id="total-vehicles" class="text-4xl font-bold mt-1">0</p>
+                        </div>
+                            <i class="fa-solid fa-car fa-2xl" style="color: #ffffff;"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200 card-animate"
+                        style="animation-delay: 0.2s;">
+                        <div>
+                            <p class="text-lg font-medium text-gray-600">Upcoming Appointments</p>
+                            <p id="upcoming-appointments" class="text-4xl font-bold mt-1 text-gray-800">0</p>
+                        </div>
+                            <i class="fa-solid fa-calendar-day fa-2xl" style="color: #2563eb;"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200 card-animate"
+                        style="animation-delay: 0.3s;">
+                        <div>
+                            <p class="text-lg font-medium text-gray-600">Total Spent (YTD)</p>
+                            <p id="total-spent" class="text-4xl font-bold mt-1 text-gray-800">$0.00</p>
+                        </div>
+                            <i class="fa-solid fa-coins fa-2xl" style="color: #ffc400;"></i>                    
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex items-center justify-between"
+    style="animation-delay: 0.4s;"> <div>
+        <p class="text-lg font-medium text-gray-600">Maintenance Alerts</p>
+        <p id="maintenance-alerts" class="text-4xl font-bold mt-1 text-gray-800">0</p>
+    </div>
+    <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ff0000;"></i>
+</div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.5s;">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                My Garage
+            </h2>
+                            <div id="garage-vehicles-list" class="text-gray-700 text-base space-y-4">
+                                <p class="text-gray-500">Loading vehicles...</p>
+                            </div>
+                            <button
+                                class="bg-blue600 hover:bg-blue700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue600 transition-all shadow-md mt-6"
+                                id="go-to-garage-btn">Manage Vehicles</button>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.6s;">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                    Upcoming Appointments & Services
+            </h2>
+                            <div id="upcoming-appointments-list" class="space-y-4">
+                                <p class="text-gray-500">No upcoming appointments or pending services.</p>
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.7s;">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-800">Quick Actions</h2>
+                            <div class="flex flex-col space-y-3">
+                                <button
+                                    class="w-full bg-primary hover:bg-accent text-white font-semibold py-2 rounded-md transition-all shadow-sm"
+                                    id="quick-add-vehicle-btn">
+                                    <span class="flex items-center justify-center">
+                                        <i class="fa-solid fa-square-plus mr-2"></i>
+                                        Add New Vehicle
+                                    </span>
+                                </button>
+                                <button
+    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm"
+    id="quick-book-appointment-btn"> <span class="flex items-center justify-center">
+                <i class="fa-solid fa-calendar-check mr-2"></i> Book New Appointment
+    </span>
+</button>
+                                <button onclick="toggleUpdateProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm">
+    <span class="flex items-center justify-center">
+        <i class="fa-solid fa-user-pen mr-2"></i>
+        Update Profile
+    </span>
+</button>
+
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.8s;">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-800">Account Actions</h2>
+                            <p class="text-gray-700 text-base mb-4">Manage your account settings, or clear saved data.</p>
+                            <div class="flex flex-col space-y-3">
+                                <button
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 transition-all shadow-md"
+                                    id="clear-data-btn">
+                                    <span class="flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Clear Data
+                                    </span>
+                                </button>
+                                <button
+                                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm">
+                                    <span class="flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-600"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path
+                                                d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 2.464V16a1 1 0 102 0v-1.768a2 2 0 000-2.464V4zM11 4a1 1 0 00-2 0v1.268a2 2 0 000 2.464V16a1 1 0 102 0V7.732a2 2 0 000-2.464V4zM17 4a1 1 0 00-2 0v1.268a2 2 0 000 2.464V16a1 1 0 102 0V7.732a2 2 0 000-2.464V4z" />
+                                        </svg>
+                                        Change Password
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+                <div id="serviceCategorySelectionSection" class="hidden">
+                    <label for="serviceCategorySelect" class="block text-sm font-medium text-gray-700">Select Service Category:</label>
+                    <select id="serviceCategorySelect" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        <option value="">-- Select Service Category --</option>
+                        </select>
+                </div>
+
+                <div id="servicesListContainer" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Available Services</h3>
+                    <div id="servicesList" class="max-h-60 overflow-y-auto border border-gray-200 rounded-md p-2 space-y-2">
+                        </div>
+                </div>
+
+                <div id="selectedServicesSummaryContainer" class="hidden mt-4">
+                    <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Your Selections</h3>
+                    <div id="currentSelections" class="space-y-2">
+                        </div>
+                    <div class="mt-4 pt-2 border-t border-gray-200 text-right">
+                        <p class="text-sm text-gray-600">Subtotal: <span id="subtotal">$0.00</span></p>
+                        <p class="text-sm text-gray-600">Tax (8%): <span id="tax">$0.00</span></p>
+                        <p class="text-lg font-bold text-gray-900">Total: <span id="total">$0.00</span></p>
+                    </div>
+                </div>
+
+                <div id="dateTimeSection" class="hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Appointment Date:</label>
+                            <input type="date" id="appointmentDate" name="appointmentDate" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="appointmentTime" class="block text-sm font-medium text-gray-700">Appointment Time:</label>
+                            <input type="time" id="appointmentTime" name="appointmentTime" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="notesSection" class="hidden">
+                    <label for="appointmentNotes" class="block text-sm font-medium text-gray-700">Notes (Optional):</label>
+                    <textarea id="appointmentNotes" name="appointmentNotes" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+                </div>
+
+                <div id="actionButtonsSection" class="flex flex-col sm:flex-row gap-4 justify-between mt-6 hidden">
+                    <button type="button" id="downloadPdfButton" class="flex-1 bg-gray-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-gray-700 transition-colors flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 4a2 2 0 00-2 2v7a2 2 0 002 2h4l-1 1H4a2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2v-2a2 2 0 00-2-2h-3l-1-1h4a2 2 0 002-2V6a2 2 0 00-2-2H5zm0 2h10v7H5V6zm10-2a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V4.5a.5.5 0 00-.5-.5h-.01z" clip-rule="evenodd"></path>
+                        </svg>
+                        Download PDF
+                    </button>
+                    <button type="submit" id="submitAppointmentButton" class="flex-1 bg-primary text-white px-6 py-3 rounded-lg shadow-md hover:bg-accent transition-colors flex items-center justify-center">
+                        Submit Appointment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+            <div class="blur-overlay" id="blur-overlay"></div>
+
+            <div id="cart-summary" class="fixed right-4 bottom-4 bg-white p-4 rounded-xl shadow-lg w-80 border border-gray-300 z-50 hidden">
+    <div id="cart-header" class="flex justify-between items-center mb-2">
+        <h3 id="cart-title" class="text-lg font-semibold text-gray-800">My Cart:</h3>
+        <button id="toggle-cart-btn" onclick="toggleCartVisibility()" class="text-red-500 text-sm font-bold">❌</button>
+    </div>
+    <div id="cart-items" class="text-gray-700 text-sm mb-4">No items yet.</div>
+    <div id="totals" class="text-gray-700 text-sm space-y-1">
+        <p><strong>Subtotal:</strong> $<span id="subtotal">0.00</span></p>
+        <p><strong>Tax (5.6%):</strong> $<span id="tax-amount">0.00</span></p>
+        <p><strong>Total:</strong> $<span id="total-amount">0.00</span></p>
+    </div>
+    <div class="mt-4 flex flex-col gap-2">
+        <button id="proceed-to-booking-btn" onclick="proceedToBooking()" class="w-full bg-primary text-white py-2 px-3 rounded hover:bg-accent font-semibold">📅 Book a Service Call</button>
+        <button id="download-pdf-btn" onclick="downloadPDF()" class="w-full bg-gray-100 border border-gray-300 text-gray-800 py-2 px-3 rounded hover:bg-gray-200">📄 Download as PDF</button>
+    </div>
+</div>
+</main>
+</div>
+</div>
+<footer class="w-full bg-white py-4 mt-auto">
+    <div class="max-w-md mx-auto text-center text-gray-500 text-sm">
+        <p>&copy; 2025 RideRescue. All rights reserved.</p>
+        <p class="font-medium mt-1">Auto repair. Handled.</p>
+    </div>
+</footer>
+
+  <!-- Edit Vehicle Modal -->
+    <div id="editVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditVehicleModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="{{ url_for('static', filename='icons/carColor.png') }}" alt="Vehicle icon" style="height: 32px; vertical-align: middle; margin-right: 20px;">
+                Change Vehicle
+            </h2>
+            <form id="editVehicleForm" class="space-y-4">
+                <input type="hidden" id="editVehicleId" name="id">
+
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="edit-vehicle-dynamic-area">
+                    <!-- The dynamic dropdown will be injected here by JavaScript -->
+                </div>
+                <div>
+                    <label for="editVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="editVehicleVIN" name="vin" required disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="editVehicleLicense" name="license" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="editVehicleMileage" name="mileage" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit" id="editVehicleSaveButton" disabled
+                class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold flex items-center justify-center">
+                <i class="fa-solid fa-floppy-disk mr-2"></i>
+                Save Changes
+            </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="text-white"></div>
+
+    <div id="garageModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeGarageModal">&times;</span>
+        <main class="p-4 sm:p-8 overflow-y-auto main-content-area-modal">
+            <div id="toast" class="text-white"></div>
+            <h1 class="mb-10 text-2xl font-semibold text-gray-900 flex items-center justify-between" id="garage-header">
+                <div class="flex items-center">
+                    My Garage
+                </div>
+                <button id="add-vehicle-icon-btn" class="ml-3 text-green-600 hover:text-green-700 focus:outline-none">
+                    <img src="/static/icons/circlePlus.png" alt="Circle Plus" class="h-6 mr-3">
+                </button>
+            </h1>
+
+            <div id="garage-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <li class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                                2022 Audi A3 Quattro Premium
+                            </p>
+                            <div class="text-base text-gray-600">
+                                <p><span class="font-medium">Engine:</span> 2.0L 1984CC L4 Mild Hybrid EVGas (MHEV) Turbo VIN: DNVB</p>
+                                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> 12345678910234567</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-gray-700 flex-grow">
+                        <p><span class="font-medium">License Plate:</span> 345-ZDX</p>
+                        <p><span class="font-medium">Mileage:</span> 142,123 miles</p>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button data-vehicle-id="1" class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+                        </button>
+                        <button data-vehicle-id="1" class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-trash-can mr-2"></i> Remove
+                        </button>
+                    </div>
+                </li>
+                <li class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                                2021 Autocar LLC. Xpeditor
+                            </p>
+                            <div class="text-base text-gray-600">
+                                <p><span class="font-medium">Engine:</span> 8.9L 8849CC L6 Nat. Gas Turbo VIN: L9N</p>
+                                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> 12345678910234562</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-gray-700 flex-grow">
+                        <p><span class="font-medium">License Plate:</span> 345-ZDX</p>
+                        <p><span class="font-medium">Mileage:</span> 142 miles</p>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button data-vehicle-id="2" class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+                        </button>
+                        <button data-vehicle-id="2" class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-trash-can mr-2"></i> Remove
+                        </button>
+                    </div>
+                </li>
+                <li class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                                2021 BYD 40FT
+                            </p>
+                            <div class="text-base text-gray-600">
+                                <p><span class="font-medium">Engine:</span> Electric VIN: 2912TZA</p>
+                                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> 12345678910234563</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-gray-700 flex-grow">
+                        <p><span class="font-medium">License Plate:</span> 345-ZDX</p>
+                        <p><span class="font-medium">Mileage:</span> 142 miles</p>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button data-vehicle-id="3" class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+                        </button>
+                        <button data-vehicle-id="3" class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-trash-can mr-2"></i> Remove
+                        </button>
+                    </div>
+                </li>
+                <li class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                                2022 BYD 30FT
+                            </p>
+                            <div class="text-base text-gray-600">
+                                <p><span class="font-medium">Engine:</span> Electric</p>
+                                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> 12345678910234564</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-gray-700 flex-grow">
+                        <p><span class="font-medium">License Plate:</span> 345-ZDX</p>
+                        <p><span class="font-medium">Mileage:</span> 142 miles</p>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button data-vehicle-id="4" class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+                        </button>
+                        <button data-vehicle-id="4" class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+                            <i class="fa-solid fa-trash-can mr-2"></i> Remove
+                        </button>
+                    </div>
+                </li>
+            </div>
+        </main>
+    </div>
+</div>
+
+    <!-- Add Vehicle Modal -->
+    <div id="addVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAddVehicleModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+        <img src="/static/icons/carColor.png" alt="Vehicle icon" style="height: 32px; vertical-align: middle; margin-right: 20px;">            
+        Add New Vehicle
+        </h2>
+            <form id="addVehicleForm" class="space-y-4">
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="add-vehicle-dynamic-area">
+                    <!-- The dynamic dropdown will be injected here by JavaScript -->
+                </div>
+                <div>
+                    <label for="addVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="addVehicleVIN" name="vin" required minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="VIN must be 17 alphanumeric characters (excluding I, O, Q)." oninput="this.value = this.value.toUpperCase()">
+                    <span id="vinWarning" class="text-red-500 text-sm mt-1 hidden">VIN must be 17 alphanumeric characters (excluding I, O, Q).</span>
+                </div>
+                <div>
+                    <label for="addVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="addVehicleLicense" name="license" placeholder="XXX-XXX" pattern="[A-Z0-9]{3}-[A-Z0-9]{3}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="License plate should be in XXX-XXX format (e.g., ABC-123)." oninput="formatLicensePlate(this)">
+                </div>
+                <div>
+                    <label for="addVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="addVehicleMileage" name="mileage" placeholder="XXX,XXX" pattern="[0-9]{1,3},[0-9]{3}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="Mileage should be in XXX,XXX format (e.g., 123,456)." oninput="formatMileage(this)">
+                </div>
+                <button type="submit" id="addVehicleSaveButton" disabled
+                class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold flex items-center justify-center">
+                <i class="fa-solid fa-plus-square mr-2"></i>        
+                Add Vehicle
+        </button>
+            </form>
+        </div>
+    </div>
+
+<div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" class="text-xl font-bold mb-4">Confirm Action</h2>
+            <p id="modalMessage" class="mb-6">Are you sure you want to proceed?</p>
+            <div class="flex justify-around">
+                <button id="confirmYesBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Yes</button>
+                <button id="confirmNoBtn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">No</button>
+            </div>
+        </div>
+    </div>
+
+<div id="editAppointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditAppointmentModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="/static/icons/newCalendar.png" alt="Add Calendar"
+                    style="height: 40px; vertical-align: middle; margin-right: 10px;">
+                Edit Appointment
+            </h2>
+            <form id="editAppointmentForm" class="space-y-4">
+                <input type="hidden" id="editAppointmentId">
+                <div>
+                    <label for="editAppointmentDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="editAppointmentDate" name="appointment_date" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentTime" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="editAppointmentTime" name="appointment_time" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentServices" class="block text-sm font-medium text-gray-700">Services
+                        Needed (comma-separated)</label>
+                    <input type="text" id="editAppointmentServices" name="services_needed" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentVehicle" class="block text-sm font-medium text-gray-700">Vehicle
+                        Info</label>
+                    <input type="text" id="editAppointmentVehicle" name="vehicle_info" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold flex items-center justify-center">
+    <i class="fa-solid fa-floppy-disk fa-lg mr-2"></i> Save Changes
+</button>
+            </form>
+        </div>
+    </div>
+
+<div id="update-profile-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white w-full max-w-xl mx-auto rounded-xl shadow-lg border border-gray-200 p-8 relative">
+        <button onclick="toggleUpdateProfileModal()" class="close-button">×</button>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+            <i class="fa-solid fa-user-pen mr-2"></i> Update Profile
+        </h2>
+        <form id="modalProfileForm" class="space-y-4">
+            <div>
+                <label for="modal-name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" id="modal-name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div>
+                <label for="modal-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="modal-email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div>
+                <label for="modal-address" class="block text-sm font-medium text-gray-700">Address</label>
+                <input type="text" id="modal-address" name="address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="modal-city" class="block text-sm font-medium text-gray-700">City</label>
+                    <input type="text" id="modal-city" name="city" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <div>
+                    <label for="modal-zip" class="block text-sm font-medium text-gray-700">Zip Code</label>
+                    <input type="text" id="modal-zip" name="zip" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+            </div>
+            <div>
+                <label for="modal-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input type="tel" id="modal-phone" name="phone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+            </div>
+            <div class="flex items-center">
+                <input type="checkbox" id="modal-text-optin" name="text_optin" class="h-4 w-4 text-primary border-gray-300 rounded">
+                <label for="modal-text-optin" class="ml-2 block text-sm text-gray-900">Opt-in to text notifications</label>
+            </div>
+            <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">Save Profile</button>
+        </form>
+    </div>
+</div>
+
+<div id="editVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditVehicleModal">×</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="/static/icons/carColor.png" alt="Vehicle icon" style="height: 32px; vertical-align: middle; margin-right: 20px;">
+                Change Vehicle
+            </h2>
+            <form id="editVehicleForm" class="space-y-4">
+                <input type="hidden" id="editVehicleId" name="id" value="1">
+
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="edit-vehicle-dynamic-area"><div class="mb-2 text-sm text-gray-600 flex items-center justify-between">
+                    <span>Selected: <span class="font-medium">2022 Aston Martin DB11 Volante 4.0L 3982CC V8 FI Turbo</span></span>
+                    <button id="goBackBtn-edit-vehicle-dynamic-area" class="ml-3 text-primary hover:underline text-xs py-1 px-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">Go Back</button>
+                </div></div>
+                <div>
+                    <label for="editVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="editVehicleVIN" name="vin" required="" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="editVehicleLicense" name="license" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="editVehicleMileage" name="mileage" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit" id="editVehicleSaveButton" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold flex items-center justify-center">
+                <i class="fa-solid fa-floppy-disk mr-2"></i>
+                Save Changes
+            </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-semibold mb-4">Confirmation</h3>
+        <p id="confirmMessage" class="mb-6 text-gray-700">Are you sure you want to proceed?</p>
+        <div class="flex justify-end space-x-4">
+            <button id="cancelButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md transition-colors">Cancel</button>
+            <button id="confirmButton" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-colors">Confirm</button>
+        </div>
+    </div>
+</div>
+<script>
+     // Global variables for dynamic dropdowns
+        // Unified approach for vehicle selection across Add/Edit modals
+        let currentVehicleSelection = {
+            year: null,
+            make: null,
+            model: null,
+            engine: null
+        };
+        let vehicleOptions = {
+            years: [],
+            makes: {},
+            models: {},
+            engines: {}
+        };
+
+        // Global references to modal input fields and buttons
+        let addVehicleVINInput;
+        let addVehicleLicenseInput;
+        let addVehicleMileageInput;
+        let addVehicleSaveButton;
+        let addVehicleDynamicArea;
+        let editVehicleVINInput;
+        let editVehicleLicenseInput;
+        let editVehicleMileageInput;
+        let editVehicleSaveButton;
+        let editVehicleDynamicArea;
+        let vinWarning; // For VIN validation message
+
+        // --- General Utility Functions ---
+
+        // Function to display toast notifications (success or error)
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (!toast) {
+                console.error("Toast element not found!");
+                return;
+            }
+            toast.textContent = message;
+            toast.classList.remove('bg-green-600', 'bg-red-600', 'bg-blue-600'); // Clear previous colors
+
+            if (type === 'success') {
+                toast.classList.add('bg-green-600');
+            } else if (type === 'error') {
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.add('bg-blue-600'); // Default to info/blue
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+/* @param {string} message - The message content to display in the confirmation modal.
+ * @returns {Promise<boolean>} A promise that resolves to true if confirmed, false if cancelled.
+ */
+function showConfirmationModal(message) {
+    return new Promise((resolve) => {
+        const confirmModal = document.createElement('div');
+        confirmModal.className = 'modal show'; // Using existing modal classes
+        confirmModal.innerHTML = `
+            <div class="modal-content">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirmation</h3>
+                <p class="mb-6">${message}</p>
+                <div class="flex justify-end space-x-4">
+                    <button id="cancelConfirm" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">Cancel</button>
+                    <button id="confirmAction" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors">Confirm</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmModal);
+
+        document.getElementById('confirmAction').addEventListener('click', () => {
+            confirmModal.remove();
+            resolve(true);
+        });
+
+        document.getElementById('cancelConfirm').addEventListener('click', () => {
+            confirmModal.remove();
+            resolve(false);
+        });
+
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) {
+                confirmModal.remove();
+                resolve(false);
+            }
+        });
+    });
+}
+
+        // Helper to capitalize first letter (for element IDs)
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Function to fetch data from API endpoints
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                showToast("Failed to load vehicle data. Please try again.", 'error');
+                return [];
+            }
+        }
+
+        // Helper to create a select element with options
+        function createSelectElement(id, name, options, placeholder, selectedValue = null) {
+            const selectDiv = document.createElement('div');
+            selectDiv.className = 'mb-4'; // Add margin-bottom for spacing
+            selectDiv.innerHTML = `
+                <label for="${id}" class="block text-sm font-medium text-gray-700 capitalize">${name}</label>
+                <select id="${id}" name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    <option value="">${placeholder}</option>
+                    ${options.map(option => `<option value="${option}" ${selectedValue === option ? 'selected' : ''}>${option}</option>`).join('')}
+                </select>
+            `;
+            return selectDiv;
+        }
+
+        // Function to enable/disable VIN, License, Mileage, and Save button for a specific modal
+        function toggleVehicleDetailsFields(targetAreaId, enable) {
+            let vinInput, licenseInput, mileageInput, saveButton;
+
+            if (targetAreaId === 'add-vehicle-dynamic-area') {
+                vinInput = addVehicleVINInput;
+                licenseInput = addVehicleLicenseInput;
+                mileageInput = addVehicleMileageInput;
+                saveButton = addVehicleSaveButton;
+            } else if (targetAreaId === 'edit-vehicle-dynamic-area') {
+                vinInput = editVehicleVINInput;
+                licenseInput = editVehicleLicenseInput;
+                mileageInput = editVehicleMileageInput;
+                saveButton = editVehicleSaveButton;
+            } else {
+                console.warn("Unknown targetAreaId for toggleVehicleDetailsFields:", targetAreaId);
+                return;
+            }
+
+            if (vinInput) vinInput.disabled = !enable;
+            if (licenseInput) licenseInput.disabled = !enable;
+            if (mileageInput) mileageInput.disabled = !enable;
+            if (saveButton) saveButton.disabled = !enable;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal elements for Add Vehicle
+            const addVehicleIconBtn = document.getElementById('add-vehicle-icon-btn');
+            const addVehicleModal = document.getElementById('addVehicleModal');
+            const closeAddVehicleModal = document.getElementById('closeAddVehicleModal');
+            
+            if (addVehicleIconBtn) {
+                addVehicleIconBtn.addEventListener('click', async () => {
+                    if (addVehicleModal) {
+                        addVehicleModal.classList.add('show');
+                        addVehicleForm.reset(); // Reset form fields
+                        // Reset selections and start dynamic dropdown for new vehicle
+                        await resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                    }
+                });
+            }
+
+            if (closeAddVehicleModal) {
+                closeAddVehicleModal.addEventListener('click', () => {
+                    if (addVehicleModal) {
+                        addVehicleModal.classList.remove('show');
+                        addVehicleForm.reset();
+                        resetDynamicVehicleSelection('add-vehicle-dynamic-area'); // Reset on close
+                    }
+                });
+            }
+
+            if (addVehicleModal) {
+                addVehicleModal.addEventListener('click', (e) => {
+                    if (e.target === addVehicleModal) {
+                        addVehicleModal.classList.remove('show');
+                        addVehicleForm.reset();
+                        resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                    }
+                });
+            }
+            
+            // Handle Add Vehicle Form Submission
+            if (addVehicleForm) {
+                addVehicleForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    // Check if all vehicle details are selected
+                    if (!currentVehicleSelection.year || !currentVehicleSelection.make || !currentVehicleSelection.model || !currentVehicleSelection.engine) {
+                        showToast("Please select the complete vehicle details (Year, Make, Model, Engine).", 'error');
+                        return;
+                    }
+
+                    const vehicleData = {
+                        year: currentVehicleSelection.year, // Use the values from global selections
+                        make: currentVehicleSelection.make,
+                        model: currentVehicleSelection.model,
+                        engine: currentVehicleSelection.engine || null, // Optional
+                        vin: addVehicleVINInput.value,
+                        license: addVehicleLicenseInput.value || null, // Optional
+                        mileage: addVehicleMileageInput.value || null // Optional
+                    };
+
+                    try {
+                        const response = await fetch('/api/vehicles', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(vehicleData)
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            showToast(result.message, 'success');
+                            if (addVehicleModal) addVehicleModal.classList.remove('show');
+                            addVehicleForm.reset();
+                            resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                            displayGarageVehicles(); // Refresh the garage list
+                        } else {
+                            showToast(result.message || "Failed to add vehicle.", 'error');
+                        }
+                    } catch (error) {
+                        console.error("Error adding vehicle:", error);
+                        showToast("An error occurred while adding the vehicle.", 'error');
+                    }
+                });
+            }
+
+        });
+
+        // This is the central function that updates the dynamic area for both Add and Edit modals
+        async function updateDynamicVehicleSelectionArea(targetAreaId, initialVehicleData = null) {
+            const targetElement = document.getElementById(targetAreaId);
+            if (!targetElement) return;
+
+            // Clear previous content but keep the structure for progress text/go back button
+            targetElement.innerHTML = '';
+
+            // If initialVehicleData is provided (for edit modal on open), set currentVehicleSelection
+            if (initialVehicleData && !currentVehicleSelection.year && !currentVehicleSelection.make) { // Only set if not already in selection process
+                currentVehicleSelection.year = initialVehicleData.year || null;
+                currentVehicleSelection.make = initialVehicleData.make || null;
+                currentVehicleSelection.model = initialVehicleData.model || null;
+                currentVehicleSelection.engine = initialVehicleData.engine || null;
+            }
+
+            // Display current selection path and Go Back button
+            const selectionPath = [];
+            if (currentVehicleSelection.year) selectionPath.push(currentVehicleSelection.year);
+            if (currentVehicleSelection.make) selectionPath.push(currentVehicleSelection.make);
+            if (currentVehicleSelection.model) selectionPath.push(currentVehicleSelection.model);
+            if (currentVehicleSelection.engine) selectionPath.push(currentVehicleSelection.engine);
+
+            // Show "Selected: ..." and "Go Back" if any part of the vehicle is selected
+            if (selectionPath.length > 0) {
+                const selectedDiv = document.createElement('div');
+                selectedDiv.className = 'mb-2 text-sm text-gray-600 flex items-center justify-between';
+                selectedDiv.innerHTML = `
+                    <span>Selected: <span class="font-medium">${selectionPath.join(' ')}</span></span>
+                    <button id="goBackBtn-${targetAreaId}" class="ml-3 text-primary hover:underline text-xs py-1 px-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">Go Back</button>
+                `;
+                targetElement.appendChild(selectedDiv);
+
+                const goBackBtn = document.getElementById(`goBackBtn-${targetAreaId}`);
+                if (goBackBtn) {
+                    goBackBtn.addEventListener('click', () => handleGoBack(targetAreaId));
+                }
+            }
+
+            // Determine which dropdown to show next
+            let nextDropdownElement = null;
+            let dropdownToRender = '';
+            let optionsToUse = [];
+            let placeholderText = '';
+            let currentLabel = '';
+
+            if (!currentVehicleSelection.year) {
+                dropdownToRender = 'year';
+                optionsToUse = vehicleOptions.years;
+                placeholderText = 'Select Year';
+                currentLabel = 'Year';
+            } else if (!currentVehicleSelection.make) {
+                dropdownToRender = 'make';
+                optionsToUse = vehicleOptions.makes[currentVehicleSelection.year] || [];
+                placeholderText = 'Select Make';
+                currentLabel = 'Make';
+            } else if (!currentVehicleSelection.model) {
+                dropdownToRender = 'model';
+                optionsToUse = vehicleOptions.models[currentVehicleSelection.make] || [];
+                placeholderText = 'Select Model';
+                currentLabel = 'Model';
+            } else if (!currentVehicleSelection.engine) {
+                dropdownToRender = 'engine';
+                optionsToUse = vehicleOptions.engines[currentVehicleSelection.model] || [];
+                placeholderText = 'Select Engine (Optional)';
+                currentLabel = 'Engine';
+            }
+
+            if (dropdownToRender) {
+                const currentSelectedValue = currentVehicleSelection[dropdownToRender];
+                nextDropdownElement = createSelectElement(
+                    `${targetAreaId.replace('-dynamic-area', '')}${capitalizeFirstLetter(dropdownToRender)}`,
+                    dropdownToRender,
+                    optionsToUse,
+                    placeholderText,
+                    currentSelectedValue
+                );
+                targetElement.appendChild(nextDropdownElement);
+
+                // Attach event listener to the newly created select
+                const newSelect = nextDropdownElement.querySelector('select');
+                if (newSelect) {
+                    newSelect.addEventListener('change', async (e) => {
+                        const value = e.target.value;
+                        if (value) {
+                            if (dropdownToRender === 'year') {
+                                currentVehicleSelection.year = value;
+                                currentVehicleSelection.make = null; // Reset subsequent
+                                currentVehicleSelection.model = null;
+                                currentVehicleSelection.engine = null;
+                                vehicleOptions.makes[value] = await fetchData(`/get_makes?year=${value}`);
+                            } else if (dropdownToRender === 'make') {
+                                currentVehicleSelection.make = value;
+                                currentVehicleSelection.model = null; // Reset subsequent
+                                currentVehicleSelection.engine = null;
+                                vehicleOptions.models[value] = await fetchData(`/get_models?year=${currentVehicleSelection.year}&make=${value}`);
+                            } else if (dropdownToRender === 'model') {
+                                currentVehicleSelection.model = value;
+                                currentVehicleSelection.engine = null; // Reset subsequent
+                                vehicleOptions.engines[value] = await fetchData(`/get_engines?year=${currentVehicleSelection.year}&make=${currentVehicleSelection.make}&model=${value}`);
+                            } else if (dropdownToRender === 'engine') {
+                                currentVehicleSelection.engine = value;
+                            }
+                        }
+                        updateDynamicVehicleSelectionArea(targetAreaId); // Re-render the dynamic area
+                    });
+                }
+                toggleVehicleDetailsFields(targetAreaId, false); // Disable VIN/License/Mileage if not all selected
+            } else {
+                // All selections made, enable VIN, License Plate, Mileage, and Add/Save Vehicle button
+                toggleVehicleDetailsFields(targetAreaId, true);
+            }
+        }
+
+        // Handles the "Go Back" button click for dynamic vehicle selection
+        function handleGoBack(targetAreaId) {
+            if (currentVehicleSelection.engine) {
+                currentVehicleSelection.engine = null;
+            } else if (currentVehicleSelection.model) {
+                currentVehicleSelection.model = null;
+            } else if (currentVehicleSelection.make) {
+                currentVehicleSelection.make = null;
+            } else if (currentVehicleSelection.year) {
+                currentVehicleSelection.year = null;
+            }
+            updateDynamicVehicleSelectionArea(targetAreaId);
+            toggleVehicleDetailsFields(targetAreaId, false); // Disable fields when going back
+        }
+
+        // Resets the dynamic dropdowns and selection state for a given modal
+        async function resetDynamicVehicleSelection(targetAreaId) {
+            currentVehicleSelection = {
+                year: null,
+                make: null,
+                model: null,
+                engine: null
+            };
+            vehicleOptions = { // Clear cached options too
+                years: [],
+                makes: {},
+                models: {},
+                engines: {}
+            };
+            const dynamicArea = document.getElementById(targetAreaId);
+            if (dynamicArea) dynamicArea.innerHTML = ''; // Clear the area
+            toggleVehicleDetailsFields(targetAreaId, false); // Disable fields again
+            
+            // Re-fetch years to restart the process for the specific modal
+            vehicleOptions.years = await fetchData('/get_years');
+            updateDynamicVehicleSelectionArea(targetAreaId);
+        }
+
+        // --- Event Listeners and Initializations ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+            if (menuToggle && sidebar && mobileMenuOverlay) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('-translate-x-full');
+                    mobileMenuOverlay.classList.toggle('hidden');
+                });
+
+                mobileMenuOverlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    mobileMenuOverlay.classList.add('hidden');
+                });
+            }
+
+            // Assign global variables for modal elements
+            addVehicleVINInput = document.getElementById('addVehicleVIN');
+            addVehicleLicenseInput = document.getElementById('addVehicleLicense');
+            addVehicleMileageInput = document.getElementById('addVehicleMileage');
+            addVehicleSaveButton = document.getElementById('addVehicleSaveButton');
+            addVehicleDynamicArea = document.getElementById('add-vehicle-dynamic-area');
+            vinWarning = document.getElementById('vinWarning');
+
+            editVehicleVINInput = document.getElementById('editVehicleVIN');
+            editVehicleLicenseInput = document.getElementById('editVehicleLicense');
+            editVehicleMileageInput = document.getElementById('editVehicleMileage');
+            editVehicleSaveButton = document.getElementById('editVehicleSaveButton');
+            editVehicleDynamicArea = document.getElementById('edit-vehicle-dynamic-area');
+
+
+            // --- Vehicle Management Functions ---
+            async function fetchVehicles() {
+                try {
+                    const response = await fetch('/api/vehicles');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching vehicles:", error);
+                    showToast("Failed to load vehicles.", 'error');
+                    return [];
+                }
+            }
+
+            async function displayGarageVehicles() {
+                const garageList = document.getElementById('garage-list');
+                garageList.innerHTML = '<p class="text-gray-500 col-span-full">Loading vehicles...</p>'; // Show loading
+
+                const vehicles = await fetchVehicles();
+                garageList.innerHTML = ''; // Clear loading message
+
+                if (vehicles.length === 0) {
+                    garageList.innerHTML = '<p class="text-gray-600 col-span-full">No vehicles in your garage.</p>';
+                    return;
+                }
+
+                vehicles.forEach(vehicle => {
+                    const listItem = document.createElement('li'); // Keep as <li> as it's a list of vehicles
+                    // Apply all card-specific classes directly to the <li> element
+                    listItem.className = 'bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up';
+
+                    // The innerHTML now just contains the content of the card, not wrapped in another <div>
+                    listItem.innerHTML = `
+    <div class="flex items-start mb-4">
+        <div>
+            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                ${vehicle.year} ${vehicle.make} ${vehicle.model}
+            </p>
+            <div class="text-base text-gray-600">
+                <p><span class="font-medium">Engine:</span> ${vehicle.engine}</p>
+                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> ${vehicle.vin}</p>
+            </div>
+        </div>
+    </div>
+    <div class="space-y-2 text-gray-700 flex-grow">
+        <p><span class="font-medium">License Plate:</span> ${vehicle.license ? vehicle.license : 'N/A'}</p>
+        <p><span class="font-medium">Mileage:</span> ${vehicle.mileage ? vehicle.mileage.toLocaleString() + ' miles' : 'N/A'}</p>
+    </div>
+    <div class="flex space-x-3 mt-6">
+        <button data-vehicle-id="${vehicle.id}"
+            class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+            <i class="fa-solid fa-pen-to-square mr-2"></i> Edit
+        </button>
+        <button data-vehicle-id="${vehicle.id}"
+            class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+            <i class="fa-solid fa-trash-can mr-2"></i> Remove
+        </button>
+    </div>
+                    `;
+                    garageList.appendChild(listItem);
+                });
+
+                // Attach event listeners after elements are added to DOM
+                document.querySelectorAll('.remove-vehicle-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const vehicleId = event.target.dataset.vehicleId;
+                        removeVehicle(vehicleId);
+                    });
+                });
+
+                document.querySelectorAll('.edit-vehicle-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const vehicleId = event.target.dataset.vehicleId;
+                        const vehicleToEdit = vehicles.find(v => v.id == vehicleId);
+                        if (vehicleToEdit) {
+                            openEditVehicleModal(vehicleToEdit);
+                        }
+                    });
+                });
+            }
+
+            async function removeVehicle(vehicleIdToRemove) {
+                const modalConfirmed = await showConfirmationModal("Are you sure you want to remove this vehicle from your garage?");
+                if (!modalConfirmed) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/vehicles/${vehicleIdToRemove}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast(result.message, 'success');
+                        displayGarageVehicles(); // Refresh display
+                    } else {
+                        showToast(result.message || "Failed to remove vehicle.", 'error');
+                    }
+                } catch (error) {
+                    console.error("Error removing vehicle:", error);
+                    showToast("An error occurred while removing the vehicle.", 'error');
+                }
+            }
+
+            // --- Edit Vehicle Modal Logic ---
+            const editVehicleModal = document.getElementById('editVehicleModal');
+            const closeEditVehicleModal = document.getElementById('closeEditVehicleModal');
+            const editVehicleForm = document.getElementById('editVehicleForm');
+            
+            async function openEditVehicleModal(vehicleData) {
+                // Reset current selection state for a fresh start in the edit modal
+                currentVehicleSelection = {
+                    year: null,
+                    make: null,
+                    model: null,
+                    engine: null
+                };
+                vehicleOptions = { // Clear cached options
+                    years: [],
+                    makes: {},
+                    models: {},
+                    engines: {}
+                };
+
+                // Populate VIN, License, Mileage fields from vehicleData
+                editVehicleVINInput.value = vehicleData.vin || '';
+                editVehicleLicenseInput.value = vehicleData.license || '';
+                editVehicleMileageInput.value = vehicleData.mileage || '';
+
+                // Set the hidden input field for vehicle ID
+                const editVehicleIdHiddenInput = document.getElementById('editVehicleId');
+                if (editVehicleIdHiddenInput) {
+                    editVehicleIdHiddenInput.value = vehicleData.id;
+                }
+
+                editVehicleModal.classList.add('show');
+
+                // Initialize dynamic dropdowns for edit modal with existing vehicle data
+                // This will pre-select the existing vehicle's details and show the "Selected: ..." summary
+                vehicleOptions.years = await fetchData('/get_years');
+                if (vehicleData.year) {
+                    currentVehicleSelection.year = vehicleData.year;
+                    vehicleOptions.makes[vehicleData.year] = await fetchData(`/get_makes?year=${vehicleData.year}`);
+                }
+                if (vehicleData.make) {
+                    currentVehicleSelection.make = vehicleData.make;
+                    vehicleOptions.models[vehicleData.make] = await fetchData(`/get_models?year=${vehicleData.year}&make=${vehicleData.make}`);
+                }
+                if (vehicleData.model) {
+                    currentVehicleSelection.model = vehicleData.model;
+                    vehicleOptions.engines[vehicleData.model] = await fetchData(`/get_engines?year=${vehicleData.year}&make=${vehicleData.make}&model=${vehicleData.model}`);
+                }
+                if (vehicleData.engine) {
+                    currentVehicleSelection.engine = vehicleData.engine;
+                }
+                
+                updateDynamicVehicleSelectionArea('edit-vehicle-dynamic-area');
+
+                // Initially disable VIN/License/Mileage fields and Save button.
+                // They will be enabled by updateDynamicVehicleSelectionArea if a full vehicle is selected.
+                toggleVehicleDetailsFields('edit-vehicle-dynamic-area', false);
+            }
+
+            // Close Edit Modal
+            if (closeEditVehicleModal) {
+                closeEditVehicleModal.addEventListener('click', () => {
+                    editVehicleModal.classList.remove('show');
+                    editVehicleForm.reset();
+                    resetDynamicVehicleSelection('edit-vehicle-dynamic-area'); // Reset dropdown states
+                });
+            }
+
+            // Close modal if clicked outside content
+            if (editVehicleModal) {
+                editVehicleModal.addEventListener('click', (e) => {
+                    if (e.target === editVehicleModal) {
+                        editVehicleModal.classList.remove('show');
+                        editVehicleForm.reset();
+                        resetDynamicVehicleSelection('edit-vehicle-dynamic-area');
+                    }
+                });
+            }
+
+            if (editVehicleForm) {
+                editVehicleForm.addEventListener('submit', async (event) => {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Check if all vehicle details are selected
+                    if (!currentVehicleSelection.year || !currentVehicleSelection.make || !currentVehicleSelection.model || !currentVehicleSelection.engine) {
+                        showToast("Please select the complete vehicle details (Year, Make, Model, Engine).", 'error');
+                        return;
+                    }
+
+                    const vehicleId = document.getElementById('editVehicleId').value;
+                    const updatedVehicleData = {
+                        year: currentVehicleSelection.year, // Use the values from global selections
+                        make: currentVehicleSelection.make,
+                        model: currentVehicleSelection.model,
+                        engine: currentVehicleSelection.engine || null, // Optional
+                        vin: editVehicleVINInput.value,
+                        license: editVehicleLicenseInput.value || null, // Optional
+                        mileage: editVehicleMileageInput.value || null // Optional
+                    };
+                    
+                    try {
+                        const response = await fetch(`/api/vehicles/${vehicleId}`, {
+                            method: 'PUT', // Use PUT for updates
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedVehicleData)
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            showToast(result.message || "Vehicle updated successfully!", 'success');
+                            editVehicleModal.classList.remove('show'); // Close the modal
+                            editVehicleForm.reset(); // Reset form fields
+                            resetDynamicVehicleSelection('edit-vehicle-dynamic-area'); // Reset dropdown states
+                            displayGarageVehicles(); // Refresh the list of vehicles
+                        } else {
+                            showToast(result.message || "Failed to update vehicle.", 'error');
+                        }
+                    } catch (error) {
+                        console.error("Error updating vehicle:", error);
+                        showToast("An error occurred while updating the vehicle.", 'error');
+                    }
+                });
+            }
+            
+            // Initial load of vehicles
+            displayGarageVehicles();
+        })
+
+        // Function to validate VIN input and show/hide warning
+    function validateVinInput() {
+        // This function is currently not attached to an event listener for editVehicleVINInput
+        // but can be if you wish to add real-time validation for it.
+        // For addVehicleVINInput, it's used with oninput in HTML.
+        const vinInput = addVehicleVINInput || editVehicleVINInput; // Use whichever is relevant
+        const warningElement = vinWarning; // Assuming vinWarning is global or passed
+
+        if (!vinInput || !warningElement) return;
+
+        const vin = vinInput.value;
+        const isValidLength = vin.length === 17;
+        // checkValidity() will return false if pattern or minlength/maxlength is violated.
+        const isValidPattern = vinInput.checkValidity();
+
+        if (!isValidLength || !isValidPattern) {
+            warningElement.classList.remove('hidden');
+            if (!isValidLength) {
+                warningElement.textContent = 'VIN must be exactly 17 characters.';
+            } else if (!isValidPattern) {
+                warningElement.textContent = 'VIN contains invalid characters. (Exclude I, O, Q)';
+            }
+        } else {
+            warningElement.classList.add('hidden');
+        }
+    }
+
+    // Function to format License Plate input
+    function formatLicensePlate(input) {
+        let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // Uppercase and remove non-alphanumeric
+        let formattedValue = '';
+
+        if (value.length > 3) {
+            formattedValue = value.substring(0, 3) + '-' + value.substring(3, 6); // Max 6 chars for XXX-XXX
+        } else {
+            formattedValue = value;
+        }
+        input.value = formattedValue;
+    }
+
+    // Helper to create a select element with options
+        function createSelectElement(id, name, options, placeholder, selectedValue = null) {
+            const selectDiv = document.createElement('div');
+            selectDiv.className = 'mb-4'; // Add margin-bottom for spacing
+            selectDiv.innerHTML = `
+                <label for="${id}" class="block text-sm font-medium text-gray-700 capitalize">${name}</label>
+                <select id="${id}" name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    <option value="">${placeholder}</option>
+                    ${options.map(option => `<option value="${option}" ${selectedValue === option ? 'selected' : ''}>${option}</option>`).join('')}
+                </select>
+            `;
+            return selectDiv;
+        }
+
+        // Function to fetch data from API endpoints
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                showToast("Failed to load vehicle data. Please try again.", 'error');
+                return [];
+            }
+        }
+
+    // Function to format Mileage input
+    function formatMileage(input) {
+        let value = input.value.replace(/[^0-9]/g, ''); // Only allow digits
+        let formattedValue = '';
+
+        if (value.length > 3) {
+            formattedValue = value.substring(0, 3) + ',' + value.substring(3, 6); // Max 6 digits for XXX,XXX
+        } else {
+            formattedValue = value;
+        }
+        input.value = formattedValue;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // --- Dashboard Interactivity Script --- //
+    // Declare global variables for elements that need broader scope access.
+    // Their values will be assigned once the DOM is loaded.
+    let mainContentWrapper;
+    let searchMagnifierIcon;
+    let searchBarContainer;
+    let toast; // Declared globally for showToast function
+
+    // Dashboard specific elements
+    let userGreeting;
+    let totalVehicles;
+    let upcomingAppointmentsCount;
+    let totalSpent;
+    let maintenanceAlerts;
+    let garageVehiclesList;
+    let upcomingAppointmentsList;
+
+    // Add Vehicle Modal elements
+    let addVehicleForm;
+    let addVehicleModal;
+    let closeAddVehicleModal;
+    let openAddVehicleModalBtn; // Corrected ID to the button that opens the modal
+    let addVehicleLicensePlateInput;
+    let saveVehicleButton;
+
+    // Edit Appointment Modal elements
+    let editAppointmentModal;
+    let closeEditAppointmentModal;
+    let editAppointmentForm;
+    let editAppointmentId;
+    let editAppointmentDate;
+    let editAppointmentTime;
+    let editAppointmentServices;
+    let editAppointmentVehicle;
+
+
+    // Confirmation Modal elements
+    let confirmationModal;
+    let confirmationMessage;
+    let confirmButton;
+    let cancelConfirmButton;
+    let resolveConfirmation; // Function to resolve the confirmation promise
+
+
+    // Global variables for appointment modal (from appointments.html)
+    let selectedServices = [];
+    const LABOR_RATE_PER_HOUR = 75.00;
+    let allServicesGrouped = {}; // To store fetched services
+    let currentVehicleForAppointment = null; // Stores the selected vehicle object
+
+
+
+    // ==================== UTILITY FUNCTIONS ====================
+
+
+
+    function showToast(message, type = 'success') {
+        if (!toast) {
+            console.warn('Toast element not found. Message:', message);
+            return;
+        }
+        toast.textContent = message;
+        toast.classList.remove('bg-green-600', 'bg-red-600', 'bg-blue-600'); // Clear previous colors
+
+        if (type === 'success') {
+            toast.classList.add('bg-green-600');
+        } else if (type === 'error') {
+            toast.classList.add('bg-red-600');
+        } else {
+            toast.classList.add('bg-blue-600'); // Default to info/blue
+        }
+
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+
+    // ==================== TOPBAR/NAVIGATION (from dashboard.html) ====================
+
+
+
+    function toggleCartVisibility() {
+        const cart = document.getElementById('cart-summary');
+        if (cart) {
+            cart.classList.toggle('hidden');
+            cart.classList.toggle('open'); // Add/remove 'open' class for external checks
+        }
+    }
+
+
+    // ==================== ADD VEHICLE MODAL (from dashboard.html) ====================
+    let vehicleDropdowns = {
+        year: null,
+        make: null,
+        model: null,
+        engine: null
+    };
+
+    function toggleVehicleDetailsFields(show) {
+        const vehicleDetailsFields = document.getElementById('vehicle-details-fields');
+        if (vehicleDetailsFields) {
+            vehicleDetailsFields.classList.toggle('hidden', !show);
+        }
+        if (saveVehicleButton) {
+            saveVehicleButton.disabled = !show; // Enable/disable based on visibility
+        }
+    }
+
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            showToast("Failed to load vehicle data.", 'error');
+            return null;
+        }
+    }
+
+    function showGarageVehiclesModal() {
+        const modal = document.getElementById('garageVehiclesModal');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        }
+    }
+
+    // Function to hide the Garage Vehicles Modal
+    function hideGarageVehiclesModal() {
+        const modal = document.getElementById('garageVehiclesModal');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
+
+    // Event listener for the "Manage Vehicles" button
+    document.addEventListener('DOMContentLoaded', () => {
+        const goToGarageBtn = document.getElementById('go-to-garage-btn');
+        if (goToGarageBtn) {
+            goToGarageBtn.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link behavior
+                showGarageVehiclesModal();
+            });
+        }
+
+        // Close modal when clicking outside of modal-content
+        const garageModal = document.getElementById('garageVehiclesModal');
+        if (garageModal) {
+            garageModal.addEventListener('click', (e) => {
+                if (e.target === garageModal) {
+                    hideGarageVehiclesModal();
+                }
+            });
+        }
+    });
+
+    async function fetchMakesForModal(year) {
+        if (!year) return;
+        const data = await fetchData(`/api/vehicles/makes?year=${year}`);
+        if (data) {
+            vehicleOptions.makes[year] = data.makes;
+            populateDropdown('make', vehicleOptions.makes[year], 'Select Make');
+            vehicleDropdowns.model.innerHTML = '<option value="">Select Model</option>';
+            vehicleDropdowns.engine.innerHTML = '<option value="">Select Engine</option>';
+            toggleVehicleDetailsFields(false);
+        }
+    }
+
+    async function fetchModelsForModal(year, make) {
+        if (!year || !make) return;
+        const data = await fetchData(`/api/vehicles/models?year=${year}&make=${make}`);
+        if (data) {
+            vehicleOptions.models[`${year}-${make}`] = data.models;
+            populateDropdown('model', vehicleOptions.models[`${year}-${make}`], 'Select Model');
+            vehicleDropdowns.engine.innerHTML = '<option value="">Select Engine</option>';
+            toggleVehicleDetailsFields(false);
+        }
+    }
+
+    async function fetchEnginesForModal(year, make, model) {
+        if (!year || !make || !model) return;
+        const data = await fetchData(`/api/vehicles/engines?year=${year}&make=${make}&model=${model}`);
+        if (data) {
+            vehicleOptions.engines[`${year}-${make}-${model}`] = data.engines;
+            populateDropdown('engine', data.engines, 'Select Engine');
+            // Show VIN/License/Mileage fields once engine is selected
+            toggleVehicleDetailsFields(true);
+        }
+    }
+
+    function populateDropdown(dropdownId, options, defaultOptionText) {
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.innerHTML = ''; // Clear existing options
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = defaultOptionText;
+    dropdown.appendChild(defaultOption);
+
+    // Add this check:
+    if (Array.isArray(options)) {
+        options.map(option => {
+            const optElement = document.createElement('option');
+            optElement.value = option.value; // Assuming options have a 'value' property
+            optElement.textContent = option.text; // Assuming options have a 'text' property
+            dropdown.appendChild(optElement);
+        });
+    } else {
+        console.error('Expected an array for dropdown options, but received:', options);
+        // Optionally, show a user-friendly message or handle the error
+    }
+}
+
+    function createDropdown(id, labelText) {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <label for="${id}" class="block text-sm font-medium text-gray-700">${labelText}</label>
+            <select id="${id}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" disabled>
+                <option value="">Select ${labelText}</option>
+            </select>
+        `;
+        return div.firstElementChild; // Return the select element
+    }
+
+    function initializeDynamicVehicleDropdowns() {
+        if (addVehicleDynamicArea) {
+            addVehicleDynamicArea.innerHTML = ''; // Clear existing content
+
+            vehicleDropdowns.year = createDropdown('addVehicleYear', 'Year');
+            vehicleDropdowns.make = createDropdown('addVehicleMake', 'Make');
+            vehicleDropdowns.model = createDropdown('addVehicleModel', 'Model');
+            vehicleDropdowns.engine = createDropdown('addVehicleEngine', 'Engine Type');
+
+            addVehicleDynamicArea.appendChild(vehicleDropdowns.year.parentElement);
+            addVehicleDynamicArea.appendChild(vehicleDropdowns.make.parentElement);
+            addVehicleDynamicArea.appendChild(vehicleDropdowns.model.parentElement);
+            addVehicleDynamicArea.appendChild(vehicleDropdowns.engine.parentElement);
+
+            vehicleDropdowns.year.addEventListener('change', (e) => {
+                const year = e.target.value;
+                vehicleDropdowns.make.disabled = true;
+                vehicleDropdowns.model.disabled = true;
+                vehicleDropdowns.engine.disabled = true;
+                toggleVehicleDetailsFields(false);
+                if (year) fetchMakesForModal(year);
+            });
+
+            vehicleDropdowns.make.addEventListener('change', (e) => {
+                const year = vehicleDropdowns.year.value;
+                const make = e.target.value;
+                vehicleDropdowns.model.disabled = true;
+                vehicleDropdowns.engine.disabled = true;
+                toggleVehicleDetailsFields(false);
+                if (year && make) fetchModelsForModal(year, make);
+            });
+
+            vehicleDropdowns.model.addEventListener('change', (e) => {
+                const year = vehicleDropdowns.year.value;
+                const make = vehicleDropdowns.make.value;
+                const model = e.target.value;
+                vehicleDropdowns.engine.disabled = true;
+                toggleVehicleDetailsFields(false);
+                if (year && make && model) fetchEnginesForModal(year, make, model);
+            });
+
+            vehicleDropdowns.engine.addEventListener('change', (e) => {
+                const engine = e.target.value;
+                toggleVehicleDetailsFields(!!engine); // Show fields if an engine is selected
+            });
+        }
+    }
+
+    async function handleAddVehicleFormSubmit(event) {
+        event.preventDefault();
+
+        const year = vehicleDropdowns.year ? vehicleDropdowns.year.value : '';
+        const make = vehicleDropdowns.make ? vehicleDropdowns.make.value : '';
+        const model = vehicleDropdowns.model ? vehicleDropdowns.model.value : '';
+        const engine = vehicleDropdowns.engine ? vehicleDropdowns.engine.value : '';
+        const vin = addVehicleVINInput ? addVehicleVINInput.value : '';
+        const licensePlate = addVehicleLicensePlateInput ? addVehicleLicensePlateInput.value : '';
+        const mileage = addVehicleMileageInput ? addVehicleMileageInput.value : '';
+
+        if (!year || !make || !model || !engine) {
+            showToast("Please select Year, Make, Model, and Engine.", 'error');
+            return;
+        }
+
+        const vehicleData = {
+            year,
+            make,
+            model,
+            engine,
+            vin,
+            license_plate: licensePlate,
+            mileage: mileage ? parseInt(mileage, 10) : null
+        };
+
+        try {
+            const response = await fetch('/api/vehicles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(vehicleData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showToast(result.message || "Vehicle added successfully!", 'success');
+                addVehicleModal.classList.remove('show');
+                addVehicleForm.reset(); // Clear the form
+                initializeDynamicVehicleDropdowns(); // Re-initialize for next use
+                toggleVehicleDetailsFields(false); // Hide details fields
+                fetchDashboardData().then(initDashboard); // Refresh dashboard data
+            } else {
+                showToast(result.message || "Failed to add vehicle.", 'error');
+            }
+        } catch (error) {
+            console.error("Error adding vehicle:", error);
+            showToast("An error occurred while adding the vehicle.", 'error');
+        }
+    }
+
+    // ==================== DASHBOARD DATA & DISPLAY (from dashboard.html) ====================
+
+    // This function will fetch and update all dashboard related data
+    async function fetchDashboardData() {
+        try {
+            const [vehiclesResponse, appointmentsResponse] = await Promise.all([
+                fetch('/api/vehicles'),
+                fetch('/api/appointments')
+            ]);
+
+            const vehicles = vehiclesResponse.ok ? await vehiclesResponse.json() : [];
+            const appointments = appointmentsResponse.ok ? await appointmentsResponse.json() : [];
+
+            let totalSpent = 0;
+            // Assuming each service has a cost associated or you track completed service costs
+            // For now, let's just count appointments as a proxy for activity
+            // You'll need to implement actual cost tracking in your backend/DB
+            // For demonstration, let's assume a dummy cost per appointment
+            totalSpent = appointments.length * 75.00; // $75 per appointment as a placeholder
+
+            const maintenanceAlerts = vehicles.length > 0 ? 1 : 0; // Placeholder: 1 alert if any vehicle exists
+
+            return {
+                vehicles: vehicles,
+                upcomingAppointments: appointments.filter(appt => new Date(appt.appointmentDate) >= new Date()),
+                totalSpentYTD: totalSpent,
+                maintenanceAlerts: maintenanceAlerts
+            };
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+            showToast("Failed to load dashboard data.", 'error');
+            return {
+                vehicles: [],
+                upcomingAppointments: [],
+                totalSpentYTD: 0,
+                maintenanceAlerts: 0
+            };
+        }
+    }
+
+    // Update Quick Stats Section
+    function updateQuickStats(data) {
+        if (totalVehicles) totalVehicles.textContent = data.vehicles.length;
+        if (upcomingAppointmentsCount) upcomingAppointmentsCount.textContent = data.upcomingAppointments.length;
+        if (totalSpent) totalSpent.textContent = `$${data.totalSpentYTD.toFixed(2)}`;
+        if (maintenanceAlerts) maintenanceAlerts.textContent = data.maintenanceAlerts;
+    }
+
+    // Update My Garage List
+    function updateGarageList(vehicles) {
+        if (!garageVehiclesList) return;
+        garageVehiclesList.innerHTML = ''; // Clear loading message
+
+        if (vehicles.length === 0) {
+            garageVehiclesList.innerHTML = '<p class="text-gray-500">No vehicles added to garage yet.</p>';
+        } else {
+            vehicles.slice(0, 3).forEach(vehicle => { // Show up to 3 vehicles
+                const vehicleDiv = document.createElement('div');
+                vehicleDiv.className = 'flex items-center p-3 bg-gray-50 rounded-md border border-gray-100 hover:bg-gray-100 transition-colors';
+                vehicleDiv.innerHTML = `
+                    <i class="fa-solid fa-car fa-md text-primary mr-3"></i>
+                    <p class="font-medium text-gray-800">${vehicle.year} ${vehicle.make} ${vehicle.model}</p>
+                `;
+                garageVehiclesList.appendChild(vehicleDiv);
+            });
+            if (vehicles.length > 3) {
+                garageVehiclesList.innerHTML += `<p class="text-sm text-gray-500 mt-2">and ${vehicles.length - 3} more...</p>`;
+            }
+        }
+    }
+
+    // Update Upcoming Appointments/Services List
+    function updateUpcomingAppointmentsList(appointments) {
+        if (!upcomingAppointmentsList) return;
+        upcomingAppointmentsList.innerHTML = ''; // Clear loading message
+
+        if (appointments.length === 0) {
+            upcomingAppointmentsList.innerHTML = '<p class="text-gray-500">No upcoming appointments or pending services.</p>';
+        } else {
+            appointments.slice(0, 3).forEach(appt => { // Show up to 3 appointments
+                const apptDate = new Date(appt.appointmentDate);
+                const now = new Date();
+                const diffHours = (apptDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+                const serviceNames = Array.isArray(appt.services) ? appt.services.map(s => s.name).join(', ') : (appt.services || 'N/A');
+
+                const apptDiv = document.createElement('div');
+                apptDiv.className = 'flex flex-col p-3 bg-gray-50 rounded-md border border-gray-100 hover:bg-gray-100 transition-colors';
+                apptDiv.innerHTML = `
+                    <div class="flex items-start mb-2">
+                        <i class="fa-solid fa-calendar-day fa-md mt-2" style="color: #2563eb; margin-right: 20px;"></i>
+                        <div>
+                            <p class="font-medium text-gray-800">${appt.appointmentDate} at ${appt.appointmentTime} - ${serviceNames}</p>
+                            <p class="text-sm text-gray-600">Vehicle: ${appt.vehicleInfo} &bull; Status: <span class="${appt.status === 'Confirmed' ? 'text-green-600' : 'text-red-600'}">${appt.status}</span></p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 text-sm">
+                        <button class="text-blue600 hover:text-blue700 font-medium px-2 py-1 rounded transition-colors" onclick="handleEditAppointment('${appt.id}', '${appt.appointmentDate}', '${appt.appointmentTime}', '${serviceNames}', '${appt.vehicleInfo}', ${diffHours})">
+                            Edit
+                        </button>
+                        <button class="text-red600 hover:text-red500 font-medium px-2 py-1 rounded transition-colors" onclick="handleCancelAppointment('${appt.id}', ${diffHours})">
+                            Cancel
+                        </button>
+                    </div>
+                `;
+                upcomingAppointmentsList.appendChild(apptDiv);
+            });
+        }
+    }
+
+    async function handleCancelAppointment(appointmentId, diffHours) {
+        if (diffHours < 24) {
+            showToast("Appointments can only be canceled at least 24 hours in advance.", 'error');
+            return;
+        }
+
+        const isConfirmed = await showConfirmationModal("Are you sure you want to cancel this appointment?");
+        if (!isConfirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/appointments/${appointmentId}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showToast(result.message || "Appointment canceled successfully.", 'success');
+                fetchDashboardData().then(initDashboard); // Refresh the dashboard
+            } else {
+                showToast(result.message || "Failed to cancel appointment.", 'error');
+            }
+        } catch (error) {
+            console.error("Error canceling appointment:", error);
+            showToast("An error occurred while canceling the appointment.", 'error');
+        }
+    }
+
+    function handleEditAppointment(id, date, time, services, vehicleInfo, diffHours) {
+        if (diffHours < 24) {
+            showToast("Appointment details can only be updated at least 24 hours in advance.", 'error');
+            return;
+        }
+
+        if (editAppointmentId) editAppointmentId.value = id;
+        if (editAppointmentDate) editAppointmentDate.value = date;
+        if (editAppointmentTime) editAppointmentTime.value = time;
+        if (editAppointmentServices) editAppointmentServices.value = services;
+        if (editAppointmentVehicle) editAppointmentVehicle.value = vehicleInfo;
+
+        if (editAppointmentModal) editAppointmentModal.classList.add('show');
+    }
+
+    // Initial load of dashboard data
+    async function initDashboard() {
+        const userData = await fetchDashboardData();
+        updateQuickStats(userData);
+        updateGarageList(userData.vehicles);
+        updateUpcomingAppointmentsList(userData.upcomingAppointments);
+
+        // Trigger animations
+        document.querySelectorAll('.card-animate').forEach(card => {
+            card.style.opacity = '0'; // Ensure starting state is hidden
+            card.style.transform = 'translateY(20px)';
+            card.classList.add('card-animate'); // Re-add to trigger animation
+        });
+    }
+
+    // Function to fetch and display user info
+    async function fetchAndDisplayUserInfo() {
+        try {
+            const response = await fetch('/api/user_info');
+            const data = await response.json();
+            if (response.ok) {
+                if (userGreeting) userGreeting.textContent = data.name;
+            } else {
+                console.error("Failed to fetch user info:", data.message);
+                if (userGreeting) userGreeting.textContent = "Guest";
+            }
+        } catch (error) {
+            console.error("Error fetching user info:", error);
+            if (userGreeting) userGreeting.textContent = "Guest";
+        }
+    }
+
+    // Function to fetch and display appointments (duplicate, initDashboard already calls updateUpcomingAppointmentsList)
+    // This function might be redundant if initDashboard handles all data fetching and display
+    async function fetchAndDisplayAppointments() {
+        if (!upcomingAppointmentsList) return; // Add null check for robustness
+        upcomingAppointmentsList.innerHTML = '<p class="text-gray-500">Loading appointments...</p>'; // Loading state
+        try {
+            const response = await fetch('/api/appointments');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const appointments = await response.json();
+            updateUpcomingAppointmentsList(appointments);
+        } catch (error) {
+            console.error("Error fetching appointments:", error);
+            upcomingAppointmentsList.innerHTML = '<p class="text-red-500">Failed to load appointments.</p>';
+            showToast("Failed to load appointments.", 'error');
+        }
+    }
+
+
+    // ==================== PROFILE MODAL (from dashboard.html) ====================
+
+    function toggleUpdateProfileModal() {
+        const modal = document.getElementById('update-profile-modal');
+        if (modal) {
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                fetchUserProfile(); // Fetch and populate data when shown
+            }
+        }
+    }
+
+    async function fetchUserProfile() {
+        try {
+            const response = await fetch('/api/profile');
+            if (!response.ok) {
+                // If response is not OK, parse error message from response body
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || "Failed to load profile data.");
+                });
+            }
+            const data = await response.json();
+            if (data) { // Check if data is not null/undefined
+                document.getElementById('modal-name').value = data.name || '';
+                document.getElementById('modal-email').value = data.email || '';
+                document.getElementById('modal-address').value = data.address || '';
+                document.getElementById('modal-city').value = data.city || '';
+                document.getElementById('modal-zip').value = data.zip || '';
+                document.getElementById('modal-phone').value = data.phone || '';
+                // Checkboxes
+                document.getElementById('modal-text-optin').checked = data.text_optin || false;
+            }
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+            showToast(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    // ==================== GENERAL SITE-WIDE FUNCTIONS (from dashboard.html) ====================
+
+    function clearUserData() {
+        localStorage.clear();
+        showToast("🔄 All user data has been cleared.", 'info');
+        location.reload();
+    }
+
+    function clearAllData() {
+        showConfirmationModal("Are you sure you want to clear all saved data?").then(isConfirmed => {
+            if (isConfirmed) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+    }
+
+    function updateCartIcon() {
+        const count = selectedServices.reduce((total, s) => total + (s.quantity || 1), 0);
+        const badge = document.getElementById('cart-count');
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'inline-block';
+                badge.classList.remove('pulse');
+                void badge.offsetWidth; // Trigger reflow
+                badge.classList.add('pulse');
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    // ==================== APPOINTMENT MODAL FUNCTIONS (from appointments.html) ====================
+
+    function showAppointmentModal() {
+        const appointmentModal = document.getElementById('appointmentModal');
+        if (appointmentModal) {
+            appointmentModal.classList.add('show');
+            // Hide other sections and show only vehicle selection initially
+            document.getElementById('newVehicleForm').classList.add('hidden');
+            document.getElementById('serviceCategorySelectionSection').classList.add('hidden');
+            document.getElementById('servicesListContainer').classList.add('hidden');
+            document.getElementById('selectedServicesSummaryContainer').classList.add('hidden');
+            document.getElementById('dateTimeSection').classList.add('hidden');
+            document.getElementById('notesSection').classList.add('hidden');
+            document.getElementById('actionButtonsSection').classList.add('hidden');
+            document.getElementById('vehicleSelectionSection').classList.remove('hidden');
+            document.getElementById('goBackVehicleSelection').classList.add('hidden');
+            document.getElementById('vehicleSelectionProgress').textContent = 'Select a vehicle or add a new one.';
+
+
+            fetchVehiclesForAppointmentModal(); // Populate vehicle dropdown
+            resetAppointmentForm(); // Clear any previous selections
+        }
+    }
+
+    function hideAppointmentModal() {
+        const appointmentModal = document.getElementById('appointmentModal');
+        if (appointmentModal) {
+            appointmentModal.classList.remove('show');
+            resetAppointmentForm();
+        }
+    }
+
+    async function fetchVehiclesForAppointmentModal() {
+        const vehicleSelect = document.getElementById('vehicleSelect');
+        if (!vehicleSelect) return;
+
+        // Clear existing options, but keep "Add a New Vehicle"
+        vehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option><option value="newVehicle">Add a New Vehicle</option>';
+
+        try {
+            const response = await fetch('/api/vehicles');
+            if (!response.ok) {
+                throw new Error('Failed to fetch vehicles.');
+            }
+            const vehicles = await response.json();
+
+            vehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle.id; // Use vehicle ID as value
+                option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} (${vehicle.vin ? vehicle.vin.substring(0, 4) + '...' : 'N/A'})`;
+                option.dataset.vehicleInfo = `${vehicle.year} ${vehicle.make} ${vehicle.model}`; // For display purposes later
+                vehicleSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error fetching vehicles for modal:", error);
+            showToast("Failed to load vehicle list.", 'error');
+        }
+    }
+
+    async function fetchServiceCategories() {
+        const serviceCategorySelect = document.getElementById('serviceCategorySelect');
+        if (!serviceCategorySelect) return;
+
+        serviceCategorySelect.innerHTML = '<option value="">-- Select Service Category --</option>'; // Clear existing options
+
+        try {
+            const response = await fetch('/get_categories');
+            if (!response.ok) {
+                throw new Error('Failed to fetch service categories.');
+            }
+            const categories = await response.json();
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                serviceCategorySelect.appendChild(option);
+            });
+            document.getElementById('serviceCategorySelectionSection').classList.remove('hidden');
+            document.getElementById('vehicleSelectionProgress').textContent = 'Vehicle selected. Now select service category.';
+            document.getElementById('goBackVehicleSelection').classList.remove('hidden'); // Show back button
+        } catch (error) {
+            console.error("Error fetching service categories:", error);
+            showToast("Failed to load service categories.", 'error');
+        }
+    }
+
+    async function fetchServicesForCategory(category) {
+        const servicesListDiv = document.getElementById('servicesList');
+        if (!servicesListDiv) return;
+
+        servicesListDiv.innerHTML = '<p class="text-gray-500">Loading services...</p>'; // Loading state
+        try {
+            const response = await fetch(`/get_services?category=${encodeURIComponent(category)}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch services.');
+            }
+            const services = await response.json();
+            allServicesGrouped[category] = services; // Store fetched services
+
+            servicesListDiv.innerHTML = ''; // Clear loading message
+
+            if (services.length === 0) {
+                servicesListDiv.innerHTML = '<p class="text-gray-500">No services found for this category.</p>';
+            } else {
+                services.forEach(service => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center';
+                    div.innerHTML = `
+                        <input type="checkbox" id="service-${service.id}" name="services" value="${service.id}"
+                               data-name="${service.name}"
+                               data-labor-hours="${service.estimated_labor_hours}"
+                               data-description="${service.description}"
+                               class="h-4 w-4 text-primary border-gray-300 rounded">
+                        <label for="service-${service.id}" class="ml-2 block text-sm text-gray-900">
+                            ${service.name} ($${(service.estimated_labor_hours * LABOR_RATE_PER_HOUR).toFixed(2)})
+                        </label>
+                    `;
+                    servicesListDiv.appendChild(div);
+
+                    const checkbox = div.querySelector(`input[type="checkbox"]`);
+                    checkbox.addEventListener('change', (event) => {
+                        const serviceId = event.target.value;
+                        const serviceName = event.target.dataset.name;
+                        const laborHours = parseFloat(event.target.dataset.laborHours);
+                        const description = event.target.dataset.description;
+                        const cost = laborHours * LABOR_RATE_PER_HOUR;
+
+                        if (event.target.checked) {
+                            selectedServices.push({ id: serviceId, name: serviceName, laborHours, description, cost });
+                        } else {
+                            selectedServices = selectedServices.filter(s => s.id !== serviceId);
+                        }
+                        updateSelectedServicesSummary();
+                        calculateTotals();
+                    });
+                });
+            }
+            document.getElementById('servicesListContainer').classList.remove('hidden');
+            document.getElementById('selectedServicesSummaryContainer').classList.remove('hidden');
+            document.getElementById('dateTimeSection').classList.remove('hidden');
+            document.getElementById('notesSection').classList.remove('hidden');
+            document.getElementById('actionButtonsSection').classList.remove('hidden');
+            document.getElementById('vehicleSelectionProgress').textContent = 'Select services and choose a date/time.';
+        } catch (error) {
+            console.error("Error fetching services for category:", error);
+            showToast("Failed to load services.", 'error');
+            servicesListDiv.innerHTML = '<p class="text-red-500">Failed to load services.</p>';
+        }
+    }
+
+    function updateSelectedServicesSummary() {
+        const currentSelectionsDiv = document.getElementById('currentSelections');
+        if (!currentSelectionsDiv) return;
+
+        if (selectedServices.length === 0) {
+            currentSelectionsDiv.innerHTML = '<p class="text-gray-500">No services selected yet.</p>';
+        } else {
+            currentSelectionsDiv.innerHTML = selectedServices.map(service => `
+                <div class="flex justify-between items-center text-sm border-b pb-1">
+                    <span>${service.name}</span>
+                    <span>$${service.cost.toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    function calculateTotals() {
+        const subtotalSpan = document.getElementById('subtotal');
+        const taxSpan = document.getElementById('tax');
+        const totalSpan = document.getElementById('total');
+
+        if (!subtotalSpan || !taxSpan || !totalSpan) return;
+
+        const subtotal = selectedServices.reduce((sum, service) => sum + service.cost, 0);
+        const taxRate = 0.08; // 8% tax
+        const tax = subtotal * taxRate;
+        const total = subtotal + tax;
+
+        subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+        taxSpan.textContent = `$${tax.toFixed(2)}`;
+        totalSpan.textContent = `$${total.toFixed(2)}`;
+    }
+
+    function resetAppointmentForm() {
+        const appointmentForm = document.getElementById('appointmentForm');
+        if (appointmentForm) {
+            appointmentForm.reset();
+        }
+        selectedServices = [];
+        allServicesGrouped = {};
+        currentVehicleForAppointment = null;
+
+        // Reset UI elements
+        document.getElementById('vehicleSelect').value = '';
+        document.getElementById('newVehicleForm').classList.add('hidden');
+        document.getElementById('serviceCategorySelect').innerHTML = '<option value="">-- Select Service Category --</option>';
+        document.getElementById('serviceCategorySelectionSection').classList.add('hidden');
+        document.getElementById('servicesList').innerHTML = '';
+        document.getElementById('servicesListContainer').classList.add('hidden');
+        document.getElementById('currentSelections').innerHTML = '<p class="text-gray-500">No services selected yet.</p>';
+        document.getElementById('selectedServicesSummaryContainer').classList.add('hidden');
+        document.getElementById('subtotal').textContent = '$0.00';
+        document.getElementById('tax').textContent = '$0.00';
+        document.getElementById('total').textContent = '$0.00';
+        document.getElementById('dateTimeSection').classList.add('hidden');
+        document.getElementById('notesSection').classList.add('hidden');
+        document.getElementById('actionButtonsSection').classList.add('hidden');
+        document.getElementById('vehicleSelectionProgress').textContent = 'Select a vehicle or add a new one.';
+        document.getElementById('goBackVehicleSelection').classList.add('hidden'); // Hide back button
+    }
+
+    async function handleNewVehicleSubmission() {
+        const newVehicleMake = document.getElementById('newVehicleMake').value;
+        const newVehicleModel = document.getElementById('newVehicleModel').value;
+        const newVehicleYear = document.getElementById('newVehicleYear').value;
+        const newVehicleVIN = document.getElementById('newVehicleVIN').value;
+
+        if (!newVehicleMake || !newVehicleModel || !newVehicleYear) {
+            showToast("Please fill in all new vehicle details (Make, Model, Year).", 'error');
+            return;
+        }
+
+        const vehicleData = {
+            make: newVehicleMake,
+            model: newVehicleModel,
+            year: parseInt(newVehicleYear),
+            vin: newVehicleVIN || null,
+            // Assuming engine type is not critical for quick add or can be default
+            engine: "N/A"
+        };
+
+        try {
+            const response = await fetch('/api/vehicles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(vehicleData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showToast(result.message || "New vehicle added successfully.", 'success');
+                currentVehicleForAppointment = { id: result.vehicle_id, info: `${newVehicleYear} ${newVehicleMake} ${newVehicleModel}` };
+                document.getElementById('newVehicleForm').classList.add('hidden');
+                fetchServiceCategories(); // Proceed to service selection
+            } else {
+                showToast(result.message || "Failed to add new vehicle.", 'error');
+            }
+        } catch (error) {
+            console.error("Error adding new vehicle for appointment:", error);
+            showToast("An error occurred while adding the new vehicle.", 'error');
+        }
+    }
+
+    function generateAppointmentPdf() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const appointmentDate = document.getElementById('appointmentDate').value;
+        const appointmentTime = document.getElementById('appointmentTime').value;
+        const appointmentNotes = document.getElementById('appointmentNotes').value;
+        const vehicleInfo = currentVehicleForAppointment ? currentVehicleForAppointment.info : 'N/A';
+
+        doc.setFontSize(22);
+        doc.text("Appointment Summary", 14, 20);
+
+        doc.setFontSize(12);
+        let y = 30;
+
+        doc.text(`Vehicle: ${vehicleInfo}`, 14, y);
+        y += 10;
+        doc.text(`Date: ${appointmentDate}`, 14, y);
+        y += 10;
+        doc.text(`Time: ${appointmentTime}`, 14, y);
+        y += 10;
+
+        y += 10;
+        doc.setFontSize(14);
+        doc.text("Selected Services:", 14, y);
+        y += 7;
+        doc.setFontSize(12);
+
+        selectedServices.forEach(service => {
+            doc.text(`${service.name} - $${service.cost.toFixed(2)}`, 18, y);
+            y += 7;
+        });
+
+        y += 5;
+        const subtotal = selectedServices.reduce((sum, service) => sum + service.cost, 0);
+        const taxRate = 0.08;
+        const tax = subtotal * taxRate;
+        const total = subtotal + tax;
+
+        doc.text(`Subtotal: $${subtotal.toFixed(2)}`, 14, y);
+        y += 7;
+        doc.text(`Tax (8%): $${tax.toFixed(2)}`, 14, y);
+        y += 7;
+        doc.setFontSize(14);
+        doc.text(`Total: $${total.toFixed(2)}`, 14, y);
+        y += 10;
+
+        if (appointmentNotes) {
+            doc.setFontSize(14);
+            doc.text("Notes:", 14, y);
+            y += 7;
+            doc.setFontSize(12);
+            doc.text(appointmentNotes, 14, y, { maxWidth: 180 });
+        }
+
+        doc.save("appointment-summary.pdf");
+    }
+
+
+    // --- DOMContentLoaded Event Listener ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // Assign elements to the globally declared variables here
+        // Topbar
+        menuToggle = document.getElementById('menu-toggle');
+        // sidebar = document.getElementById('sidebar'); // Sidebar is not in dashboard.html directly
+        // mobileMenuOverlay = document.getElementById('mobile-menu-overlay'); // Overlay not in dashboard.html directly
+        mainContentWrapper = document.getElementById('main-content-wrapper');
+        searchMagnifierIcon = document.getElementById('search-magnifier-icon');
+        searchBarContainer = document.getElementById('search-bar-container');
+        // closeSidebarButton = document.getElementById('close-sidebar-button'); // Not in dashboard.html directly
+        toast = document.getElementById('toast'); // Dashboard already has this
+
+        // Dashboard specific elements
+        userGreeting = document.getElementById('user-greeting');
+        totalVehicles = document.getElementById('total-vehicles');
+        upcomingAppointmentsCount = document.getElementById('upcoming-appointments');
+        totalSpent = document.getElementById('total-spent');
+        maintenanceAlerts = document.getElementById('maintenance-alerts');
+        garageVehiclesList = document.getElementById('garage-vehicles-list');
+        upcomingAppointmentsList = document.getElementById('upcoming-appointments-list');
+
+        // Add Vehicle Modal elements
+        addVehicleForm = document.getElementById('addVehicleForm');
+        addVehicleModal = document.getElementById('addVehicleModal');
+        closeAddVehicleModal = document.getElementById('closeAddVehicleModal');
+        openAddVehicleModalBtn = document.getElementById('quick-add-vehicle-btn'); // Corrected ID to the button that opens the modal
+        addVehicleVINInput = document.getElementById('addVehicleVIN');
+        addVehicleLicensePlateInput = document.getElementById('addVehicleLicense');
+        addVehicleMileageInput = document.getElementById('addVehicleMileage');
+        saveVehicleButton = addVehicleForm.querySelector('button[type="submit"]'); // Get the submit button
+        addVehicleDynamicArea = document.getElementById('add-vehicle-dynamic-area'); // Get dynamic area element
+
+        // Edit Appointment Modal elements
+        editAppointmentModal = document.getElementById('editAppointmentModal');
+        closeEditAppointmentModal = document.getElementById('closeEditAppointmentModal');
+        editAppointmentForm = document.getElementById('editAppointmentForm');
+        editAppointmentId = document.getElementById('editAppointmentId');
+        editAppointmentDate = document.getElementById('editAppointmentDate');
+        editAppointmentTime = document.getElementById('editAppointmentTime');
+        editAppointmentServices = document.getElementById('editAppointmentServices');
+        editAppointmentVehicle = document.getElementById('editAppointmentVehicle');
+
+        // Confirmation Modal elements
+        confirmationModal = document.getElementById('confirmationModal');
+        confirmationMessage = document.getElementById('confirmationMessage');
+        confirmButton = document.getElementById('confirmButton');
+        cancelConfirmButton = document.getElementById('cancelConfirmButton');
+
+
+        // --- Event Listeners for Dashboard Elements ---
+
+        if (menuToggle && mainContentWrapper) {
+            menuToggle.addEventListener('click', function() {
+                // If a sidebar existed, this would toggle it. For now, it might be a dummy button.
+                // mainContentWrapper.classList.toggle('sidebar-open');
+                // if (sidebar) sidebar.classList.toggle('hidden');
+                // if (mobileMenuOverlay) mobileMenuOverlay.classList.toggle('hidden');
+            });
+        }
+
+        if (searchMagnifierIcon && searchBarContainer) {
+            searchMagnifierIcon.addEventListener('click', function() {
+                searchBarContainer.classList.toggle('active');
+            });
+        }
+
+        // Add Vehicle Modal Listeners
+        if (openAddVehicleModalBtn && addVehicleModal && closeAddVehicleModal) {
+            openAddVehicleModalBtn.addEventListener('click', function() {
+                addVehicleModal.classList.add('show');
+                initializeDynamicVehicleDropdowns(); // Initialize dropdowns when modal opens
+            });
+
+            closeAddVehicleModal.addEventListener('click', function() {
+                addVehicleModal.classList.remove('show');
+                addVehicleForm.reset(); // Reset the form
+                initializeDynamicVehicleDropdowns(); // Re-initialize dropdowns to clear selected options
+                toggleVehicleDetailsFields(false); // Hide details fields
+            });
+
+            addVehicleModal.addEventListener('click', function(event) {
+                if (event.target === addVehicleModal) {
+                    addVehicleModal.classList.remove('show');
+                    addVehicleForm.reset();
+                    initializeDynamicVehicleDropdowns();
+                    toggleVehicleDetailsFields(false);
+                }
+            });
+
+            if (addVehicleForm) {
+                addVehicleForm.addEventListener('submit', handleAddVehicleFormSubmit);
+            }
+        }
+
+
+        // Edit Appointment Modal Listeners
+        if (editAppointmentModal) {
+            editAppointmentModal.addEventListener('click', (e) => {
+                if (e.target === editAppointmentModal) {
+                    editAppointmentModal.classList.remove('show');
+                    if (editAppointmentForm) editAppointmentForm.reset();
+                }
+            });
+        }
+        if (closeEditAppointmentModal) {
+            closeEditAppointmentModal.addEventListener('click', () => {
+                if (editAppointmentModal) editAppointmentModal.classList.remove('show');
+                if (editAppointmentForm) editAppointmentForm.reset();
+            });
+        }
+        if (editAppointmentForm) {
+            editAppointmentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const appointmentId = editAppointmentId.value;
+                const updatedData = {
+                    appointmentDate: editAppointmentDate.value,
+                    appointmentTime: editAppointmentTime.value,
+                    services: editAppointmentServices.value.split(',').map(s => ({ name: s.trim() })),
+                    vehicleInfo: editAppointmentVehicle.value
+                };
+
+                try {
+                    const response = await fetch(`/api/appointments/${appointmentId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast(result.message || "Appointment updated successfully.", 'success');
+                        editAppointmentModal.classList.remove('show');
+                        fetchDashboardData().then(initDashboard); // Refresh dashboard
+                    } else {
+                        showToast(result.message || "Failed to update appointment.", 'error');
+                    }
+                } catch (error) {
+                    console.error("Error updating appointment:", error);
+                    showToast("An error occurred while updating the appointment.", 'error');
+                }
+            });
+        }
+
+
+        // Quick Actions Listeners
+const goToGarageBtn = document.getElementById('go-to-garage-btn');
+if (goToGarageBtn) {
+    goToGarageBtn.addEventListener('click', function() {
+        // Instead of navigating, open the addVehicleModal
+        const addVehicleModal = document.getElementById('garageModal');
+        if (garageModal) {
+            garageModal.classList.add('show'); // Or whatever class you use to display modals
+        }
+        // Remove or comment out the line below that causes navigation
+        // window.location.href = '/garage'; // Navigate to garage page
+    });
+}
+
+        const clearDataBtn = document.getElementById('clear-data-btn');
+        if (clearDataBtn) {
+            clearDataBtn.addEventListener('click', clearAllData);
+        }
+
+        // Handle avatar upload
+        const topbarAvatar = document.getElementById('topbar-avatar');
+        const avatarInput = document.getElementById('avatar-input');
+
+        if (topbarAvatar && avatarInput) {
+            topbarAvatar.addEventListener('click', function() {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        topbarAvatar.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+
+        // Initial fetch of dashboard and user info
+        initDashboard();
+        fetchAndDisplayUserInfo();
+
+        // --- Appointment Modal Specific Event Listeners (from appointments.html) ---
+        const quickBookAppointmentBtn = document.getElementById('quick-book-appointment-btn');
+        const closeAppointmentModalBtn = document.getElementById('closeAppointmentModal');
+        const appointmentModal = document.getElementById('appointmentModal');
+        const vehicleSelect = document.getElementById('vehicleSelect');
+        const newVehicleForm = document.getElementById('newVehicleForm');
+        const submitNewVehicleButton = document.getElementById('submitNewVehicle');
+        const serviceCategorySelect = document.getElementById('serviceCategorySelect');
+        const downloadPdfButton = document.getElementById('downloadPdfButton');
+        const goBackVehicleSelectionButton = document.getElementById('goBackVehicleSelection');
+
+        if (quickBookAppointmentBtn) {
+            quickBookAppointmentBtn.addEventListener('click', showAppointmentModal);
+        }
+        if (closeAppointmentModalBtn) {
+            closeAppointmentModalBtn.addEventListener('click', hideAppointmentModal);
+        }
+        if (appointmentModal) {
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === appointmentModal) {
+                    hideAppointmentModal();
+                }
+            });
+        }
+
+        // Pre-fill data from existing profile if available (from previous script)
+        const modalProfileForm = document.getElementById('modalProfileForm');
+        if (modalProfileForm) {
+            modalProfileForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    const response = await fetch('/api/profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast(result.message, 'success');
+                        document.getElementById('update-profile-modal').classList.add('hidden');
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (err) {
+                    console.error("Error updating profile:", err);
+                    showToast("An error occurred while updating your profile.", 'error');
+                }
+            });
+        }
+
+        // ==================== CART INTERACTIVITY ====================
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        function recalculateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartSubtotalSpan = document.getElementById('subtotal');
+            const cartTaxAmountSpan = document.getElementById('tax-amount');
+            const cartTotalAmountSpan = document.getElementById('total-amount');
+
+            if (!cartItemsContainer || !cartSubtotalSpan || !cartTaxAmountSpan || !cartTotalAmountSpan) return;
+
+            cartItemsContainer.innerHTML = ''; // Clear current display
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500">No items yet.</p>';
+            } else {
+                cartItems.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex justify-between items-center text-sm border-b border-gray-100 py-1';
+                    itemDiv.innerHTML = `
+                        <span>${item.name} (x${item.quantity})</span>
+                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeFromCart(${index})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    `;
+                    cartItemsContainer.appendChild(itemDiv);
+                });
+            }
+
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const taxRate = 0.056; // Example tax rate (5.6%)
+            const tax = subtotal * taxRate;
+            const total = subtotal + tax;
+
+            cartSubtotalSpan.textContent = subtotal.toFixed(2);
+            cartTaxAmountSpan.textContent = tax.toFixed(2);
+            cartTotalAmountSpan.textContent = total.toFixed(2);
+
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            updateCartIcon();
+        }
+
+        function addToCart(item) {
+            const existingItem = cartItems.find(i => i.id === item.id);
+            if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + (item.quantity || 1);
+            } else {
+                cartItems.push({ ...item, quantity: item.quantity || 1 });
+            }
+            showToast(`${item.name} added to cart!`, 'success');
+            recalculateCart();
+        }
+
+        function removeFromCart(index) {
+            const removedItem = cartItems.splice(index, 1);
+            if (removedItem.length > 0) {
+                showToast(`${removedItem[0].name} removed from cart.`, 'info');
+                recalculateCart();
+            }
+        }
+
+        function proceedToBooking() {
+            // This function would typically navigate to a booking page or open a booking modal
+            showToast("Proceeding to booking (feature not fully implemented).", 'info');
+            // Example: window.location.href = '/booking';
+            hideAppointmentModal(); // Close the cart if it's open
+            showAppointmentModal(); // Open the appointment modal
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            doc.text("Cart Summary", 14, 20);
+
+            let y = 30;
+            doc.setFontSize(12);
+
+            if (cartItems.length === 0) {
+                doc.text("No items in cart.", 14, y);
+                y += 10;
+            } else {
+                cartItems.forEach(item => {
+                    doc.text(`${item.name} (x${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`, 18, y);
+                    y += 7;
+                });
+            }
+
+            y += 5;
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const taxRate = 0.056;
+            const tax = subtotal * taxRate;
+            const total = subtotal + tax;
+
+            doc.text(`Subtotal: $${subtotal.toFixed(2)}`, 14, y);
+            y += 7;
+            doc.text(`Tax (5.6%): $${tax.toFixed(2)}`, 14, y);
+            y += 7;
+            doc.setFontSize(14);
+            doc.text(`Total: $${total.toFixed(2)}`, 14, y);
+
+            doc.save("cart-summary.pdf");
+        }
+
+        // Initial call to update cart display on page load
+        recalculateCart();
+
+        // Existing click listener for cart overlay closure
+        document.addEventListener('click', (e) => {
+            const cart = document.getElementById('cart-summary');
+            const icon = document.getElementById('cart-icon-wrapper');
+            if (cart && icon && cart.classList.contains('open') && !cart.contains(e.target) && !icon.contains(e.target)) {
+                toggleCartVisibility();
+            }
+        });
+
+        // Existing error codes loading (keep as is)
+        fetch('/static/full_codes.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // renderCodes(data); // This function is not provided, so commented out
+            })
+            .catch(error => {
+                console.error('Error loading JSON:', error);
+            });
+
+    });
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////// THIS SECTION CONTROLS DROPDOWNS LOADING WHEN EDIT IS CLICKED FOR A PARTICULAR VEHICLE IN UPCOMING APPOINTMENTS AND SERVICE
+
+
+// New global variables for the select elements
+    let editAppointmentServicesSelect;
+    let editAppointmentVehicleSelect;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... (existing DOMContentLoaded assignments) ...
+
+        editAppointmentServicesSelect = document.getElementById('editAppointmentServices');
+        editAppointmentVehicleSelect = document.getElementById('editAppointmentVehicle');
+
+        // Populate dropdowns when the page loads or when the modal is opened.
+        // For demonstration, we'll call them on DOMContentLoaded.
+        // In a real application, you might call populateVehiclesDropdown()
+        // and populateServicesDropdown() when the edit appointment modal is shown.
+        populateVehiclesDropdown();
+        // Services are hardcoded in HTML for demonstration. If dynamic, call a function here.
+    });
+
+    // Function to populate the Vehicle dropdown
+    async function populateVehiclesDropdown() {
+        if (!editAppointmentVehicleSelect) {
+            console.error("editAppointmentVehicleSelect element not found.");
+            return;
+        }
+
+        // Clear existing options
+        editAppointmentVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+
+        // --- Replace this with your actual API call to fetch user vehicles ---
+        // For demonstration, using dummy data:
+        const dummyVehicles = [
+            { id: 'veh1', make: 'Toyota', model: 'Camry', year: 2020 },
+            { id: 'veh2', make: 'Honda', model: 'Civic', year: 2018 },
+            { id: 'veh3', make: 'Ford', model: 'F-150', year: 2022 }
+        ];
+
+        // Example of fetching from an API (uncomment and modify for real use):
+        // try {
+        //     const response = await fetch('/api/user/vehicles'); // Adjust endpoint as needed
+        //     if (!response.ok) {
+        //         throw new Error(`HTTP error! Status: ${response.status}`);
+        //     }
+        //     const vehicles = await response.json();
+        //     vehicles.forEach(vehicle => {
+        //         const option = document.createElement('option');
+        //         option.value = vehicle.id; // Or vehicle.vin, depending on what you want to store
+        //         option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+        //         editAppointmentVehicleSelect.appendChild(option);
+        //     });
+        // } catch (error) {
+        //     console.error('Error fetching vehicles:', error);
+        //     showToast('Failed to load vehicles.', 'error');
+        // }
+
+
+        // Using dummy data for now
+        dummyVehicles.forEach(vehicle => {
+            const option = document.createElement('option');
+            option.value = vehicle.id;
+            option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+            editAppointmentVehicleSelect.appendChild(option);
+        });
+        // --- End of dummy data / API call example ---
+    }
+
+
+    // Function to populate the Services dropdown (if dynamic)
+    // Currently, services are hardcoded in the HTML for simplicity.
+    // If you need to fetch services dynamically, you would implement a similar
+    // fetch logic as populateVehiclesDropdown.
+    /*
+    async function populateServicesDropdown() {
+        if (!editAppointmentServicesSelect) {
+            console.error("editAppointmentServicesSelect element not found.");
+            return;
+        }
+
+        // Clear existing options, keep the default if any
+        editAppointmentServicesSelect.innerHTML = '';
+
+        // Example of fetching from an API:
+        // try {
+        //     const response = await fetch('/api/services'); // Adjust endpoint as needed
+        //     if (!response.ok) {
+        //         throw new Error(`HTTP error! Status: ${response.status}`);
+        //     }
+        //     const services = await response.json();
+        //     services.forEach(service => {
+        //         const option = document.createElement('option');
+        //         option.value = service.id; // Or service.name
+        //         option.textContent = service.name;
+        //         editAppointmentServicesSelect.appendChild(option);
+        //     });
+        // } catch (error) {
+        //     console.error('Error fetching services:', error);
+        //     showToast('Failed to load services.', 'error');
+        // }
+    }
+    */
+
+    // Event listener for opening the edit appointment modal
+    // Assuming there's a button or mechanism that opens editAppointmentModal
+    // For example, if you have an "Edit" button for each appointment:
+    // document.querySelectorAll('.edit-appointment-btn').forEach(button => {
+    //     button.addEventListener('click', (event) => {
+    //         const appointmentId = event.target.dataset.appointmentId; // Get ID from data attribute
+    //         // Fetch appointment details by ID and populate modal fields
+    //         // Then call populateVehiclesDropdown() and populateServicesDropdown()
+    //         editAppointmentModal.classList.add('show');
+    //     });
+    // });
+
+    // Ensure the editAppointmentModal can be opened and closed
+    document.getElementById('closeEditAppointmentModal').addEventListener('click', () => {
+        editAppointmentModal.classList.remove('show');
+    });
+
+    // You will need to ensure that the 'editAppointmentModal' is shown
+    // when a user clicks on an 'edit' button related to an appointment.
+    // This typically involves adding an event listener to your existing
+    // "edit" buttons for appointments, populating the modal with the
+    // current appointment data, and then making the modal visible.
+</script>
+</body>
+</html>

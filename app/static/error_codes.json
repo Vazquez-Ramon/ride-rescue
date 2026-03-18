@@ -1,0 +1,4802 @@
+[
+  {
+    "code": "C0121",
+    "category": "Brakes",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0098",
+    "category": "ABS",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0519",
+    "category": "Idle/Throttle",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0306",
+    "category": "Ignition",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0168",
+    "category": "Network",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0873",
+    "category": "Clutch",
+    "description": "System too lean",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0069",
+    "category": "ABS",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1003",
+    "category": "Fuel Injection",
+    "description": "Evap leak detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Faulty sensor",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0176",
+    "category": "Brakes",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1055",
+    "category": "Fuel Injection",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Wiring issue",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0094",
+    "category": "Body",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1009",
+    "category": "Fuel Injection",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Connector corrosion",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0454",
+    "category": "EVAP",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0064",
+    "category": "Body",
+    "description": "System too rich",
+    "causes": [
+      "Wiring issue",
+      "Faulty ECM/PCM",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0331",
+    "category": "Ignition",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0170",
+    "category": "Network",
+    "description": "Evap leak detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0408",
+    "category": "EVAP",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0460",
+    "category": "EVAP",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0203",
+    "category": "Fuel System",
+    "description": "Control module communication lost",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0466",
+    "category": "EVAP",
+    "description": "Misfire detected",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1032",
+    "category": "Fuel Injection",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0242",
+    "category": "Fuel System",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0266",
+    "category": "Fuel System",
+    "description": "Misfire detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0210",
+    "category": "Fuel System",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0682",
+    "category": "PCM",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0764",
+    "category": "Transmission",
+    "description": "System too lean",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0794",
+    "category": "Transmission",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Wiring issue",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0263",
+    "category": "Fuel System",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "B0074",
+    "category": "Body",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0423",
+    "category": "EVAP",
+    "description": "Evap leak detected",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Fix vacuum leak",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1017",
+    "category": "Fuel Injection",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0395",
+    "category": "Ignition",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Connector corrosion",
+      "Faulty sensor",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0191",
+    "category": "Sensors",
+    "description": "System too lean",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1067",
+    "category": "Fuel Injection",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1031",
+    "category": "Fuel Injection",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0476",
+    "category": "EVAP",
+    "description": "System too rich",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0347",
+    "category": "Ignition",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1043",
+    "category": "Fuel Injection",
+    "description": "System too lean",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0770",
+    "category": "Transmission",
+    "description": "Control module communication lost",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0017",
+    "category": "ABS",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0117",
+    "category": "Network",
+    "description": "System too rich",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0827",
+    "category": "Clutch",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0249",
+    "category": "Fuel System",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0097",
+    "category": "ABS",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Faulty sensor",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Replace module",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0678",
+    "category": "PCM",
+    "description": "Control module communication lost",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0747",
+    "category": "Transmission",
+    "description": "System too lean",
+    "causes": [
+      "Low fuel pressure",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0731",
+    "category": "Transmission",
+    "description": "Control module communication lost",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0726",
+    "category": "Transmission",
+    "description": "System too rich",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0020",
+    "category": "Body",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty sensor",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "B0093",
+    "category": "Body",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0104",
+    "category": "Network",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Short to ground",
+      "Faulty sensor",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Inspect wiring",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1052",
+    "category": "Fuel Injection",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Leaking vacuum line",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0895",
+    "category": "Clutch",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0568",
+    "category": "Idle/Throttle",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1036",
+    "category": "Fuel Injection",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Short to ground",
+      "Faulty sensor",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0434",
+    "category": "EVAP",
+    "description": "System too lean",
+    "causes": [
+      "Wiring issue",
+      "Faulty ECM/PCM",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0897",
+    "category": "Clutch",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0126",
+    "category": "Network",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0545",
+    "category": "Idle/Throttle",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1002",
+    "category": "Fuel Injection",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0184",
+    "category": "Brakes",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0358",
+    "category": "Ignition",
+    "description": "System too rich",
+    "causes": [
+      "Wiring issue",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0123",
+    "category": "Sensors",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0877",
+    "category": "Clutch",
+    "description": "System too rich",
+    "causes": [
+      "Blown fuse",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0523",
+    "category": "Idle/Throttle",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0151",
+    "category": "Brakes",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0037",
+    "category": "Body",
+    "description": "System too rich",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Faulty sensor",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0829",
+    "category": "Clutch",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Blown fuse",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0548",
+    "category": "Idle/Throttle",
+    "description": "System too lean",
+    "causes": [
+      "Wiring issue",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0780",
+    "category": "Transmission",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0631",
+    "category": "PCM",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0369",
+    "category": "Ignition",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Wiring issue",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1001",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Wiring issue",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace module",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0318",
+    "category": "Ignition",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Faulty sensor",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0195",
+    "category": "Network",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0765",
+    "category": "Transmission",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0521",
+    "category": "Idle/Throttle",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0186",
+    "category": "Sensors",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Leaking vacuum line",
+      "Faulty sensor",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0414",
+    "category": "EVAP",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0096",
+    "category": "ABS",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1038",
+    "category": "Fuel Injection",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0189",
+    "category": "Network",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Connector corrosion",
+      "Short to ground",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0052",
+    "category": "Body",
+    "description": "System too rich",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0028",
+    "category": "ABS",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0276",
+    "category": "Fuel System",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Blown fuse",
+      "Connector corrosion",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0527",
+    "category": "Idle/Throttle",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0169",
+    "category": "Sensors",
+    "description": "System too rich",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0002",
+    "category": "ABS",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0350",
+    "category": "Ignition",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0005",
+    "category": "ABS",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0822",
+    "category": "Clutch",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace module",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0616",
+    "category": "PCM",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Faulty sensor",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0050",
+    "category": "ABS",
+    "description": "Control module communication lost",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "U0187",
+    "category": "Network",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Clean connectors",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0003",
+    "category": "ABS",
+    "description": "Control module communication lost",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "U0147",
+    "category": "Network",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty sensor",
+      "Short to ground",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0010",
+    "category": "ABS",
+    "description": "Evap leak detected",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1061",
+    "category": "Fuel Injection",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0863",
+    "category": "Clutch",
+    "description": "Evap leak detected",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0065",
+    "category": "Body",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Leaking vacuum line",
+      "Faulty sensor",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1097",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1027",
+    "category": "Fuel Injection",
+    "description": "System too lean",
+    "causes": [
+      "Faulty sensor",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0021",
+    "category": "ABS",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Leaking vacuum line",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0576",
+    "category": "Idle/Throttle",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Wiring issue",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Check and replace fuse",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0791",
+    "category": "Transmission",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1062",
+    "category": "Fuel Injection",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1022",
+    "category": "Fuel Injection",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Short to ground",
+      "Wiring issue",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0481",
+    "category": "EVAP",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0618",
+    "category": "PCM",
+    "description": "Evap leak detected",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0758",
+    "category": "Transmission",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Wiring issue",
+      "Short to ground",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0625",
+    "category": "PCM",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace module",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0555",
+    "category": "Idle/Throttle",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0392",
+    "category": "Ignition",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0106",
+    "category": "Sensors",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0029",
+    "category": "Body",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "B0041",
+    "category": "Body",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0504",
+    "category": "Idle/Throttle",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0102",
+    "category": "Sensors",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Wiring issue",
+      "Faulty ECM/PCM",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0224",
+    "category": "Fuel System",
+    "description": "Evap leak detected",
+    "causes": [
+      "Wiring issue",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1063",
+    "category": "Fuel Injection",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1049",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty sensor",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0609",
+    "category": "PCM",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0702",
+    "category": "Transmission",
+    "description": "System too lean",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0720",
+    "category": "Transmission",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Wiring issue",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0871",
+    "category": "Clutch",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0153",
+    "category": "Sensors",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Connector corrosion",
+      "Faulty ECM/PCM",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0152",
+    "category": "Brakes",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0769",
+    "category": "Transmission",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Connector corrosion",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1007",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0729",
+    "category": "Transmission",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0201",
+    "category": "Fuel System",
+    "description": "Misfire detected",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0291",
+    "category": "Fuel System",
+    "description": "Evap leak detected",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0797",
+    "category": "Transmission",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Short to ground",
+      "Connector corrosion",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P1018",
+    "category": "Fuel Injection",
+    "description": "Misfire detected",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0060",
+    "category": "ABS",
+    "description": "System too lean",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0110",
+    "category": "Network",
+    "description": "Control module communication lost",
+    "causes": [
+      "Wiring issue",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0814",
+    "category": "Clutch",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Blown fuse",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0247",
+    "category": "Fuel System",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Wiring issue",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0172",
+    "category": "Brakes",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Blown fuse",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0390",
+    "category": "Ignition",
+    "description": "System too lean",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0099",
+    "category": "ABS",
+    "description": "Evap leak detected",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0796",
+    "category": "Transmission",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Leaking vacuum line",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0124",
+    "category": "Network",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0135",
+    "category": "Brakes",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0405",
+    "category": "EVAP",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0866",
+    "category": "Clutch",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Connector corrosion",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0393",
+    "category": "Ignition",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0043",
+    "category": "Body",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0441",
+    "category": "EVAP",
+    "description": "Evap leak detected",
+    "causes": [
+      "Faulty sensor",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0125",
+    "category": "Network",
+    "description": "System too rich",
+    "causes": [
+      "Faulty sensor",
+      "Faulty ECM/PCM",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0012",
+    "category": "ABS",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0742",
+    "category": "Transmission",
+    "description": "Control module communication lost",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0367",
+    "category": "Ignition",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Blown fuse",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0717",
+    "category": "Transmission",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0479",
+    "category": "EVAP",
+    "description": "System too rich",
+    "causes": [
+      "Connector corrosion",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0402",
+    "category": "EVAP",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Wiring issue",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0156",
+    "category": "Sensors",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0524",
+    "category": "Idle/Throttle",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0067",
+    "category": "Body",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Connector corrosion",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0151",
+    "category": "Sensors",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Low fuel pressure",
+      "Wiring issue",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "U0152",
+    "category": "Network",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0146",
+    "category": "Sensors",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0517",
+    "category": "Idle/Throttle",
+    "description": "Evap leak detected",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Check and replace fuse",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0108",
+    "category": "Sensors",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Wiring issue",
+      "Connector corrosion",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0246",
+    "category": "Fuel System",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Faulty ECM/PCM",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0267",
+    "category": "Fuel System",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0154",
+    "category": "Brakes",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0497",
+    "category": "EVAP",
+    "description": "Evap leak detected",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0894",
+    "category": "Clutch",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0403",
+    "category": "EVAP",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Blown fuse",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0115",
+    "category": "Brakes",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Short to ground",
+      "Connector corrosion",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0721",
+    "category": "Transmission",
+    "description": "Misfire detected",
+    "causes": [
+      "Wiring issue",
+      "Connector corrosion",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0798",
+    "category": "Transmission",
+    "description": "Misfire detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0251",
+    "category": "Fuel System",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0526",
+    "category": "Idle/Throttle",
+    "description": "System too lean",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0600",
+    "category": "PCM",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0537",
+    "category": "Idle/Throttle",
+    "description": "Control module communication lost",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Connector corrosion",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0520",
+    "category": "Idle/Throttle",
+    "description": "System too rich",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0036",
+    "category": "ABS",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0087",
+    "category": "Body",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Wiring issue",
+      "Leaking vacuum line",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0232",
+    "category": "Fuel System",
+    "description": "Evap leak detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0009",
+    "category": "ABS",
+    "description": "Evap leak detected",
+    "causes": [
+      "Blown fuse",
+      "Leaking vacuum line",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0222",
+    "category": "Fuel System",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Connector corrosion",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0204",
+    "category": "Fuel System",
+    "description": "Misfire detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0419",
+    "category": "EVAP",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0810",
+    "category": "Clutch",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0057",
+    "category": "Body",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Leaking vacuum line",
+      "Connector corrosion",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0498",
+    "category": "EVAP",
+    "description": "Control module communication lost",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0216",
+    "category": "Fuel System",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Short to ground",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0101",
+    "category": "Brakes",
+    "description": "Control module communication lost",
+    "causes": [
+      "Connector corrosion",
+      "Faulty sensor",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0009",
+    "category": "Body",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Clean connectors",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0252",
+    "category": "Fuel System",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0161",
+    "category": "Sensors",
+    "description": "System too lean",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0161",
+    "category": "Brakes",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace module",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0143",
+    "category": "Sensors",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0435",
+    "category": "EVAP",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Wiring issue",
+      "Leaking vacuum line",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0176",
+    "category": "Sensors",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Short to ground",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0579",
+    "category": "Idle/Throttle",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0715",
+    "category": "Transmission",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0042",
+    "category": "ABS",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Blown fuse",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0072",
+    "category": "ABS",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0687",
+    "category": "PCM",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0087",
+    "category": "ABS",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0549",
+    "category": "Idle/Throttle",
+    "description": "System too lean",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0161",
+    "category": "Network",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0114",
+    "category": "Sensors",
+    "description": "Evap leak detected",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0681",
+    "category": "PCM",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Connector corrosion",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0766",
+    "category": "Transmission",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0158",
+    "category": "Brakes",
+    "description": "System too lean",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0190",
+    "category": "Sensors",
+    "description": "System too rich",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "U0139",
+    "category": "Network",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0088",
+    "category": "ABS",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Leaking vacuum line",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0723",
+    "category": "Transmission",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Clean connectors",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0002",
+    "category": "Body",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Short to ground",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0809",
+    "category": "Clutch",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Short to ground",
+      "Connector corrosion",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0240",
+    "category": "Fuel System",
+    "description": "Misfire detected",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0113",
+    "category": "Brakes",
+    "description": "Control module communication lost",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0685",
+    "category": "PCM",
+    "description": "Evap leak detected",
+    "causes": [
+      "Connector corrosion",
+      "Blown fuse",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0533",
+    "category": "Idle/Throttle",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Blown fuse",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1030",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Low fuel pressure",
+      "Connector corrosion",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0656",
+    "category": "PCM",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Replace module",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0312",
+    "category": "Ignition",
+    "description": "Control module communication lost",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace module",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0165",
+    "category": "Sensors",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Low fuel pressure",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0063",
+    "category": "Body",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Wiring issue",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "B0070",
+    "category": "Body",
+    "description": "Control module communication lost",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1073",
+    "category": "Fuel Injection",
+    "description": "Control module communication lost",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0525",
+    "category": "Idle/Throttle",
+    "description": "Control module communication lost",
+    "causes": [
+      "Wiring issue",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0220",
+    "category": "Fuel System",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Short to ground",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0119",
+    "category": "Network",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Wiring issue",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Check and replace fuse",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0763",
+    "category": "Transmission",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0062",
+    "category": "ABS",
+    "description": "Misfire detected",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0192",
+    "category": "Brakes",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Leaking vacuum line",
+      "Wiring issue",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1037",
+    "category": "Fuel Injection",
+    "description": "Transmission range sensor",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0106",
+    "category": "Network",
+    "description": "Evap leak detected",
+    "causes": [
+      "Short to ground",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0820",
+    "category": "Clutch",
+    "description": "System too rich",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0567",
+    "category": "Idle/Throttle",
+    "description": "Control module communication lost",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0148",
+    "category": "Network",
+    "description": "Control module communication lost",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0665",
+    "category": "PCM",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Blown fuse",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0300",
+    "category": "Ignition",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace module",
+      "Check and replace fuse",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0709",
+    "category": "Transmission",
+    "description": "System too lean",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0872",
+    "category": "Clutch",
+    "description": "Evap leak detected",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0792",
+    "category": "Transmission",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0180",
+    "category": "Sensors",
+    "description": "System too rich",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Replace module",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0195",
+    "category": "Sensors",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Leaking vacuum line",
+      "Blown fuse",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0288",
+    "category": "Fuel System",
+    "description": "System too lean",
+    "causes": [
+      "Connector corrosion",
+      "Faulty ECM/PCM",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0023",
+    "category": "ABS",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0582",
+    "category": "Idle/Throttle",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Leaking vacuum line",
+      "Low fuel pressure",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P1054",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Connector corrosion",
+      "Leaking vacuum line",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0059",
+    "category": "ABS",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Short to ground",
+      "Faulty sensor",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace module",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0345",
+    "category": "Ignition",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Leaking vacuum line",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0396",
+    "category": "Ignition",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Inspect wiring",
+      "Repair damaged wire"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0026",
+    "category": "Body",
+    "description": "Evap leak detected",
+    "causes": [
+      "Blown fuse",
+      "Connector corrosion",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Replace module",
+      "Fix vacuum leak",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0208",
+    "category": "Fuel System",
+    "description": "Control module communication lost",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0693",
+    "category": "PCM",
+    "description": "System too rich",
+    "causes": [
+      "Blown fuse",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace module",
+      "Clean connectors",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0138",
+    "category": "Sensors",
+    "description": "System too rich",
+    "causes": [
+      "Connector corrosion",
+      "Faulty sensor",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0175",
+    "category": "Brakes",
+    "description": "Heated O2 sensor malfunction",
+    "causes": [
+      "Low fuel pressure",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0329",
+    "category": "Ignition",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0500",
+    "category": "Idle/Throttle",
+    "description": "System too lean",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Repair damaged wire",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0113",
+    "category": "Network",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Wiring issue",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0826",
+    "category": "Clutch",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Replace sensor",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0139",
+    "category": "Sensors",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Low fuel pressure",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0480",
+    "category": "EVAP",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Connector corrosion",
+      "Faulty sensor",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "B0089",
+    "category": "Body",
+    "description": "Control module communication lost",
+    "causes": [
+      "Blown fuse",
+      "Connector corrosion",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0155",
+    "category": "Network",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Short to ground",
+      "Faulty ECM/PCM",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "U0121",
+    "category": "Network",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0888",
+    "category": "Clutch",
+    "description": "System too lean",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Check and replace fuse"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "B0030",
+    "category": "Body",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Clean connectors"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P1039",
+    "category": "Fuel Injection",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Connector corrosion",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0108",
+    "category": "Network",
+    "description": "System too rich",
+    "causes": [
+      "Short to ground",
+      "Wiring issue",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0672",
+    "category": "PCM",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Leaking vacuum line",
+      "Faulty ECM/PCM",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Replace module",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0607",
+    "category": "PCM",
+    "description": "System too lean",
+    "causes": [
+      "Wiring issue",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Inspect wiring"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0449",
+    "category": "EVAP",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace module",
+      "Inspect wiring",
+      "Fix vacuum leak"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0452",
+    "category": "EVAP",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0535",
+    "category": "Idle/Throttle",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Repair damaged wire",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0473",
+    "category": "EVAP",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0838",
+    "category": "Clutch",
+    "description": "Evap leak detected",
+    "causes": [
+      "Wiring issue",
+      "Blown fuse",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0273",
+    "category": "Fuel System",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Low fuel pressure",
+      "Blown fuse",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0615",
+    "category": "PCM",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Fix vacuum leak",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0587",
+    "category": "Idle/Throttle",
+    "description": "Misfire detected",
+    "causes": [
+      "Blown fuse",
+      "Faulty sensor",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace module",
+      "Repair damaged wire",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0874",
+    "category": "Clutch",
+    "description": "System too lean",
+    "causes": [
+      "Leaking vacuum line",
+      "Faulty ECM/PCM",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Inspect wiring",
+      "Repair damaged wire"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "C0143",
+    "category": "Brakes",
+    "description": "Misfire detected",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Faulty sensor",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Repair damaged wire",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0743",
+    "category": "Transmission",
+    "description": "Catalyst efficiency below threshold",
+    "causes": [
+      "Wiring issue",
+      "Connector corrosion",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Repair damaged wire",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0058",
+    "category": "ABS",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Faulty ECM/PCM",
+      "Short to ground",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Inspect wiring",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0015",
+    "category": "ABS",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Leaking vacuum line",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Replace module",
+      "Repair damaged wire"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0133",
+    "category": "Sensors",
+    "description": "Evap leak detected",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Check and replace fuse",
+      "Clean connectors",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0641",
+    "category": "PCM",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Leaking vacuum line",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0624",
+    "category": "PCM",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Low fuel pressure",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Inspect wiring",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0166",
+    "category": "Sensors",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Blown fuse",
+      "Low fuel pressure",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0181",
+    "category": "Brakes",
+    "description": "Sensor circuit low input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Inspect wiring",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "U0127",
+    "category": "Network",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Faulty sensor",
+      "Connector corrosion",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace module",
+      "Clean connectors"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0788",
+    "category": "Transmission",
+    "description": "System too rich",
+    "causes": [
+      "Faulty sensor",
+      "Faulty ECM/PCM",
+      "Leaking vacuum line"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Replace module",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0749",
+    "category": "Transmission",
+    "description": "System too lean",
+    "causes": [
+      "Connector corrosion",
+      "Faulty ECM/PCM",
+      "Low fuel pressure"
+    ],
+    "fixes": [
+      "Repair damaged wire",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "U0164",
+    "category": "Network",
+    "description": "Brake switch malfunction",
+    "causes": [
+      "Faulty sensor",
+      "Low fuel pressure",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace module"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0431",
+    "category": "EVAP",
+    "description": "Throttle actuator control",
+    "causes": [
+      "Connector corrosion",
+      "Wiring issue",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Replace sensor",
+      "Check and replace fuse"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "C0054",
+    "category": "ABS",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Wiring issue",
+      "Low fuel pressure",
+      "Faulty ECM/PCM"
+    ],
+    "fixes": [
+      "Inspect wiring",
+      "Fix vacuum leak",
+      "Replace sensor"
+    ],
+    "severity": "High"
+  },
+  {
+    "code": "P0893",
+    "category": "Clutch",
+    "description": "Sensor circuit high input",
+    "causes": [
+      "Low fuel pressure",
+      "Short to ground",
+      "Blown fuse"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Repair damaged wire",
+      "Inspect wiring"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0296",
+    "category": "Fuel System",
+    "description": "System too rich",
+    "causes": [
+      "Short to ground",
+      "Blown fuse",
+      "Wiring issue"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Medium"
+  },
+  {
+    "code": "P0141",
+    "category": "Sensors",
+    "description": "Fuel rail pressure too low",
+    "causes": [
+      "Wiring issue",
+      "Faulty ECM/PCM",
+      "Faulty sensor"
+    ],
+    "fixes": [
+      "Fix vacuum leak",
+      "Check and replace fuse",
+      "Replace module"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "P0135",
+    "category": "Sensors",
+    "description": "System too lean",
+    "causes": [
+      "Faulty sensor",
+      "Faulty ECM/PCM",
+      "Short to ground"
+    ],
+    "fixes": [
+      "Replace sensor",
+      "Fix vacuum leak",
+      "Clean connectors"
+    ],
+    "severity": "Low"
+  },
+  {
+    "code": "C0174",
+    "category": "Brakes",
+    "description": "Wheel speed sensor circuit",
+    "causes": [
+      "Low fuel pressure",
+      "Leaking vacuum line",
+      "Connector corrosion"
+    ],
+    "fixes": [
+      "Clean connectors",
+      "Replace sensor",
+      "Fix vacuum leak"
+    ],
+    "severity": "Low"
+  }
+]

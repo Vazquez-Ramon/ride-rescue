@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments | Vehicle Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS configuration - duplicated here for self-contained HTML,
+        // but typically would be linked from an external file or part of a build process.
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF CDN for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Simple fade-in animation for cards */
+        .card-animate {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust delays for staggered effect */
+        .card-animate:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card-animate:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card-animate:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card-animate:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card-animate:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .card-animate:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #000000;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-left a {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .topbar-right a {
+            display: flex;
+            align-items: center;
+            color: #4B5563;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .topbar-right a:hover {
+            color: #2563EB;
+        }
+
+        @media (max-width: 1023px) {
+            .topbar-right a:not(#cart-icon-wrapper):not([href="/login"]) {
+                display: none;
+            }
+
+            .topbar #search-bar-container {
+                display: none;
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block;
+            }
+
+            body {
+                padding-top: 72px;
+            }
+
+            #appointments-header {
+                margin-top: 0;
+            }
+
+            .main-content-area {
+                padding-top: 0;
+            }
+        }
+
+        @media (max-width: 556px) {
+            .topbar #search-bar-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                padding: 0.75rem 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                animation: slideDown 0.3s ease-out forwards;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .topbar #search-bar-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .topbar #search-bar-container input {
+                width: 100%;
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block;
+                cursor: pointer;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        .mobile-menu-overlay-blurred {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        #appointmentModal .modal-content,
+        #editAppointmentModal .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #menu-toggle {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #menu-toggle.is-open {
+            transform: translateX(40px) rotate(45deg);
+        }
+
+        #main-content-wrapper {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #main-content-wrapper.sidebar-open {
+            transform: translateX(16rem);
+        }
+
+        body.sidebar-open {
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 1023px) {
+            .topbar {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen flex-col">
+
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <div class="topbar" id="main-topbar">
+        <div class="topbar-left">
+            <button id="menu-toggle" class="text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md lg:hidden">
+                               <i class="fa-solid fa-ellipsis-vertical fa-xl" style="color: #ffffff; margin-right: 30px;"></i>
+            </button>
+            <a href="/">
+                <img src="/static/logo.png" alt="RideRescue Logo" style="height: 30px;">
+            </a>
+        </div>
+
+        <div class="topbar-right">
+            <button id="search-magnifier-icon" class="p-2 text-gray-600 focus:outline-none hidden">
+                                <i class="fa-solid fa-magnifying-glass fa-lg" style="color: #ffffff;"></i>
+            </button>
+
+            <div id="search-bar-container" class="relative hidden sm:block">
+                <input type="text" placeholder="Search..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-64">
+                <svg class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+                                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                <span id="cart-count" style="
+                        position: absolute;
+                        top: -8px;
+                        right: -10px;
+                        background: red;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        padding: 2px 6px;
+                        display: none;
+                    ">0</span>
+            </div>
+
+            <a href="/dashboard">
+                <img src="/static/icons/user.png" alt="User"
+                    style="height: 20px; vertical-align: middle; margin-right: 6px;">
+            </a>
+            <img id="topbar-avatar" src="/static/avatars/default_avatar.png" alt="User Avatar"
+                class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+            <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col lg:flex-row">
+        <aside id="sidebar"
+            class="w-80 bg-gray-900 text-white flex flex-col p-4 shadow-xl fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-center mb-8">
+                <img src="/static/logo.png" alt="Vehicle Manager Logo" class="h-10 mr-3">
+                <span class="text-2xl font-bold">Manager</span>
+            </div>
+            <button id="close-sidebar-button"
+                class="absolute top-4 right-4 text-gray-400 hover:text-white focus:outline-none focus:bg-gray-700 rounded-md lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <nav class="flex-grow">
+                <ul>
+                    <li class="mb-2">
+                        <a href="/dashboard"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <img src="/static/icons/dashboard.png" alt="Dashboard"
+                                style="height: 20px; vertical-align: left; margin-right: 6px;">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="mb-2">
+                        <a href="/garage"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm1.475 2.5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM7.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H7.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM11.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H11.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM15.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H15.5zM3 13.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            My Garage
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/appointments"
+                            class="flex items-center p-3 rounded-lg bg-gray-800 text-blue-300 font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Appointments
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/history"
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm1.293 2.293a1 1 0 011.414 0L10 9.586l3.293-3.293a1 1 0 111.414 1.414L11.414 11l3.293 3.293a1 1 0 01-1.414-1.414L10 12.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 11 5.293 7.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            History
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/codes" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414zM10 2a8 8 0 100 16 8 8 0 000-16z" clip-rule="evenodd" />
+                            </svg>
+                            Error Codes
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <a href="/"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <img src="/static/icons/home.png" alt="Home"
+                        style="height: 20px; vertical-align: left; margin-right: 6px;">
+                    Home
+                </a>
+                <a href="/settings"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <img src="/static/icons/settings.png" alt="Logout"
+                        style="height: 20px; vertical-align: left; margin-right: 6px;">
+                    Account
+                </a>
+                <a href="/logout"
+                    class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                    <img src="/static/icons/logout.png" alt="Logout"
+                        style="height: 20px; vertical-align: left; margin-right: 6px;">
+                    Logout
+                </a>
+            </div>
+        </aside>
+        <div id="main-content-wrapper" class="flex-grow">
+            <main class="p-4 mt-6 sm:p-8 overflow-y-auto main-content-area">
+                <div id="toast" class="text-white"></div>
+                <h1 class="mb-10 text-2xl font-semibold text-gray-900 flex items-center justify-between" id="appointments-header">
+    <div class="flex items-center">
+        <img src="/static/icons/calendar.png" alt="Add Calendar"
+            style="height: 38px; vertical-align: middle; margin-right: 20px; display: inline-block;">
+        My Appointments
+    </div>
+    <button id="book-new-appointment-btn"
+        class="ml-3 text-green-600 hover:text-green-700 focus:outline-none">
+        <img src="/static/icons/circlePlus.png" alt="Circle Plus" class="h-6">
+    </button>
+</h1>
+
+                <div id="appointments-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <p class="text-gray-500 col-span-full">Loading appointments...</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+                <!-- Appointment Modal -->
+                <div id="appointmentModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-button" onclick="closeAppointmentModal()">&times;</span>
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
+                                <img src="/static/icons/newCalendar.png" alt="Add Calendar"
+                    style="height: 40px; vertical-align: middle; margin-right: 10px;"> Book New Appointment
+                        </h2>
+                        <form id="appointmentForm" class="space-y-4">
+                            <!-- Vehicle Selection -->
+                            <div>
+                                <label for="vehicleSelect" class="block text-sm font-medium text-gray-700">Select
+                                    Vehicle:</label>
+                                <select id="vehicleSelect" onchange="handleVehicleSelection()"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                    <option value="">-- Loading Vehicles --</option>
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                                <button type="button" id="goBackVehicleSelection"
+                                    class="mt-2 hidden text-primary hover:underline text-sm py-1 px-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">Go
+                                    Back</button>
+                                <div id="vehicleSelectionProgress" class="text-sm text-gray-500 mt-2"></div>
+                            </div>
+
+                            <!-- Service Category Selection -->
+                            <div id="serviceCategorySelectionSection" class="hidden">
+                                <label for="serviceCategorySelect" class="block text-sm font-medium text-gray-700">Select
+                                    Service Category:</label>
+                                <select id="serviceCategorySelect" onchange="populateServices()"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    disabled>
+                                    <option value="">-- Select Service Category --</option>
+                                    <!-- Service categories will be populated dynamically by JS -->
+                                </select>
+                            </div>
+
+                            <!-- Services List -->
+                            <div id="servicesListContainer" class="hidden">
+                                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Available Services</h3>
+                                <div id="servicesList"
+                                    class="max-h-60 overflow-y-auto border border-gray-200 rounded-md p-2 space-y-2">
+                                    <!-- Services will be populated here by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Selected Services Summary -->
+                            <div id="selectedServicesSummary" class="hidden mt-4">
+                                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Your Selections</h3>
+                                <div id="currentSelections" class="space-y-2">
+                                    <!-- Selected services and quantities will appear here -->
+                                </div>
+                                <div class="mt-4 pt-2 border-t border-gray-200 text-right">
+                                    <p class="text-sm text-gray-600">Subtotal: <span id="subtotal">$0.00</span></p>
+                                    <p class="text-sm text-gray-600">Tax (8%): <span id="tax">$0.00</span></p>
+                                    <p class="text-lg font-bold text-gray-900">Total: <span id="total">$0.00</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Date and Time -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="appointmentDate"
+                                        class="block text-sm font-medium text-gray-700">Appointment Date:</label>
+                                    <input type="date" id="appointmentDate"
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="appointmentTime"
+                                        class="block text-sm font-medium text-gray-700">Appointment Time:</label>
+                                    <input type="time" id="appointmentTime"
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label for="appointmentNotes" class="block text-sm font-medium text-gray-700">Notes
+                                    (Optional):</label>
+                                <textarea id="appointmentNotes" rows="3"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
+                            </div>
+
+                            <div class="flex items-center justify-between mt-6">
+                                <button type="button" onclick="downloadAppointmentPDF()"
+                                    class="bg-gray-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-gray-700 transition-colors flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M5 4a2 2 0 00-2 2v7a2 2 0 002 2h4l-1 1H4a2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2v-2a2 2 0 00-2-2h-3l-1-1h4a2 2 0 002-2V6a2 2 0 00-2-2H5zm0 2h10v7H5V6zm10-2a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V4.5a.5.5 0 00-.5-.5h-.01z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Download PDF
+                                </button>
+                                <button type="submit"
+                                    class="bg-primary text-white px-6 py-3 rounded-lg shadow-md hover:bg-accent transition-colors">
+                                    Submit Appointment
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+    <div id="editAppointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditAppointmentModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="/static/icons/newCalendar.png" alt="Add Calendar"
+                    style="height: 40px; vertical-align: middle; margin-right: 10px;">
+                Edit Appointment
+            </h2>
+            <form id="editAppointmentForm" class="space-y-4">
+                <input type="hidden" id="editAppointmentId">
+                <div>
+                    <label for="editAppointmentDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="editAppointmentDate" name="appointment_date" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentTime" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="editAppointmentTime" name="appointment_time" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentServices" class="block text-sm font-medium text-gray-700">Services
+                        Needed (comma-separated)</label>
+                    <input type="text" id="editAppointmentServices" name="services_needed" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentVehicle" class="block text-sm font-medium text-gray-700">Vehicle
+                        Info</label>
+                    <input type="text" id="editAppointmentVehicle" name="vehicle_info" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold flex items-center justify-center">
+    <i class="fa-solid fa-floppy-disk fa-lg mr-2"></i> Save Changes
+</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="blur-overlay" id="blur-overlay"></div>
+
+    <div id="cart-summary"
+        class="fixed right-4 bottom-4 bg-white p-4 rounded-xl shadow-lg w-80 border border-gray-300 z-50 hidden">
+        <div id="cart-header" class="flex justify-between items-center mb-2">
+            <h3 id="cart-title" class="text-lg font-semibold text-gray-800">My Cart:</h3>
+            <button id="toggle-cart-btn" onclick="toggleCartVisibility()" class="text-red-500 text-sm font-bold">❌</button>
+        </div>
+        <div id="cart-items" class="text-gray-700 text-sm mb-4">No items yet.</div>
+        <div id="totals" class="text-gray-700 text-sm space-y-1">
+            <p><strong>Subtotal:</strong> $<span id="subtotal">0.00</span></p>
+            <p><strong>Tax (5.6%):</strong> $<span id="tax-amount">0.00</span></p>
+            <p><strong>Total:</strong> $<span id="total-amount">0.00</span></p>
+        </div>
+        <div class="mt-4 flex flex-col gap-2">
+            <button id="proceed-to-booking-btn" onclick="proceedToBooking()"
+                class="w-full bg-primary text-white py-2 px-3 rounded hover:bg-accent font-semibold">📅 Book a
+                Service Call</button>
+            <button id="download-pdf-btn" onclick="downloadPDF()"
+                class="w-full bg-gray-100 border border-gray-300 text-gray-800 py-2 px-3 rounded hover:bg-gray-200">📄
+                Download as PDF</button>
+        </div>
+    </div>
+    </main>
+    </div>
+    </div>
+
+    <footer class="w-full bg-white py-4 mt-auto">
+        <div class="max-w-md mx-auto text-center text-gray-500 text-sm">
+            <p>&copy; 2025 RideRescue. All rights reserved.</p>
+            <p class="font-medium mt-1">Auto repair. Handled.</p>
+        </div>
+    </footer>
+
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" class="text-xl font-bold mb-4">Confirm Action</h2>
+            <p id="modalMessage" class="mb-6">Are you sure you want to proceed?</p>
+            <div class="flex justify-around">
+                <button id="confirmYesBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Yes</button>
+                <button id="confirmNoBtn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        
+
+/* @param {string} message - The message content to display in the confirmation modal.
+ * @returns {Promise<boolean>} A promise that resolves to true if confirmed, false if cancelled.
+ */
+function showConfirmationModal(message) {
+    return new Promise((resolve) => {
+        const confirmModal = document.createElement('div');
+        confirmModal.className = 'modal show'; // Using existing modal classes
+        confirmModal.innerHTML = `
+            <div class="modal-content">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirmation</h3>
+                <p class="mb-6">${message}</p>
+                <div class="flex justify-end space-x-4">
+                    <button id="cancelConfirm" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">Cancel</button>
+                    <button id="confirmAction" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors">Confirm</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(confirmModal);
+
+        document.getElementById('confirmAction').addEventListener('click', () => {
+            confirmModal.remove();
+            resolve(true);
+        });
+
+        document.getElementById('cancelConfirm').addEventListener('click', () => {
+            confirmModal.remove();
+            resolve(false);
+        });
+
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) {
+                confirmModal.remove();
+                resolve(false);
+            }
+        });
+    });
+}
+
+// This function needs to be global because it's called directly from onclick in HTML.
+function handleCancelAppointment(appointmentId, diffHours) {
+    console.log(`Cancelling appointment ${appointmentId}. Time difference: ${diffHours} hours.`);
+
+    fetch(`/api/appointments/${appointmentId}`, { // <-- CHANGED URL TO MATCH BACKEND
+        method: 'DELETE', // <-- CHANGED METHOD TO MATCH BACKEND
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any authentication headers here if your API requires them (e.g., 'Authorization': 'Bearer YOUR_TOKEN')
+        },
+        // For a DELETE request, the body is often not strictly necessary,
+        // but if your backend expects it (e.g., for logging or specific conditions), keep it.
+        body: JSON.stringify({
+            appointmentId: appointmentId,
+             timeDifferenceHours: diffHours
+         })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => { throw new Error(errData.message || `HTTP error! Status: ${response.status}`); });
+        }
+        // If backend returns 204 No Content for successful DELETE,
+        // then `response.json()` would fail. Check for response.status === 204.
+        if (response.status === 204 || response.headers.get('content-length') === '0') {
+             return {}; // Return empty object for successful no-content response
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Cancellation successful:', data);
+        const modal = document.getElementById('confirmationModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        fetchAndDisplayAppointments(); // This line is already present and will now use the consolidated function.
+        showToast("Appointment cancelled successfully!", 'success');
+    })
+    .catch(error => {
+        console.error('Cancellation failed:', error);
+        showToast(`Failed to cancel appointment: ${error.message}`, 'error');
+    });
+
+    const modal = document.getElementById('confirmationModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function showToast(message, type = "info") {
+    const toast = document.getElementById('toast');
+    if (!toast) {
+        console.error("Toast element not found!");
+        return;
+    }
+
+    toast.textContent = message;
+    toast.className = 'text-white p-3 rounded-lg shadow-md fixed bottom-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out transform';
+
+    if (type === 'success') {
+        toast.classList.add('bg-green-600');
+    } else if (type === 'error') {
+        toast.classList.add('bg-red-600');
+    } else {
+        toast.classList.add('bg-gray-800');
+    }
+
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => {
+            toast.className = 'text-white';
+        }, { once: true });
+    }, 3000);
+}
+
+// Function to convert 24-hour time to 12-hour format with AM/PM
+function formatTimeTo12Hour(time24) {
+    if (!time24) return 'N/A';
+    const [hours, minutes] = time24.split(':');
+    let h = parseInt(hours, 10);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12; // the hour '0' should be '12'
+    return `${h}:${minutes} ${ampm}`;
+}
+
+// Function to format date to "Month Day, Year"
+function formatDateToMonthDayYear(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString + 'T00:00:00'); // Add T00:00:00 to ensure correct date parsing in all browsers
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Helper function to render the cancel button with necessary data attributes.
+// These data attributes (`data-id`, `data-diff-hours`) are used by the event listener.
+function renderCancelButton(appointment) {
+    // Essential data check: Don't render if critical info is missing
+    if (!appointment.id || !appointment.appointmentDate || !appointment.appointmentTime) {
+        return '';
+    }
+
+    // Calculate time difference for cancellation logic (if needed by your backend)
+    const appointmentDateTime = new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}:00`);
+    const now = new Date();
+    const diffMilliseconds = appointmentDateTime.getTime() - now.getTime();
+    const diffHours = diffMilliseconds / (1000 * 60 * 60);
+
+    return `
+        <button class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1"
+                onclick="handleCancelAppointment('${appointment.id}', ${diffHours.toFixed(2)})">
+            <i class="fa-solid fa-rectangle-xmark fa-lg mr-2"></i> Cancel
+        </button>
+    `;
+}
+
+function renderAppointmentCard(appointment, index) {
+        const serviceNames = Array.isArray(appointment.services) ? appointment.services.map(s => s.name).join(', ') : (appointment.services || 'N/A');
+        const formattedTime = formatTimeTo12Hour(appointment.appointmentTime);
+        const formattedDate = formatDateToMonthDayYear(appointment.appointmentDate);
+        // Safely get and format the total. Assumes appointment.total exists in the data.
+        const totalAmount = appointment.total ? `$${parseFloat(appointment.total).toFixed(2)}` : 'N/A';
+
+        return `
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate">
+            <div class="flex items-center mb-4">
+                <i class="fa-solid fa-calendar-day fa-2xl" style="color: #2563eb; margin-right: 20px;"></i>
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">${formattedDate}</p>
+                    <p class="text-base text-gray-600">${formattedTime}</p>
+                </div>
+            </div>
+            <div class="space-y-2 text-gray-700">
+                <p><span class="font-medium">Vehicle:</span> ${appointment.vehicleInfo}</p>
+                <p><span class="font-medium">Services:</span> ${serviceNames || 'N/A'}</p>
+                <p><span class="font-medium">Status:</span> <span class="font-semibold ${appointment.status === 'Confirmed' ? 'text-green-600' : 'text-yellow-600'}">${appointment.status}</span></p>
+                <p><span class="font-medium">Total:</span> ${totalAmount}</p>
+            </div>
+            <div class="flex space-x-3 mt-6">
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1" onclick="handleEditAppointment('${appointment.id}', '${appointment.appointmentDate}', '${appointment.appointmentTime}', '${serviceNames}', '${appointment.vehicleInfo}', ${calculateDiffHours(appointment)})">
+                    <i class="fa-solid fa-pen-to-square fa-lg mr-2"></i> Edit
+                </button>
+                ${renderCancelButton(appointment)}
+            </div>
+        </div>
+        `;
+    }
+
+// Helper to calculate diffHours for the edit button
+function calculateDiffHours(appointment) {
+    const appointmentDateTime = new Date(`${appointment.appointmentDate}T${appointment.appointmentTime}`);
+    const now = new Date();
+    return (appointmentDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+}
+
+// Function to fetch and display ALL appointments (consolidated version)
+async function fetchAndDisplayAppointments() {
+    const appointmentsList = document.getElementById('appointments-list');
+    if (!appointmentsList) {
+        console.error("Appointments list div not found!");
+        return;
+    }
+
+    appointmentsList.innerHTML = '<p class="text-gray-500 col-span-full text-center py-8">Loading appointments...</p>';
+
+    try {
+        const response = await fetch('/api/appointments');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const appointments = await response.json();
+        console.log("Fetched appointments:", appointments);
+
+        if (appointments.length === 0) {
+            appointmentsList.innerHTML = '<p class="text-gray-500 col-span-full text-center py-8">No appointments found.</p>';
+            return;
+        }
+
+        appointments.sort((a, b) => {
+            const dateA = new Date(`${a.appointmentDate}T${a.appointmentTime}`);
+            const dateB = new Date(`${b.appointmentDate}T${b.appointmentTime}`);
+            return dateB - dateA; // Descending order
+        });
+
+        appointmentsList.innerHTML = ''; // Clear loading message and existing cards
+        appointments.forEach((appointment, index) => {
+            appointmentsList.innerHTML += renderAppointmentCard(appointment, index);
+        });
+
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
+        appointmentsList.innerHTML = '<p class="text-red-500 col-span-full text-center py-8">Failed to load appointments. Please try again.</p>';
+        showToast("Failed to load appointments.", 'error');
+    }
+}
+
+
+// Other existing scripts from your appointments.html (from the error log)
+let currentVehicleSelectionState = null;
+
+async function fetchData(url, params = {}) {
+    let fullUrl = url;
+    if (Object.keys(params).length > 0) {
+        fullUrl = `${url}?${new URLSearchParams(params)}`;
+    }
+    console.log(`Fetching data from: ${fullUrl}`);
+    try {
+        const response = await fetch(fullUrl);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+        }
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            console.log(`Data from ${fullUrl}:`, data);
+            return data;
+        } else {
+            console.log(`No JSON content from ${fullUrl}. Status: ${response.status}`);
+            return {};
+        }
+    } catch (error) {
+        console.error(`Error fetching data from ${fullUrl}:`, error);
+        if (typeof showToast === 'function') {
+            showToast(`Failed to load data: ${error.message}`, 'error');
+        }
+        return [];
+    }
+}
+
+function updateVehicleSelectionProgress() {
+    const progressDiv = document.getElementById('vehicleSelectionProgress');
+    let progressText = '';
+
+    if (currentVehicleSelectionState.mode === 'initial') {
+        progressText = 'Select a vehicle or add a new one.';
+    } else if (currentVehicleSelectionState.mode === 'existing') {
+        progressText = `Selected: ${currentVehicleSelectionState.selectedExistingVehicleDisplay}`;
+    } else if (currentVehicleSelectionState.mode === 'new_year') {
+        progressText = 'Adding New Vehicle: Select Year';
+    } else if (currentVehicleSelectionState.mode === 'new_make') {
+        progressText = `Adding New Vehicle: Year ${currentVehicleSelectionState.selectedYear}, Select Make`;
+    } else if (currentVehicleSelectionState.mode === 'new_model') {
+        progressText = `Adding New Vehicle: Year ${currentVehicleSelectionState.selectedYear}, Make ${currentVehicleSelectionState.selectedMake}, Select Model`;
+    } else if (currentVehicleSelectionState.mode === 'new_engine') {
+        progressText = `Adding New Vehicle: ${currentVehicleSelectionState.selectedYear} ${currentVehicleSelectionState.selectedMake} ${currentVehicleSelectionState.selectedModel}, Select Engine (Optional)`;
+    } else if (currentVehicleSelectionState.mode === 'new_complete') {
+        progressText = `New Vehicle Selected: ${currentVehicleSelectionState.selectedYear} ${currentVehicleSelectionState.selectedMake} ${currentVehicleSelectionState.selectedModel} ${currentVehicleSelectionState.selectedEngine ? '- ' + currentVehicleSelectionState.selectedEngine : ''}`;
+    }
+    progressDiv.textContent = progressText;
+}
+
+async function populateVehicleDropdown() {
+    if (currentVehicleSelectionState === null) { /* fetch vehicles */ }
+    console.log("Populating vehicle dropdown. Current state:", currentVehicleSelectionState.mode);
+    const vehicleSelect = document.getElementById('vehicleSelect');
+    const goBackBtn = document.getElementById('goBackVehicleSelection');
+    vehicleSelect.innerHTML = ''; // Clear existing options
+    goBackBtn.classList.add('hidden'); // Hide go back button by default
+
+    // Reset service category and services sections
+    document.getElementById('serviceCategorySelect').value = "";
+    document.getElementById('serviceCategorySelect').disabled = true;
+    document.getElementById('serviceCategorySelectionSection').classList.add('hidden'); // Ensure hidden
+    document.getElementById('servicesListContainer').classList.add('hidden');
+    document.getElementById('selectedServicesSummary').classList.add('hidden');
+    selectedServices = {};
+    updateCalculations();
+    updateVehicleSelectionProgress(); // Update progress text
+
+
+    // Handle different modes for the single dropdown
+    if (currentVehicleSelectionState.mode === 'initial') {
+        vehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+        const newVehicleOption = document.createElement('option');
+        newVehicleOption.value = 'newVehicle';
+        newVehicleOption.textContent = 'Add a New Vehicle';
+        vehicleSelect.appendChild(newVehicleOption);
+
+        try {
+            const existingVehicles = await fetchData('/api/vehicles'); // Fetch user's garage vehicles
+            existingVehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = `existing:${vehicle.id}`; // Prefix to identify existing vehicles
+                option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model} VIN: ${vehicle.vin || 'N/A'}`;
+                vehicleSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error fetching existing vehicles:", error);
+            showToast("Failed to load your garage vehicles.", "error");
+        }
+    } else if (currentVehicleSelectionState.mode === 'new_year') {
+        goBackBtn.classList.remove('hidden');
+        vehicleSelect.innerHTML = '<option value="">-- Select Year --</option>';
+        const years = await fetchData('/get_years');
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            vehicleSelect.appendChild(option);
+        });
+    } else if (currentVehicleSelectionState.mode === 'new_make') {
+        goBackBtn.classList.remove('hidden');
+        vehicleSelect.innerHTML = '<option value="">-- Select Make --</option>';
+        const makes = await fetchData(`/get_makes?year=${currentVehicleSelectionState.selectedYear}`);
+        makes.forEach(make => {
+            const option = document.createElement('option');
+            option.value = make;
+            option.textContent = make;
+            vehicleSelect.appendChild(option);
+        });
+    } else if (currentVehicleSelectionState.mode === 'new_model') {
+        goBackBtn.classList.remove('hidden');
+        vehicleSelect.innerHTML = '<option value="">-- Select Model --</option>';
+        const models = await fetchData(`/get_models?year=${currentVehicleSelectionState.selectedYear}&make=${currentVehicleSelectionState.selectedMake}`);
+        models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            vehicleSelect.appendChild(option);
+        });
+    } else if (currentVehicleSelectionState.mode === 'new_engine') {
+        goBackBtn.classList.remove('hidden');
+        vehicleSelect.innerHTML = '<option value="">-- Select Engine (Optional) --</option>';
+        const engines = await fetchData(`/get_engines?year=${currentVehicleSelectionState.selectedYear}&make=${currentVehicleSelectionState.selectedMake}&model=${currentVehicleSelectionState.selectedModel}`);
+        engines.forEach(engine => {
+            const option = document.createElement('option');
+            option.value = engine;
+            option.textContent = engine;
+            vehicleSelect.appendChild(option);
+        });
+    } else if (currentVehicleSelectionState.mode === 'new_complete' || currentVehicleSelectionState.mode === 'existing') {
+        const option = document.createElement('option');
+        option.value = vehicleSelect.value;
+        option.textContent = currentVehicleSelectionState.selectedExistingVehicleDisplay ||
+                             `${currentVehicleSelectionState.selectedYear} ${currentVehicleSelectionState.selectedMake} ${currentVehicleSelectionState.selectedModel} ${currentVehicleSelectionState.selectedEngine ? '- ' + currentVehicleSelectionState.selectedEngine : ''}`;
+        option.selected = true;
+        vehicleSelect.appendChild(option);
+        vehicleSelect.disabled = true;
+        goBackBtn.classList.remove('hidden');
+        
+        document.getElementById('serviceCategorySelectionSection').classList.remove('hidden');
+        document.getElementById('serviceCategorySelect').disabled = false;
+        populateServiceCategories();
+    }
+}
+
+async function handleVehicleSelection() {
+    console.log("handleVehicleSelection called. Selected value:", document.getElementById('vehicleSelect').value);
+    const vehicleSelect = document.getElementById('vehicleSelect');
+    const selectedValue = vehicleSelect.value;
+
+    document.getElementById('serviceCategorySelect').value = "";
+    document.getElementById('serviceCategorySelect').disabled = true;
+    document.getElementById('serviceCategorySelectionSection').classList.add('hidden');
+    document.getElementById('servicesListContainer').classList.add('hidden');
+    document.getElementById('selectedServicesSummary').classList.add('hidden');
+    selectedServices = {};
+    updateCalculations();
+    updateVehicleSelectionProgress();
+
+
+    if (selectedValue === 'newVehicle') {
+        currentVehicleSelectionState = {
+            mode: 'new_year',
+            selectedYear: null,
+            selectedMake: null,
+            selectedModel: null,
+            selectedEngine: null
+        };
+        populateVehicleDropdown();
+    } else if (selectedValue.startsWith('existing:')) {
+        currentVehicleSelectionState.mode = 'existing';
+        currentVehicleSelectionState.selectedExistingVehicleId = selectedValue.split(':')[1];
+        currentVehicleSelectionState.selectedExistingVehicleDisplay = vehicleSelect.options[vehicleSelect.selectedIndex].text;
+        populateVehicleDropdown();
+    } else if (currentVehicleSelectionState.mode === 'new_year') {
+        currentVehicleSelectionState.selectedYear = selectedValue;
+        currentVehicleSelectionState.mode = 'new_make';
+        populateVehicleDropdown();
+    } else if (currentVehicleSelectionState.mode === 'new_make') {
+        currentVehicleSelectionState.selectedMake = selectedValue;
+        currentVehicleSelectionState.mode = 'new_model';
+        populateVehicleDropdown();
+    } else if (currentVehicleSelectionState.mode === 'new_model') {
+        currentVehicleSelectionState.selectedModel = selectedValue;
+        currentVehicleSelectionState.mode = 'new_engine';
+        populateVehicleDropdown();
+    } else if (currentVehicleSelectionState.mode === 'new_engine') {
+        currentVehicleSelectionState.selectedEngine = selectedValue;
+        currentVehicleSelectionState.mode = 'new_complete';
+        populateVehicleDropdown();
+    } else {
+        resetVehicleSelectionState();
+        populateVehicleDropdown();
+    }
+}
+
+function handleGoBackVehicleSelection() {
+    console.log("Go back clicked. Current state:", currentVehicleSelectionState.mode);
+    if (currentVehicleSelectionState.mode === 'new_engine') {
+        currentVehicleSelectionState.selectedEngine = null;
+        currentVehicleSelectionState.mode = 'new_model';
+    } else if (currentVehicleSelectionState.mode === 'new_model') {
+        currentVehicleSelectionState.selectedModel = null;
+        currentVehicleSelectionState.mode = 'new_make';
+    } else if (currentVehicleSelectionState.mode === 'new_make') {
+        currentVehicleSelectionState.selectedMake = null;
+        currentVehicleSelectionState.mode = 'new_year';
+    } else if (currentVehicleSelectionState.mode === 'new_year' || currentVehicleSelectionState.mode === 'new_complete' || currentVehicleSelectionState.mode === 'existing') {
+        resetVehicleSelectionState();
+    }
+    populateVehicleDropdown();
+}
+
+function resetVehicleSelectionState() {
+    console.log("Resetting vehicle selection state.");
+
+    currentVehicleSelectionState = {
+        mode: 'initial',
+        selectedYear: null,
+        selectedMake: null,
+        selectedModel: null,
+        selectedEngine: null,
+        selectedExistingVehicleId: null,
+        selectedExistingVehicleDisplay: null
+    };
+    document.getElementById('vehicleSelect').disabled = false;
+}
+
+async function populateServiceCategories() {
+    console.log("Populating service categories.");
+    const serviceCategorySelect = document.getElementById('serviceCategorySelect');
+    serviceCategorySelect.innerHTML = '<option value="">-- Select Service Category --</option>';
+    try {
+        const categories = await fetchData('/get_categories');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            serviceCategorySelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error fetching service categories:", error);
+        showToast("Failed to load service categories.", "error");
+    }
+}
+
+let selectedServices = {};
+async function populateServices() {
+    console.log("Populating services.");
+    const serviceCategory = document.getElementById('serviceCategorySelect').value;
+    const servicesListDiv = document.getElementById('servicesList');
+    const servicesListContainer = document.getElementById('servicesListContainer');
+    const selectedServicesSummary = document.getElementById('selectedServicesSummary');
+
+    servicesListDiv.innerHTML = '';
+    selectedServices = {};
+    updateCalculations();
+
+    if (serviceCategory) {
+        servicesListContainer.classList.remove('hidden');
+        selectedServicesSummary.classList.remove('hidden');
+
+        try {
+            const services = await fetchData(`/get_services?category=${encodeURIComponent(serviceCategory)}`);
+            
+            if (services.length > 0) {
+                services.forEach(service => {
+                    if (!service.name || typeof service.name !== 'string') {
+                        console.warn("Skipping service due to missing or invalid name:", service);
+                        return;
+                    }
+
+                    const estimatedLaborHours = parseFloat(service.estimated_labor_hours);
+                    const servicePrice = !isNaN(estimatedLaborHours) ? (estimatedLaborHours * 50).toFixed(2) : '0.00';
+                    const rawPrice = !isNaN(estimatedLaborHours) ? (estimatedLaborHours * 50) : 0;
+
+                    const serviceItem = document.createElement('div');
+                    serviceItem.classList.add('flex', 'justify-between', 'items-center', 'p-2', 'bg-gray-50',
+                        'rounded-md', 'border', 'border-gray-100');
+                    serviceItem.innerHTML = `
+                        <span class="text-gray-800">${service.name} ($${servicePrice})</span>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="adjustServiceQuantity('${service.name.replace(/'/g, "\\'")}', -1, ${rawPrice})"
+                                class="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-lg leading-none hover:bg-red-600 transition-colors">
+                                -
+                            </button>
+                            <span id="quantity-${service.name.replace(/\s/g, '-')}" class="font-semibold">0</span>
+                            <button type="button" onclick="adjustServiceQuantity('${service.name.replace(/'/g, "\\'")}', 1, ${rawPrice})"
+                                class="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-lg leading-none hover:bg-green-700 transition-colors">
+                                +
+                            </button>
+                        </div>
+                    `;
+                    servicesListDiv.appendChild(serviceItem);
+                });
+            } else {
+                servicesListDiv.innerHTML = '<p class="text-gray-500">No services found for this category.</p>';
+            }
+
+        } catch (error) {
+            console.error("Error fetching services:", error);
+            servicesListDiv.innerHTML = '<p class="text-red-500">Failed to load services. Please try again.</p>';
+        }
+    } else {
+        servicesListContainer.classList.add('hidden');
+        selectedServicesSummary.classList.add('hidden');
+    }
+}
+
+function adjustServiceQuantity(serviceName, change, price) {
+    console.log(`Adjusting quantity for ${serviceName}, change: ${change}, price: ${price}`);
+    if (!selectedServices[serviceName]) {
+        selectedServices[serviceName] = {
+            quantity: 0,
+            price: parseFloat(price)
+        };
+    }
+
+    selectedServices[serviceName].quantity += change;
+
+    if (selectedServices[serviceName].quantity < 0) {
+        selectedServices[serviceName].quantity = 0;
+    }
+
+    if (selectedServices[serviceName].quantity === 0) {
+        delete selectedServices[serviceName];
+    }
+
+    const quantitySpan = document.getElementById(`quantity-${serviceName.replace(/\s/g, '-')}`);
+    if (quantitySpan) {
+        quantitySpan.textContent = (selectedServices[serviceName] ? selectedServices[serviceName].quantity : 0)
+            .toString();
+    }
+
+    updateCalculations();
+}
+
+function updateCalculations() {
+    console.log("Updating calculations.");
+    let subtotal = 0;
+    const currentSelectionsDiv = document.getElementById('currentSelections');
+    currentSelectionsDiv.innerHTML = '';
+
+    for (const serviceName in selectedServices) {
+        const service = selectedServices[serviceName];
+        if (service.quantity > 0) {
+            const itemTotal = service.quantity * service.price;
+            subtotal += itemTotal;
+
+            const selectionItem = document.createElement('p');
+            selectionItem.classList.add('text-gray-700');
+            selectionItem.innerHTML =
+                `${serviceName} x ${service.quantity} <span class="float-right">$${itemTotal.toFixed(2)}</span>`;
+            currentSelectionsDiv.appendChild(selectionItem);
+        }
+    }
+
+    const taxRate = 0.08;
+    const tax = subtotal * taxRate;
+    const total = subtotal + tax;
+
+    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+}
+
+document.getElementById('appointmentForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    console.log("Appointment form submitted.");
+
+    const vehicleSelect = document.getElementById('vehicleSelect');
+    let selectedVehicleDisplay = "";
+    let vehicleDetailsForAPI = {};
+
+    if (currentVehicleSelectionState.mode === 'new_complete') {
+        selectedVehicleDisplay = `${currentVehicleSelectionState.selectedYear} ${currentVehicleSelectionState.selectedMake} ${currentVehicleSelectionState.selectedModel} ${currentVehicleSelectionState.selectedEngine ? '- ' + currentVehicleSelectionState.selectedEngine : ''}`;
+        vehicleDetailsForAPI = {
+            year: currentVehicleSelectionState.selectedYear,
+            make: currentVehicleSelectionState.selectedMake,
+            model: currentVehicleSelectionState.selectedModel,
+            engine: currentVehicleSelectionState.selectedEngine || ''
+        };
+        showToast("New vehicle details (VIN, License, Mileage) are not collected in this simplified flow.", "info");
+
+    } else if (currentVehicleSelectionState.mode === 'existing' && currentVehicleSelectionState.selectedExistingVehicleId) {
+        selectedVehicleDisplay = currentVehicleSelectionState.selectedExistingVehicleDisplay;
+        vehicleDetailsForAPI = {
+            id: currentVehicleSelectionState.selectedExistingVehicleId,
+            display: selectedVehicleDisplay
+        };
+    } else {
+        showToast("Please select a vehicle or complete new vehicle details.", "red");
+        return;
+    }
+
+    const serviceCategory = document.getElementById('serviceCategorySelect').value;
+    if (currentVehicleSelectionState.mode !== 'initial' && !serviceCategory) {
+         showToast("Please select a service category for the selected vehicle.", "red");
+         return;
+    }
+
+    const appointmentDate = document.getElementById('appointmentDate').value;
+    const appointmentTime = document.getElementById('appointmentTime').value;
+    const appointmentNotes = document.getElementById('appointmentNotes').value;
+
+    if (!appointmentDate || !appointmentTime) {
+        showToast("Please select appointment date and time.", "red");
+        return;
+    }
+
+    const bookedServices = Object.keys(selectedServices).map(serviceName => {
+        const service = selectedServices[serviceName];
+        return {
+            name: serviceName,
+            quantity: service.quantity,
+            price: service.price,
+        };
+    });
+    
+    if (bookedServices.length === 0 && currentVehicleSelectionState.mode !== 'new_complete') {
+        showToast("Please select at least one service.", "red");
+        return;
+    }
+
+    const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace('$', ''));
+    const tax = parseFloat(document.getElementById('tax').textContent.replace('$', ''));
+    const total = parseFloat(document.getElementById('total').textContent.replace('$', ''));
+
+    const appointmentData = {
+        customerName: "Current User",
+        vehicleInfo: selectedVehicleDisplay,
+        vehicleDetails: vehicleDetailsForAPI,
+        serviceCategory: serviceCategory,
+        services: bookedServices,
+        appointmentDate: appointmentDate,
+        appointmentTime: appointmentTime,
+        notes: appointmentNotes,
+        subtotal: subtotal,
+        tax: tax,
+        total: total
+    };
+
+    console.log('Submitting Appointment Details:', appointmentData);
+    
+    try {
+        const response = await fetch('/api/appointments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(appointmentData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        showToast(result.message || "Appointment booked successfully!", "success");
+        closeAppointmentModal();
+        fetchAndDisplayAppointments(); // UNCOMMENTED: Refresh the list after booking!
+
+    } catch (error) {
+        console.error("Error booking appointment:", error);
+        showToast(`Failed to book appointment: ${error.message}`, "error");
+    }
+});
+
+function resetAppointmentForm() {
+    console.log("Resetting appointment form.");
+    document.getElementById('appointmentForm').reset();
+    resetVehicleSelectionState();
+    populateVehicleDropdown();
+
+    document.getElementById('serviceCategorySelect').value = "";
+    document.getElementById('serviceCategorySelect').disabled = true;
+    document.getElementById('serviceCategorySelectionSection').classList.add('hidden');
+    document.getElementById('servicesListContainer').classList.add('hidden');
+    document.getElementById('selectedServicesSummary').classList.add('hidden');
+    document.getElementById('servicesList').innerHTML = '';
+    document.getElementById('currentSelections').innerHTML = '';
+    selectedServices = {};
+    updateCalculations();
+    updateVehicleSelectionProgress();
+}
+
+function downloadAppointmentPDF() {
+    console.log("Downloading PDF.");
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const vehicleSelect = document.getElementById('vehicleSelect');
+    let selectedVehicleName = "";
+    let vehicleInfoForPdf = "";
+
+    if (currentVehicleSelectionState.mode === 'new_complete') {
+        selectedVehicleName = `${currentVehicleSelectionState.selectedYear} ${currentVehicleSelectionState.selectedMake} ${currentVehicleSelectionState.selectedModel}`;
+        vehicleInfoForPdf = `New Vehicle: ${selectedVehicleName}\nEngine: ${currentVehicleSelectionState.selectedEngine || 'N/A'}`;
+    } else if (currentVehicleSelectionState.mode === 'existing') {
+        selectedVehicleName = currentVehicleSelectionState.selectedExistingVehicleDisplay;
+        vehicleInfoForPdf = `Selected Vehicle: ${selectedVehicleName}`;
+    } else {
+        selectedVehicleName = "Not Selected";
+        vehicleInfoForPdf = "Vehicle: Not selected";
+    }
+
+    const serviceCategory = document.getElementById('serviceCategorySelect').value;
+    const appointmentDate = document.getElementById('appointmentDate').value;
+    const appointmentTime = document.getElementById('appointmentTime').value;
+    const appointmentNotes = document.getElementById('appointmentNotes').value;
+
+    let servicesText = '';
+    for (const serviceName in selectedServices) {
+        const service = selectedServices[serviceName];
+        if (service.quantity > 0) {
+            servicesText += `- ${serviceName} x ${service.quantity} ($${(service.quantity * service.price).toFixed(2)})\n`;
+        }
+    }
+    if (servicesText === '') servicesText = 'No services selected.\n';
+
+
+    const subtotal = document.getElementById('subtotal').textContent;
+    const tax = document.getElementById('tax').textContent;
+    const total = document.getElementById('total').textContent;
+
+    doc.setFontSize(22);
+    doc.text("Appointment Details", 10, 20);
+
+    doc.setFontSize(14);
+    doc.text(`Date: ${appointmentDate || 'N/A'}`, 10, 30);
+    doc.text(`Time: ${appointmentTime || 'N/A'}`, 10, 37);
+
+    doc.setFontSize(16);
+    doc.text("Vehicle Information:", 10, 50);
+    doc.setFontSize(12);
+    doc.text(vehicleInfoForPdf, 10, 57);
+    if (serviceCategory) {
+        doc.text(`Service Category: ${serviceCategory}`, 10, 64);
+    }
+
+    let currentY = 77;
+
+    doc.setFontSize(16);
+    doc.text("Selected Services:", 10, currentY);
+    currentY += 7;
+    doc.setFontSize(12);
+    doc.text(servicesText, 10, currentY);
+    currentY += (servicesText.split('\n').length * 7);
+
+    doc.setFontSize(14);
+    doc.text(`Subtotal: ${subtotal}`, 10, currentY + 10);
+    doc.text(`Tax: ${tax}`, 10, currentY + 17);
+    doc.setFontSize(16);
+    doc.text(`Total: ${total}`, 10, currentY + 27);
+
+    doc.setFontSize(12);
+    doc.text("Notes:", 10, currentY + 40);
+    doc.text(appointmentNotes || 'N/A', 10, currentY + 47);
+
+
+    doc.save(`appointment_${selectedVehicleName.replace(/[^a-zA-Z0-9]/g, '_')}_${appointmentDate}.pdf`);
+    showToast("PDF Downloaded!", "green");
+}
+
+function openAppointmentModal() {
+    console.log("openAppointmentModal function called.");
+    const appointmentModal = document.getElementById('appointmentModal');
+    if (appointmentModal) {
+        appointmentModal.classList.add('show');
+    }
+    if (typeof resetAppointmentForm === 'function') {
+         resetAppointmentForm();
+     }
+    resetVehicleSelection();
+}
+
+function closeAppointmentModal() {
+    console.log("closeAppointmentModal function called.");
+    const appointmentModal = document.getElementById('appointmentModal');
+    if (appointmentModal) {
+        appointmentModal.classList.remove('show');
+    }
+}
+
+// Ensure openAppointmentModal and closeAppointmentModal are globally accessible if called from HTML
+window.openAppointmentModal = openAppointmentModal;
+window.closeAppointmentModal = closeAppointmentModal;
+window.resetVehicleSelection = resetVehicleSelectionState; // Make resetVehicleSelectionState accessible globally
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOMContentLoaded fired.");
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebarButton = document.getElementById('close-sidebar-button');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const mainContentWrapper = document.getElementById('main-content-wrapper');
+    const bookNewAppointmentBtn = document.getElementById('book-new-appointment-btn');
+
+    function toggleMobileMenu() {
+        sidebar.classList.toggle('-translate-x-full');
+        mobileMenuOverlay.classList.toggle('hidden');
+        mobileMenuOverlay.classList.toggle('mobile-menu-overlay-blurred');
+        if (menuToggle) {
+            menuToggle.classList.toggle('is-open');
+        }
+        if (mainContentWrapper) {
+            mainContentWrapper.classList.toggle('sidebar-open');
+        }
+        document.body.classList.toggle('sidebar-open', !sidebar.classList.contains('-translate-x-full'));
+    }
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleMobileMenu);
+    }
+
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+    }
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+                if (menuToggle) {
+                    menuToggle.classList.remove('is-open');
+                }
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.add('hidden');
+                    mobileMenuOverlay.classList.remove('mobile-menu-overlay-blurred');
+                }
+                if (mainContentWrapper) {
+                    mainContentWrapper.classList.remove('sidebar-open');
+                }
+                if (document.body) {
+                    document.body.classList.remove('sidebar-open');
+                }
+            }
+        }
+    });
+
+    if (closeSidebarButton) {
+        closeSidebarButton.addEventListener('click', () => {
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                toggleMobileMenu();
+            }
+        });
+    }
+
+    const searchMagnifierIcon = document.getElementById('search-magnifier-icon');
+    const searchBarContainer = document.getElementById('search-bar-container');
+
+    if (searchMagnifierIcon && searchBarContainer) {
+        searchMagnifierIcon.addEventListener('click', function () {
+            if (window.innerWidth <= 556) {
+                searchBarContainer.classList.toggle('active');
+                if (searchBarContainer.classList.contains('active')) {
+                    searchMagnifierIcon.style.display = 'none';
+                } else {
+                    searchMagnifierIcon.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        const isClickInsideSearchBar = searchBarContainer && searchBarContainer.contains(event.target);
+        const isClickOnMagnifier = searchMagnifierIcon && searchMagnifierIcon.contains(event.target);
+
+        if (window.innerWidth <= 556 && searchBarContainer && !isClickInsideSearchBar && !isClickOnMagnifier && searchBarContainer.classList.contains('active')) {
+            searchBarContainer.classList.remove('active');
+            searchMagnifierIcon.style.display = 'block';
+        }
+    });
+
+    if (bookNewAppointmentBtn) {
+        console.log("Attaching click listener to bookNewAppointmentBtn.");
+        bookNewAppointmentBtn.addEventListener('click', openAppointmentModal);
+    } else {
+        console.error("Error: bookNewAppointmentBtn not found!");
+    }
+
+    document.getElementById('serviceCategorySelect').addEventListener('change', (event) => {
+        const selectedCategory = event.target.value;
+        populateServices();
+    });
+
+    // Initial load of all appointments when the page is ready
+    fetchAndDisplayAppointments();
+    
+    // Populate vehicle dropdown on page load
+    populateVehicleDropdown();
+
+    const editAppointmentModal = document.getElementById('editAppointmentModal');
+    const closeEditAppointmentModal = document.getElementById('closeEditAppointmentModal');
+    const editAppointmentForm = document.getElementById('editAppointmentForm');
+    const editAppointmentId = document.getElementById('editAppointmentId');
+    const editAppointmentDate = document.getElementById('editAppointmentDate');
+    const editAppointmentTime = document.getElementById('editAppointmentTime');
+    const editAppointmentServices = document.getElementById('editAppointmentServices');
+    const editAppointmentVehicle = document.getElementById('editAppointmentVehicle');
+
+    window.handleEditAppointment = async function (id, date, time, services, vehicleInfo, diffHours) {
+        if (diffHours < 24) {
+            showToast("Appointment details can only be updated at least 24 hours in advance.", 'error');
+            return;
+        }
+        editAppointmentId.value = id;
+        editAppointmentDate.value = date;
+        editAppointmentTime.value = time;
+        editAppointmentServices.value = services;
+        editAppointmentVehicle.value = vehicleInfo;
+        editAppointmentModal.classList.add('show');
+    }
+
+    if (closeEditAppointmentModal) {
+        closeEditAppointmentModal.addEventListener('click', () => {
+            editAppointmentModal.classList.remove('show');
+            editAppointmentForm.reset();
+        });
+    }
+
+    if (editAppointmentModal) {
+        editAppointmentModal.addEventListener('click', (e) => {
+            if (e.target === editAppointmentModal) {
+                editAppointmentModal.classList.remove('show');
+                editAppointmentForm.reset();
+            }
+        });
+    }
+
+    if (editAppointmentForm) {
+        editAppointmentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const appointmentId = editAppointmentId.value;
+            const updatedData = {
+                appointmentDate: editAppointmentDate.value,
+                appointmentTime: editAppointmentTime.value,
+                services: editAppointmentServices.value.split(',').map(s => ({ name: s.trim() })),
+                vehicleInfo: editAppointmentVehicle.value
+            };
+
+            try {
+                const response = await fetch(`/api/appointments/${appointmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast(result.message || "Appointment updated successfully.", 'success');
+                    editAppointmentModal.classList.remove('show');
+                    fetchAndDisplayAppointments();
+                } else {
+                    showToast(result.message || "Failed to update appointment.", 'error');
+                }
+            } catch (error) {
+                console.error("Error updating appointment:", error);
+                showToast("An error occurred while updating the appointment.", 'error');
+            }
+        });
+    }
+
+    const topbarAvatar = document.getElementById('topbar-avatar');
+    const avatarInput = document.getElementById('avatar-input');
+
+    if (topbarAvatar && avatarInput) {
+        topbarAvatar.addEventListener('click', function() {
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    topbarAvatar.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }}
+        )}
+
+ })
+        
+</script>
+
+
+
+
+</body>
+
+</html>

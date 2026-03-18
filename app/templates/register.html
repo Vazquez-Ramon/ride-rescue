@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Register - Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    // Add the custom colors from login.html for consistency
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1E40AF', // blue-800
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray300: '#D1D5DB',
+                        gray600: '#4B5563',
+                        red500: '#EF4444', // Added red for warnings
+                        red600: '#DC2626', // Added red for warnings
+                        green600: '#16A34A', // Added green for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.15s ease-in-out;
+            z-index: 10;
+        }
+
+        .toggle-password:hover {
+            color: #374151;
+        }
+
+        .account-type-selector {
+            display: flex;
+            background-color: #ffffff;
+            border-radius: 9999px;
+            padding: 4px;
+            width: 100%;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.25rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .account-type-selector button {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 500;
+            color: #4b5563;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .account-type-selector button.active {
+            background-color: #111827;
+            color: #ffffff;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            color: #4b5563;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .social-button:hover {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .social-button img {
+            height: 20px;
+            width: 20px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body class="bg-white flex flex-col items-center justify-between min-h-screen">
+
+<div class="topbar" style="display: flex; justify-content: space-between; height: 55px; align-items: center; padding: 8px 16px; background-color: #000000;">
+    
+    <!-- Left: Logo -->
+    <div class="topbar-left" style="flex: 1; display: flex; align-items: center;">
+        <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="/static/logo.png" alt="RideRescue Logo" style="height: 30px;">
+        </a>
+    </div>
+
+    <!-- Center: Slogan -->
+    <div class="topbar-center" style="flex: 1; display: flex; justify-content: center; align-items: center;">
+        <img src="/static/sloganWhite.png" alt="Slogan" style="height: 40px;">
+    </div>
+
+    <!-- Right: Cart -->
+    <div class="topbar-right" style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+        <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+            <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+            <span id="cart-count" style="
+                position: absolute;
+                top: -8px;
+                right: -10px;
+                background: red;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                border-radius: 50%;
+                padding: 2px 6px;
+                display: none;
+            ">0</span>
+        </div>
+
+<button id="mobile-menu-button"><i class="fa-solid fa-ellipsis-vertical fa-xl" style="color: #ffffff; margin-left: 10px;"></i>
+
+</button>
+
+<div id="mobile-nav-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-[99] flex flex-col items-center justify-center p-8 hidden">    <button id="close-mobile-nav" class="absolute top-4 right-4 text-white text-3xl focus:outline-none">×</button>
+
+    <div class="flex flex-col space-y-6 text-2xl text-white text-center">
+        <a href="/">
+    <img src="/static/icons/home.png" alt="Home icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  Home
+</a>
+        <a href="/about">
+  <img src="/static/icons/about.png" alt="About icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  About
+</a>
+
+        <div class="dropdown w-full">
+            <a href="/services" class="services-toggle">
+  <img src="/static/icons/mechanic.png" alt="Mechanic icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">Services 
+</a>
+            <div class="dropdown-box hidden flex flex-col space-y-4 text-xl">
+          <a href="/services/engine"><img src="/static/icons/carEngine.png" alt="Car engine icon" style="height: 32px;"> Engine</a>
+          <a href="/services/brakes"><img src="/static/icons/discBrake.png" alt="Disc brake icon" style="height: 32px;"> Brakes</a>
+          <a href="/services/diagnostics"><img src="/static/icons/carSuspension.png" alt="Car suspension icon" style="height: 32px;"> Suspension</a>
+          <a href="/services/suspension"><img src="/static/icons/lightning.png" alt="Lightning icon" style="height: 32px;"> Electrical</a>
+          <a href="/maintenance"><img src="/static/icons/wrenchWhite.png" alt="White wrench icon" style="height: 32px;"> Maintenance</a>
+          <a href="/services/diagnostics"><img src="/static/icons/diagnostics.png" alt="Scan tool icon" style="height: 32px;"> Diagnostics</a>
+          <a href="/services/transmission"><img src="/static/icons/transmission.png" alt="Transmission icon" style="height: 32px;"> Transmission</a>
+          <a href="/services/body"><img src="/static/icons/body.png" alt="Car body icon" style="height: 32px;"> Body</a>
+          <a href="/services/steering"><img src="/static/icons/steering.png" alt="Steering wheel icon" style="height: 32px;"> Steering</a>
+          <a href="/services/miscellaneous"><img src="/static/icons/miscellaneous.png" alt="Miscellaneous icon" style="height: 32px;"> Miscellaneous</a>
+            </div>
+        </div>
+        <a href="/maintenance">
+  <img src="/static/icons/wrench.png" alt="Wrench icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">Maintenance
+</a>
+        <a href="/codes">
+  <img src="/static/icons/checkengine.png" alt="Check engine light icon" style="height: 30px; vertical-align: middle; margin-right: 6px;">
+  Codes
+</a>
+        <a href="/contact">
+  <img src="/static/icons/contactUs.png" alt="Contact us icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  Contact Us
+</a>
+    </div>
+</div>
+
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+    <div class="bg-white p-8 rounded-lg w-full max-w-md my-auto">
+        <h2 class="text-2xl tracking-tighter font-bold mb-0 text-center text-gray-800">Create an account</h2>
+
+        <p class="text-center text-sm tracking-tighter text-gray-600">
+            Already have an account?
+            <a href="/login" class="font-medium tracking-tighter text-blue600 hover:text-blue700 transition">Login here</a>
+        </p>
+
+        <div class="account-type-selector tracking-tighter mt-4"> <button id="personal-btn" class="active">Personal</button>
+            <button id="business-btn">Fleet</button>
+        </div>
+
+        <div id="message-area" class="mb-4 text-center text-sm" aria-live="polite"></div>
+
+        <form id="register-form" class="space-y-5">
+            <div id="personal-form-fields">
+                <div class="flex gap-4">
+                    <div class="w-1/2">
+                        <input type="text" id="first-name" name="first-name" required
+                            class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent"
+                            placeholder="First name">
+                        <span id="first-name-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                    </div>
+                    <div class="w-1/2">
+                        <input type="text" id="last-name" name="last-name" required
+                            class="w-full px-4 py-3 border tracking-tighter  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent"
+                            placeholder="Last name">
+                        <span id="last-name-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <input type="email" id="email" name="email" required
+                        class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent"
+                        placeholder="Email">
+                    <span id="email-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+
+            <div id="business-form-fields" class="hidden">
+                <p class="text-sm tracking-tighter text-gray-700 mb-5">Continue to register as a <span
+                        class="font-bold">business or nonprofit</span>, or if you plan to sell a large number of
+                    goods.</p>
+                <div>
+                    <input type="text" id="business-name" name="business-name"
+                        class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent"
+                        placeholder="Business name">
+                    <span id="business-name-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+                <div class="mt-5">
+                    <input type="email" id="business-email" name="business-email"
+                        class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent"
+                        placeholder="Business email">
+                    <span id="business-email-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+            </div>
+
+
+            <div>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required minlength="8"
+                        autocomplete="new-password"
+                        class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent pr-10"
+                        placeholder="Password">
+                    <span class="toggle-password"
+                        onclick="togglePasswordVisibility('password', 'toggle-icon-password')">
+                        <svg id="toggle-icon-password" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </span>
+                </div>
+                <span id="password-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+
+            <div id="business-specific-extra-fields" class="hidden">
+                <div>
+                    <label for="business-registered-country" class="block text-sm font-medium text-gray-700 sr-only">Where is your business registered?</label>
+                    <select id="business-registered-country" name="business-registered-country"
+                        class="mt-1 block w-full pl-3 pr-10 py-3 text-base tracking-tighter border-gray-300 focus:outline-none focus:ring-blue600 focus:border-blue600 sm:text-sm rounded-md">
+                        <option value="">Where is your business registered?</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                    <span id="country-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                </div>
+                <p class="text-xs tracking-tighter mt-1 mb-5 text-gray-500">If your business isn't registered, select your country of
+                    residence.</p>
+                <div class="flex items-center">
+                    <input id="only-buying" name="only-buying" type="checkbox"
+                        class="h-4 w-4 text-blue600 focus:ring-blue600 tracking-tighter border-gray-300 rounded">
+                    <label for="only-buying" class="ml-2 block text-sm tracking-tighter text-gray-900">
+                        I'm only interested in buying on Vehicle Manager for now
+                    </label>
+                </div>
+            </div>
+
+
+            <div>
+                <p style="font-size: 0.775rem; letter-spacing: -0.025em; line-height: 1.0rem; color: #707070;" id="agreement-text">
+                    By selecting Create personal account, you agree to our <a href="#"
+                        class="text-blue-600 tracking-tighter hover:underline">User Agreement</a> and acknowledge reading our <a
+                        href="#" class="text-blue-600 tracking-tighter hover:underline">User Privacy Notice</a>.
+                </p>
+            </div>
+            <button
+  type="submit"
+  id="submit-button"
+  class="w-full inline-flex items-center justify-center bg-gray300 tracking-tighter text-gray600 font-semibold py-3 rounded-md focus:outline-none focus:shadow-outline transition duration-150 ease-in-out mt-6 cursor-not-allowed"
+  disabled
+>
+  <i class="fa-solid fa-user-plus fa-lg mr-2"></i>
+  <span class="submit-label">
+    Create personal account
+  </span>
+</button>
+            <div class="text-center my-6 tracking-tighter text-gray-500">
+             — or continue with —
+            </div>
+
+            <div class="flex flex-col tracking-tighter space-y-3">
+    <button type="button" class="social-button" onclick="window.location.href='/auth/google'">
+        <img src="https://www.google.com/favicon.ico" alt="Google icon">
+        Continue with Google
+    </button>
+    <button type="button" class="social-button" onclick="window.location.href='/auth/facebook'">
+        <img src="https://www.facebook.com/favicon.ico" alt="Facebook icon">
+        Continue with Facebook
+    </button>
+    <button type="button" class="social-button" onclick="window.location.href='/auth/apple'">
+        <img src="https://www.apple.com/favicon.ico" alt="Apple icon">
+        Continue with Apple
+    </button>
+</div>
+
+        </form>
+
+        </div>
+
+    <footer class="w-full bg-white py-4 mt-auto">
+        <div class="max-w-md mx-auto text-center tracking-tighter text-gray-500 text-xs">
+            <p>&copy; 2025 RideRescue. All rights reserved.</p>
+            <p class="font-medium">Auto repair. Handled.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        const registerForm = document.getElementById('register-form');
+        const messageArea = document.getElementById('message-area');
+        const personalBtn = document.getElementById('personal-btn');
+        const businessBtn = document.getElementById('business-btn');
+        const personalFormFields = document.getElementById('personal-form-fields');
+        const businessFormFields = document.getElementById('business-form-fields');
+        const businessSpecificExtraFields = document.getElementById('business-specific-extra-fields');
+        const agreementText = document.getElementById('agreement-text');
+        const submitButton = document.getElementById('submit-button');
+        const submitIcon  = submitButton.querySelector('i');
+        const submitLabel = submitButton.querySelector('.submit-label');
+
+        // Input Elements
+        const firstNameInput = document.getElementById('first-name');
+        const lastNameInput = document.getElementById('last-name');
+        const emailInput = document.getElementById('email'); // Personal email
+        const businessNameInput = document.getElementById('business-name');
+        const businessEmailInput = document.getElementById('business-email');
+        const passwordInput = document.getElementById('password');
+        const businessCountrySelect = document.getElementById('business-registered-country');
+
+        // Warning Spans
+        const firstNameWarning = document.getElementById('first-name-warning');
+        const lastNameWarning = document.getElementById('last-name-warning');
+        const emailWarning = document.getElementById('email-warning'); // Personal email warning
+        const businessNameWarning = document.getElementById('business-name-warning');
+        const businessEmailWarning = document.getElementById('business-email-warning');
+        const passwordWarning = document.getElementById('password-warning');
+        const countryWarning = document.getElementById('country-warning');
+
+
+        // Keep track of which fields have been "interacted" with (blurred at least once)
+        const interactedFields = new Set();
+
+        // Initial state
+        let accountType = 'personal'; // 'personal' or 'business'
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223a10.477 10.477 0 0 0-1.94 3.777 1.012 1.012 0 0 0 0 .6C3.423 16.49 7.36 19.5 12 19.5c2.042 0 3.957-.611 5.547-1.657m2.473-2.473A10.45 10.45 0 0 0 21.94 12c-.56-1.53-1.498-2.915-2.735-4.01m-2.473-2.473A10.44 10.44 0 0 0 12 4.5c-2.042 0-3.957.611-5.547 1.657m-2.473 2.473L3 3m18 18-3-3" />
+                </svg>`;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>`;
+            }
+        }
+
+        // Common valid email endings (you can expand this list)
+        const validEmailEndings = [
+            '.com', '.org', '.net', '.edu', '.gov', '.io', '.co', '.info', '.biz', '.tech',
+            '.app', '.dev', '.blog', '.online', '.store', '.me', '.us', '.ca', '.uk', '.au',
+            '.de', '.fr', '.jp', '.cn', '.in', '.ru', '.br', '.it', '.es', '.nl', '.xyz', '.site',
+            // Add more as needed
+        ];
+
+        // Helper to show/hide warning
+        function setWarning(inputElement, warningElement, message) {
+            if (message) {
+                warningElement.textContent = message;
+                warningElement.classList.remove('hidden');
+                inputElement.classList.add('border-red-500');
+                return false;
+            } else {
+                warningElement.classList.add('hidden');
+                warningElement.textContent = '';
+                inputElement.classList.remove('border-red-500');
+                return true;
+            }
+        }
+
+        // Validation Functions - now return true/false
+        function validateFirstName() {
+            return setWarning(firstNameInput, firstNameWarning, firstNameInput.value.trim() === '' ? 'Please enter your first name.' : '');
+        }
+
+        function validateLastName() {
+            return setWarning(lastNameInput, lastNameWarning, lastNameInput.value.trim() === '' ? 'Please enter your last name.' : '');
+        }
+
+        function validatePersonalEmail() {
+            const email = emailInput.value.trim();
+            if (email === '') {
+                return setWarning(emailInput, emailWarning, 'Please enter your email.');
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return setWarning(emailInput, emailWarning, 'Please enter a valid email format (e.g., example@domain.com).');
+            }
+            const domain = email.substring(email.lastIndexOf('@') + 1).toLowerCase();
+            const hasValidEnding = validEmailEndings.some(ending => domain.endsWith(ending));
+            if (!hasValidEnding) {
+                return setWarning(emailInput, emailWarning, 'Email address has an invalid or uncommon domain ending.');
+            }
+            return setWarning(emailInput, emailWarning, '');
+        }
+
+        function validateBusinessName() {
+            return setWarning(businessNameInput, businessNameWarning, businessNameInput.value.trim() === '' ? 'Please enter your business name.' : '');
+        }
+
+        function validateBusinessEmail() {
+            const email = businessEmailInput.value.trim();
+            if (email === '') {
+                return setWarning(businessEmailInput, businessEmailWarning, 'Please enter your business email.');
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return setWarning(businessEmailInput, businessEmailWarning, 'Please enter a valid email format (e.g., example@domain.com).');
+            }
+            const domain = email.substring(email.lastIndexOf('@') + 1).toLowerCase();
+            const hasValidEnding = validEmailEndings.some(ending => domain.endsWith(ending));
+            if (!hasValidEnding) {
+                return setWarning(businessEmailInput, businessEmailWarning, 'Business email address has an invalid or uncommon domain ending.');
+            }
+            return setWarning(businessEmailInput, businessEmailWarning, '');
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value.trim();
+            if (password === '') {
+                return setWarning(passwordInput, passwordWarning, 'Please enter a password.');
+            } else if (password.length < 8) {
+                return setWarning(passwordInput, passwordWarning, 'Password must be at least 8 characters long.');
+            }
+            return setWarning(passwordInput, passwordWarning, '');
+        }
+
+        function validateCountry() {
+            const country = businessCountrySelect.value;
+            if (accountType === 'business' && country === '') {
+                return setWarning(businessCountrySelect, countryWarning, 'Please select your business registered country.');
+            }
+            return setWarning(businessCountrySelect, countryWarning, '');
+        }
+
+        // Main validation call for form submission
+        function validateAllFields() {
+            let isValid = true;
+            if (accountType === 'personal') {
+                isValid = validateFirstName() && isValid;
+                isValid = validateLastName() && isValid;
+                isValid = validatePersonalEmail() && isValid;
+            } else { // 'business'
+                isValid = validateBusinessName() && isValid;
+                isValid = validateBusinessEmail() && isValid;
+                isValid = validateCountry() && isValid;
+            }
+            isValid = validatePassword() && isValid;
+            return isValid;
+        }
+
+        // Update form visibility based on account type
+        function updateFormVisibility() {
+            // Reset all warnings and input borders when switching form type
+            [firstNameInput, lastNameInput, emailInput, businessNameInput, businessEmailInput, passwordInput, businessCountrySelect].forEach(input => {
+                input.classList.remove('border-red-500');
+            });
+            [firstNameWarning, lastNameWarning, emailWarning, businessNameWarning, businessEmailWarning, passwordWarning, countryWarning].forEach(warning => {
+                warning.classList.add('hidden');
+                warning.textContent = '';
+            });
+            messageArea.textContent = '';
+            messageArea.className = 'mb-4 text-center text-sm';
+            interactedFields.clear(); // Clear interacted fields when switching form types
+
+
+            if (accountType === 'personal') {
+                personalBtn.classList.add('active');
+                businessBtn.classList.remove('active');
+                personalFormFields.classList.remove('hidden');
+                businessFormFields.classList.add('hidden');
+                businessSpecificExtraFields.classList.add('hidden');
+
+                firstNameInput.setAttribute('required', 'true');
+                lastNameInput.setAttribute('required', 'true');
+                emailInput.setAttribute('required', 'true');
+
+                businessNameInput.removeAttribute('required');
+                businessEmailInput.removeAttribute('required');
+                businessCountrySelect.removeAttribute('required');
+
+                agreementText.innerHTML = `By selecting Create personal account, you agree to our <a href="#" class="text-blue-600 tracking-tighter hover:underline">User Agreement</a> and acknowledge reading our <a href="#" class="text-blue-600 tracking-tighter hover:underline">User Privacy Notice</a>.`;
+                submitIcon.className    = 'fa-solid fa-user-plus fa-lg mr-2';
+                submitLabel.textContent = 'Create personal account';
+            } else { // accountType === 'business'
+                personalBtn.classList.remove('active');
+                businessBtn.classList.add('active');
+                personalFormFields.classList.add('hidden');
+                businessFormFields.classList.remove('hidden');
+                businessSpecificExtraFields.classList.remove('hidden');
+
+                firstNameInput.removeAttribute('required');
+                lastNameInput.removeAttribute('required');
+                emailInput.removeAttribute('required');
+
+                businessNameInput.setAttribute('required', 'true');
+                businessEmailInput.setAttribute('required', 'true');
+                businessCountrySelect.setAttribute('required', 'true');
+
+
+                agreementText.innerHTML = `By selecting Create fleet account, you agree to our <a href="#" class="text-blue-600 tracking-tighter hover:underline">User Agreement</a> and acknowledge reading our <a href="#" class="text-blue-600 tracking-tighter hover:underline">User Privacy Notice</a>.`;
+                submitIcon.className    = 'fa-solid fa-building fa-lg mr-2';
+                submitLabel.textContent = 'Create fleet account';
+            }
+            passwordInput.setAttribute('required', 'true');
+            // Do NOT call updateSubmitButtonState() here. It will be called by blur/input listeners.
+            updateSubmitButtonButtonOnlyState(); // Only update the button's enabled/disabled state
+        }
+
+        // Function to update the submit button's disabled state and styling
+        // This version checks if *any* required field has content, not if it's fully valid.
+        // Full validation is handled by blur/submit.
+        function updateSubmitButtonButtonOnlyState() {
+            let hasRequiredContent = false;
+
+            if (accountType === 'personal') {
+                if (firstNameInput.value.trim() !== '' &&
+                    lastNameInput.value.trim() !== '' &&
+                    emailInput.value.trim() !== '' &&
+                    passwordInput.value.trim() !== '' &&
+                    passwordInput.value.length >= 8) {
+                    hasRequiredContent = true;
+                }
+            } else { // business
+                if (businessNameInput.value.trim() !== '' &&
+                    businessEmailInput.value.trim() !== '' &&
+                    businessCountrySelect.value !== '' &&
+                    passwordInput.value.trim() !== '' &&
+                    passwordInput.value.length >= 8) {
+                    hasRequiredContent = true;
+                }
+            }
+
+            if (hasRequiredContent) {
+                submitButton.classList.remove('bg-gray300', 'text-gray600', 'cursor-not-allowed');
+                submitButton.classList.add('bg-blue600', 'hover:bg-blue700', 'text-white');
+                submitButton.disabled = false;
+            } else {
+                submitButton.classList.add('bg-gray300', 'text-gray600', 'cursor-not-allowed');
+                submitButton.classList.remove('bg-blue600', 'hover:bg-blue700', 'text-white');
+                submitButton.disabled = true;
+            }
+        }
+
+        // Attach event listeners for blur (to show warnings) and input (to re-check button state)
+        function addValidationListeners(inputElement, validateFunction) {
+            inputElement.addEventListener('blur', () => {
+                interactedFields.add(inputElement.id);
+                validateFunction();
+                updateSubmitButtonButtonOnlyState(); // Check button state after validation
+            });
+            inputElement.addEventListener('input', () => {
+                if (interactedFields.has(inputElement.id)) { // Only validate if already interacted
+                    validateFunction();
+                }
+                updateSubmitButtonButtonOnlyState(); // Always update button state on input
+            });
+            // Special case for select element
+            if (inputElement.tagName === 'SELECT') {
+                inputElement.addEventListener('change', () => {
+                    interactedFields.add(inputElement.id);
+                    validateFunction();
+                    updateSubmitButtonButtonOnlyState();
+                });
+            }
+        }
+
+        addValidationListeners(firstNameInput, validateFirstName);
+        addValidationListeners(lastNameInput, validateLastName);
+        addValidationListeners(emailInput, validatePersonalEmail);
+        addValidationListeners(businessNameInput, validateBusinessName);
+        addValidationListeners(businessEmailInput, validateBusinessEmail);
+        addValidationListeners(passwordInput, validatePassword);
+        addValidationListeners(businessCountrySelect, validateCountry); // Add listener for select
+
+        personalBtn.addEventListener('click', () => {
+            accountType = 'personal';
+            updateFormVisibility();
+        });
+
+        businessBtn.addEventListener('click', () => {
+            accountType = 'business';
+            updateFormVisibility();
+        });
+
+        // Main form submission logic
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Clear general message area
+            messageArea.textContent = '';
+            messageArea.className = 'mb-4 text-center text-sm';
+
+            // On submit, force all fields to be considered "interacted"
+            // and run full validation on all required fields.
+            [firstNameInput, lastNameInput, emailInput, businessNameInput, businessEmailInput, passwordInput, businessCountrySelect].forEach(input => {
+                interactedFields.add(input.id);
+            });
+
+            const allFieldsAreValid = validateAllFields();
+
+
+            if (allFieldsAreValid) {
+                console.log('Client-side validation passed. Attempting registration...');
+
+                const formData = new FormData(registerForm);
+                const data = {
+                    password: formData.get('password'),
+                    accountType: accountType
+                };
+
+                if (accountType === 'personal') {
+                    data.first_name = formData.get('first-name');
+                    data.last_name = formData.get('last-name');
+                    data.email = formData.get('email');
+                } else { // 'business'
+                    data.business_name = formData.get('business-name');
+                    data.business_email = formData.get('business-email');
+                    data.business_registered_country = formData.get('business-registered-country');
+                    data.only_buying = formData.get('only-buying') === 'on';
+                }
+
+                console.log('Submitting data:', data);
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        messageArea.textContent = result.message + " Redirecting...";
+                        messageArea.classList.add('text-green-600');
+                        registerForm.reset();
+                        updateFormVisibility(); // Reset form to initial state and update button
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1000);
+                    } else {
+                        messageArea.textContent = result.message || 'An error occurred during registration.';
+                        messageArea.classList.add('text-red-600');
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    messageArea.textContent = 'An unexpected error occurred. Please try again.';
+                    messageArea.classList.add('text-red-600');
+                }
+            } else {
+                messageArea.textContent = 'Please correct the errors above.';
+                messageArea.classList.add('text-red-600');
+                updateSubmitButtonButtonOnlyState(); // Re-evaluate button state
+            }
+        });
+
+        // Initial call to set up the form correctly on page load
+        updateFormVisibility();
+    </script>
+</body>
+
+</html>

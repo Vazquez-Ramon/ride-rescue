@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Simple fade-in animation for cards */
+        .card-animate {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust delays for staggered effect */
+        .card-animate:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card-animate:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card-animate:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card-animate:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card-animate:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .card-animate:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        /* Add more as needed for more cards */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #000000;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+
+        .topbar-left {
+        display: flex; /* Already present, but ensure it's flex */
+        align-items: center; /* This will vertically align items */
+        }
+
+        .topbar-left a {
+            display: flex;
+            align-items: center;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .topbar-right a {
+            display: flex;
+            align-items: center;
+            color: #4B5563; /* gray-600 */
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .topbar-right a:hover {
+            color: #2563EB; /* primary blue */
+        }
+
+        @media (max-width: 1023px) { /* Tailind's 'lg' breakpoint is 1024px */
+            .topbar-right a:not(#cart-icon-wrapper):not([href="/login"]) { /* Hide regular nav links on mobile */
+                display: none;
+            }
+            /* Hide search bar in the new top bar on mobile by default.
+               It will be toggled by JS on click. */
+            .topbar #search-bar-container {
+                display: none; /* Hidden by default on smaller screens */
+            }
+            .topbar #search-magnifier-icon {
+                display: block; /* Show magnifier icon on smaller screens */
+            }
+            /* Adjust the header in dashboard.html to account for the new fixed topbar */
+            body {
+                padding-top: 72px; /* Height of the new topbar, adjust as needed */
+            }
+            #dashboard-header {
+                margin-top: 0; /* Remove top margin if it was pushing content down */
+            }
+            .main-content-area {
+                padding-top: 0; /* Adjust padding if needed */
+            }
+        }
+
+        /* New media query for search bar visibility below 556px */
+        @media (max-width: 556px) {
+            .topbar #search-bar-container {
+                /* Initially hidden below 556px, will be shown by JS on click */
+                display: none;
+                position: absolute;
+                top: 100%; /* Position below the top bar */
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                padding: 0.75rem 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                animation: slideDown 0.3s ease-out forwards;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .topbar #search-bar-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .topbar #search-bar-container input {
+                width: 100%; /* Full width for the search input when open */
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block; /* Always show magnifier icon below 556px */
+                cursor: pointer;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles (copied from garage.html for reuse) */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        .mobile-menu-overlay-blurred {
+        backdrop-filter: blur(5px); /* Adjust blur intensity as needed */
+        -webkit-backdrop-filter: blur(5px); /* For Safari support */
+    }
+
+    #appointmentModal .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    }
+
+     #menu-toggle {
+        /* Add transition for smooth animation */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Style when the menu is open (toggle button active) */
+    #menu-toggle.is-open {
+        transform: translateX(40px) rotate(45deg); /* Adjust 40px for desired slide distance */
+        /* You might need to adjust `transform-origin` if the rotation looks off.
+           It defaults to center, which is usually fine. */
+    }
+
+     /* New CSS for the main content wrapper to push it when sidebar is open */
+    #main-content-wrapper {
+        transition: transform 0.3s ease-in-out; /* Smooth transition for the content wrapper */
+        margin-top: auto;
+    }
+
+    #main-content-wrapper.sidebar-open {
+        transform: translateX(16rem); /* Matches the width of w-64 (16rem = 256px) */
+    }
+
+    /* Prevent horizontal scrolling when the content is pushed */
+    body.sidebar-open {
+        overflow-x: hidden;
+    }
+
+    /* Ensure the topbar remains visible on mobile (overrides any hidden class) */
+    @media (max-width: 1023px) {
+        .topbar {
+            display: flex !important;
+        }
+    }
+
+    /* Ensure the topbar remains visible on mobile so the button can animate */
+    @media (max-width: 1023px) {
+        .topbar {
+            display: flex !important; /* Ensures the topbar is always displayed on mobile */
+        }
+        /* No need to hide the topbar anymore when the sidebar opens, as the overlay handles it */
+    }
+
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen flex-col">
+
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <div class="topbar" id="main-topbar">
+        <div class="topbar-left">
+            <button id="menu-toggle" class="text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md lg:hidden">
+        </button>
+            <a href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="RideRescue Logo" style="height: 30px;">
+            </a>
+        </div>
+                
+        <div class="topbar-right">
+            <button id="search-magnifier-icon" class="p-2 text-gray-600 focus:outline-none hidden">
+                <i class="fa-solid fa-magnifying-glass fa-lg" style="color: #ffffff;"></i>
+            </button>
+
+            <div id="search-bar-container" class="relative hidden sm:block">
+                <input type="text" placeholder="Search..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-64">
+            </div>
+            <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+                <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+                <span id="cart-count" style="
+                        position: absolute;
+                        top: -8px;
+                        right: -10px;
+                        background: red;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        padding: 2px 6px;
+                        display: none;
+                    ">0</span>
+            </div>
+            
+            <a href="/logout">
+                <i class="fa-solid fa-chart-simple fa-lg" style="color: #ff0000; margin-right: 10px;"></i>
+            </a>
+    <img id="topbar-avatar" src="{{ url_for('static', filename='avatars/' + (user.profile_image or 'default_avatar.png')) }}" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+        <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+
+                </div>
+            </div>
+        </div>
+            <div id="main-content-wrapper" class="flex-grow">
+        <main class="p-4 sm:p-8 overflow-y-auto main-content-area">
+                    <div id="toast" class="text-white"></div>
+<h1 class="mb-6 text-3xl font-bold text-gray-900" id="dashboard-header">Welcome, <span id="user-greeting"></span>!</h1>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div
+                        class="bg-gradient-to-r from-blue600 to-primary text-white p-6 rounded-xl shadow-lg flex items-center justify-between card-animate">
+                        <div>
+                            <p class="text-lg font-medium">Total Vehicles</p>
+                            <p id="total-vehicles" class="text-4xl font-bold mt-1">0</p>
+                        </div>
+                            <i class="fa-solid fa-car fa-2xl" style="color: #ffffff;"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200 card-animate"
+                        style="animation-delay: 0.2s;">
+                        <div>
+                            <p class="text-lg font-medium text-gray-600">Upcoming Appointments</p>
+                            <p id="upcoming-appointments" class="text-4xl font-bold mt-1 text-gray-800">0</p>
+                        </div>
+                            <i class="fa-solid fa-calendar-day fa-2xl" style="color: #2563eb;"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200 card-animate"
+                        style="animation-delay: 0.3s;">
+                        <div>
+                            <p class="text-lg font-medium text-gray-600">Total Spent (YTD)</p>
+                            <p id="total-spent" class="text-4xl font-bold mt-1 text-gray-800">$0.00</p>
+                        </div>
+                            <i class="fa-solid fa-coins fa-2xl" style="color: #ffc400;"></i>                    
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex items-center justify-between"
+    style="animation-delay: 0.4s;"> <div>
+        <p class="text-lg font-medium text-gray-600">Maintenance Alerts</p>
+        <p id="maintenance-alerts" class="text-4xl font-bold mt-1 text-gray-800">0</p>
+    </div>
+    <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color: #ff0000;"></i>
+</div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.5s;">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                My Garage
+            </h2>
+                            <div id="garage-vehicles-list" class="text-gray-700 text-base space-y-4">
+                                <p class="text-gray-500">Loading vehicles...</p>
+                            </div>
+                            <button
+                                class="bg-blue600 hover:bg-blue700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue600 transition-all shadow-md mt-6"
+                                id="go-to-garage-btn">Manage Vehicles</button>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.6s;">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                    Upcoming Appointments & Services
+            </h2>
+                            <div id="upcoming-appointments-list" class="space-y-4">
+                                <p class="text-gray-500">No upcoming appointments or pending services.</p>
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.7s;">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-800">Quick Actions</h2>
+                            <div class="flex flex-col space-y-3">
+                                <button
+                                    class="w-full bg-primary hover:bg-accent text-white font-semibold py-2 rounded-md transition-all shadow-sm"
+                                    id="quick-add-vehicle-btn">
+                                    <span class="flex items-center justify-center">
+                                        <i class="fa-solid fa-square-check fa-lg text-xl mr-2"></i>
+                                        Add New Vehicle
+                                    </span>
+                                </button>
+                                <button
+    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm"
+    id="quick-book-appointment-btn"> <span class="flex items-center justify-center">
+                <i class="fa-solid fa-calendar-check fa-lg text-xl mr-2"></i> Book New Appointment
+    </span>
+</button>
+                                <button onclick="toggleUpdateProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm">
+    <span class="flex items-center justify-center">
+        <i class="fa-solid fa-user-pen fa-lg text-xl mr-2"></i>
+        Update Profile
+    </span>
+</button>
+
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate"
+                            style="animation-delay: 0.8s;">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-800">Account Actions</h2>
+                            <p class="text-gray-700 text-base mb-4">Manage your account settings, or clear saved data.</p>
+                            <div class="flex flex-col space-y-3">
+                                <button
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 transition-all shadow-md"
+                                    id="clear-data-btn">
+                                    <span class="flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Clear Data
+                                    </span>
+                                </button>
+                                <button
+                                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-md border border-gray-300 transition-all shadow-sm">
+                                    <span class="flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-600"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path
+                                                d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 2.464V16a1 1 0 102 0v-1.768a2 2 0 000-2.464V4zM11 4a1 1 0 00-2 0v1.268a2 2 0 000 2.464V16a1 1 0 102 0V7.732a2 2 0 000-2.464V4zM17 4a1 1 0 00-2 0v1.268a2 2 0 000 2.464V16a1 1 0 102 0V7.732a2 2 0 000-2.464V4z" />
+                                        </svg>
+                                        Change Password
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Vehicle Modal -->
+    <div id="addVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAddVehicleModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Add New Vehicle</h2>
+      <form id="addVehicleForm" class="space-y-4">
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="add-vehicle-dynamic-area">
+                    <!-- The dynamic dropdown will be injected here by JavaScript -->
+                </div>
+                <div>
+                    <label for="addVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="addVehicleVIN" name="vin" required minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}"
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="VIN must be 17 alphanumeric characters (excluding I, O, Q)." oninput="this.value = this.value.toUpperCase()">
+                    <span id="vinWarning" class="text-red-500 text-sm mt-1 hidden">VIN must be 17 alphanumeric characters (excluding I, O, Q).</span>
+                </div>
+                <div>
+                    <label for="addVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="addVehicleLicense" name="license" placeholder="XXX-XXX" pattern="[A-Z0-9]{3}-[A-Z0-9]{3}"
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="License plate should be in XXX-XXX format (e.g., ABC-123)." oninput="formatLicensePlate(this)">
+                </div>
+                <div>
+                    <label for="addVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="addVehicleMileage" name="mileage" placeholder="XXX,XXX" pattern="[0-9]{1,3},[0-9]{3}"
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="Mileage should be in XXX,XXX format (e.g., 123,456)." oninput="formatMileage(this)">
+                </div>
+                <button type="submit"
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">
+                    Add Vehicle
+                </button>
+            </form>
+    </div>
+  </div>
+
+  <div id="vehicles-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeVehiclesModal">&times;</span>
+      <h2 class="text-2xl font-semibold mb-4">Your Vehicles</h2>
+      <div id="vehiclesModalList" class="space-y-2"></div>  
+    </div>
+  </div>
+
+  
+<div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAppointmentModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="{{ url_for('static', filename='icons/newAppointment.png') }}" alt="Book New Appointment" style="height: 32px; vertical-align: middle; margin-right: 5px;">
+                Schedule Appointment
+            </h2>
+      <form id="appointmentForm" class="space-y-4">
+                <div>
+                    <label for="vehicleSelect" class="block text-sm font-medium text-gray-700">Vehicle</label>
+                    <select id="vehicleSelect" name="vehicle" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        <option value="">Loading vehicles...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Services</label>
+                    <div id="servicesCheckboxesContainer" class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <p class="text-gray-500 col-span-full">Select a vehicle to see available services.</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                    <div class="flex justify-between text-sm text-gray-700">
+                        <span>Subtotal:</span>
+                        <span>$<span id="subtotalAmount">0.00</span></span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-700">
+                        <span>Tax (5.6%):</span>
+                        <span>$<span id="taxAmount">0.00</span></span>
+                    </div>
+                    <div class="flex justify-between text-lg font-semibold text-gray-800">
+                        <span>Total:</span>
+                        <span>$<span id="totalAmount">0.00</span></span>
+                    </div>
+                </div>
+                <div>
+                    <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="appointmentDate" name="appointmentDate" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="appointmentTime" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="appointmentTime" name="appointmentTime" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700">Additional Notes (Optional)</label>
+                    <textarea id="notes" name="notes" rows="3"
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="generatePdf" name="generatePdf" class="h-4 w-4 text-primary border-gray-300 rounded">
+                    <label for="generatePdf" class="ml-2 block text-sm text-gray-900">Generate PDF confirmation</label>
+                </div>
+                <button type="submit"
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">
+                    Confirm Appointment
+                </button>
+            </form>
+    </div>
+  </div>
+
+
+
+
+  <div id="editAppointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditAppointmentModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="{{ url_for('static', filename='icons/newAppointment.png') }}" alt="Appointment" style="height: 32px; vertical-align: middle; margin-right: 5px;">
+                Edit Appointment
+            </h2>
+      <form id="editAppointmentForm" class="space-y-4">
+                <input type="hidden" id="editAppointmentId">
+                <div>
+                    <label for="editAppointmentDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="editAppointmentDate" name="appointment_date" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentTime" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="editAppointmentTime" name="appointment_time" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentServices" class="block text-sm font-medium text-gray-700">Services Needed (comma-separated)</label>
+                    <input type="text" id="editAppointmentServices" name="services_needed" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editAppointmentVehicle" class="block text-sm font-medium text-gray-700">Vehicle Info</label>
+                    <input type="text" id="editAppointmentVehicle" name="vehicle_info" required
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit"
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">
+                    Save Changes
+                </button>
+            </form>
+    </div>
+  </div>
+
+
+
+
+<div id="update-profile-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+  <div class="bg-white w-full max-w-xl mx-auto rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="{{ url_for('static', filename='icons/userColor.png') }}" alt="User Color" style="height: 32px; vertical-align: middle; margin-right: 5px;">
+                Update Profile
+            </h2>
+      <form id="modalProfileForm" class="p-6 space-y-4">
+      <div>
+        <label for="modal-name" class="block text-sm font-medium text-gray-700">Name</label>
+        <input type="text" id="modal-name" name="name" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+      </div>
+      <div>
+        <label for="modal-email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="modal-email" name="email" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+      </div>
+      <div>
+        <label for="modal-address" class="block text-sm font-medium text-gray-700">Address</label>
+        <input type="text" id="modal-address" name="address" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+      </div>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label for="modal-city" class="block text-sm font-medium text-gray-700">City</label>
+          <input type="text" id="modal-city" name="city" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div class="flex-1">
+          <label for="modal-state" class="block text-sm font-medium text-gray-700">State</label>
+          <input type="text" id="modal-state" name="state" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+        </div>
+        <div class="flex-1">
+          <label for="modal-zip" class="block text-sm font-medium text-gray-700">Zip</label>
+          <input type="text" id="modal-zip" name="zip" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+        </div>
+      </div>
+      <div>
+        <label for="modal-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+        <input type="tel" id="modal-phone" name="phone" class="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+      </div>
+      <div class="flex items-center">
+        <input type="checkbox" id="modal-text-optin" name="text_optin" class="mr-2">
+        <label for="modal-text-optin" class="text-sm text-gray-700">I agree to receive appointment reminders by text</label>
+      </div>
+      <div class="flex items-center">
+        <input type="checkbox" id="modal-billing-match" name="billing_match" class="mr-2">
+        <label for="modal-billing-match" class="text-sm text-gray-700">Billing address same as above</label>
+      </div>
+      <button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent transition-colors duration-300 shadow">Save Changes</button>
+    </form>
+    </div>
+  </div>
+
+  <div id="changePasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="close-password">&times;</span>
+      <h2 class="text-2xl font-semibold mb-4">Change Password</h2>
+      <form id="password-form" class="space-y-4">
+        <input id="old-password" name="old_password" type="password" placeholder="Current Password" class="w-full border rounded px-3 py-2"/>
+        <input id="new-password" name="new_password" type="password" placeholder="New Password" class="w-full border rounded px-3 py-2"/>
+        <input id="confirm-password" name="confirm_password" type="password" placeholder="Confirm Password" class="w-full border rounded px-3 py-2"/>
+        <button type="submit" class="w-full bg-red600 hover:bg-red700 text-white py-2 rounded">Change</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirmation</h3>
+      <p id="confirmationMessage" class="mb-6"></p>
+      <div class="flex justify-end space-x-4">
+        <button id="cancelButton" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+        <button id="confirmButton" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed left-1/2 transform -translate-x-1/2 bottom-8 z-[1000] text-white p-4 rounded-md shadow-lg transition-all duration-300 ease-out"></div>
+
+   <footer class="w-full bg-white py-4 mt-auto">
+        <div class="max-w-md mx-auto text-center text-gray-500 text-sm">
+            <p>&copy; 2025 RideRescue. All rights reserved.</p>
+            <p class="font-medium mt-1">Auto repair. Handled.</p>
+        </div>
+    </footer>
+
+            <div class="blur-overlay" id="blur-overlay"></div>
+
+            <div id="cart-summary" class="fixed right-4 bottom-4 bg-white p-4 rounded-xl shadow-lg w-80 border border-gray-300 z-50 hidden">
+    <div id="cart-header" class="flex justify-between items-center mb-2">
+        <h3 id="cart-title" class="text-lg font-semibold text-gray-800">My Cart:</h3>
+        <button id="toggle-cart-btn" onclick="toggleCartVisibility()" class="text-red-500 text-sm font-bold">❌</button>
+    </div>
+    <div id="cart-items" class="text-gray-700 text-sm mb-4">No items yet.</div>
+    <div id="totals" class="text-gray-700 text-sm space-y-1">
+        <p><strong>Subtotal:</strong> $<span id="subtotal">0.00</span></p>
+        <p><strong>Tax (5.6%):</strong> $<span id="tax-amount">0.00</span></p>
+        <p><strong>Total:</strong> $<span id="total-amount">0.00</span></p>
+    </div>
+    <div class="mt-4 flex flex-col gap-2">
+        <button id="proceed-to-booking-btn" onclick="proceedToBooking()" class="w-full bg-primary text-white py-2 px-3 rounded hover:bg-accent font-semibold">📅 Book a Service Call</button>
+        <button id="download-pdf-btn" onclick="downloadPDF()" class="w-full bg-gray-100 border border-gray-300 text-gray-800 py-2 px-3 rounded hover:bg-gray-200">📄 Download as PDF</button>
+    </div>
+</div>
+        </main>
+    </div>
+</div>

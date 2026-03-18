@@ -1,0 +1,489 @@
+/* Custom styles for elements not easily handled by Tailwind or for specific overrides */
+
+/* Global Body Styling */
+body {
+    font-family: 'Inter', sans-serif;
+    color: #1F2937; /* A dark gray for main text */
+    padding-top: 54px; /* Adjust this value based on the actual height of your topbar */
+}
+
+.close-icon-img {
+    width: 20px; /* Adjust as needed */
+    height: 20px; /* Adjust as needed */
+    vertical-align: middle; /* Helps with alignment if it's next to text */
+}
+
+/* === Topbar === */
+.topbar {
+    background-color: #000000; /* gray900 */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    position: fixed;
+    width: 100%;
+    top: 0; /* <<< ADD THIS LINE */
+    z-index: 101; /* Higher z-index than navbar */
+}
+
+.topbar-left img {
+    vertical-align: middle;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.topbar-right a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.topbar-right a:hover {
+    color: #9CA3AF; /* gray400 */
+}
+
+/* General Navbar Styling */
+.vehicle-selection-bar {
+    background-color: #1F2937; /* gray800 from your config */
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 50;
+}
+
+.vehicle-selection-bar .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vehicle-select-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#vehicle-select-label {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+/* Dropdown styling */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-box {
+    display: none;
+    position: absolute;
+    top: 100%; /* ADD THIS LINE */
+    background-color: #1F2937;
+    min-width: 280px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 100;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dropdown:hover .dropdown-box,
+.dropdown.active .dropdown-box {
+    display: flex;
+}
+
+.dropdown-content {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.dropdown-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.dropdown-content ul li {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 120px;
+}
+
+.dropdown-content ul li a {
+    color: white;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.dropdown-content ul li a:hover {
+    background-color: #2D3748;
+}
+
+.dropdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+}
+
+#vehicle-dynamic-area {
+    width: 344px; /* Sets a fixed width for the container */
+}
+
+#vehicle-dynamic-area select {
+    width: 100%;  /* Existing style */
+    text-align: center; /* Add this line */
+    border-radius: 4px; /* This is equivalent to Tailwind's rounded-md */
+    /* To visually center options within the select box, especially on desktop */
+    text-align-last: center; /* For some browsers (Firefox might need this for options) */
+    height: 30px;
+}
+
+/* If you have a specific ID for the select element, e.g., <select id="vehicle-year-select"> */
+#vehicle-year-select {
+    text-align: center;
+    text-align-last: center;
+}
+
+/* Mobile specific styles (and hiding desktop elements) */
+@media (max-width: 767px) {
+    .vehicle-selection-bar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+      /* On mobile, remove the padding fix as hover is not the primary interaction */
+    .dropdown {
+        padding-bottom: 0;
+    }
+
+    .vehicle-select-group {
+        display: flex; /* Ensure it's a flex container */
+        flex-direction: row; /* <-- CHANGE THIS: Make items go side-by-side */
+        align-items: center; /* Vertically align items */
+        justify-content: center; /* Horizontally center items within the group */
+        gap: 10px; /* Add space between the label and the dropdown */
+        width: 100%;
+        margin: 0 auto;
+        flex-wrap: wrap; /* <-- IMPORTANT: Allows items to wrap to the next line if they don't fit */
+    }
+
+    .vehicle-action-buttons { /* NEW RULE FOR THE WRAPPER */
+        display: flex; /* Make it a flex container */
+        flex-direction: row; /* Arrange items in a row */
+        gap: 10px; /* Add space between the buttons */
+        width: 100%; /* Make the wrapper take full width of its parent */
+        justify-content: center; /* Center the buttons if they don't fill 100% width */
+        align-items: center; /* Align buttons vertically if they had different heights */
+        flex-wrap: wrap; /* Allow buttons to wrap to the next line if the screen is too narrow */
+        margin-top: 10px; /* Add some space above the buttons if needed */
+        box-sizing: border-box; /* Good practice */
+    }
+
+    .vehicle-action-buttons button { /* Adjust button styling for side-by-side on mobile */
+        /* Remove or override the w-full class from the HTML for mobile here */
+        width: calc(50% - 5px); /* Each button takes roughly half width, accounting for gap */
+        min-width: 140px; /* Optional: ensures buttons don't become too small on very narrow screens */
+        box-sizing: border-box; /* Include padding/border in the width calculation */
+        /* You can remove the w-full md:w-auto from the button's class attribute
+           in HTML if you want this CSS to fully control the width on mobile.
+           Otherwise, w-full will override width: calc(50% - 5px) unless you use !important or make the CSS more specific.
+           It's usually cleaner to remove the conflicting Tailwind class from the HTML. */
+    }
+
+    .vehicle-selection-bar .left {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 5px;
+    }
+    
+     #vehicle-select-label {
+        /* Remove any fixed width that might be too large for side-by-side on mobile */
+        width: auto; /* Let it take its content width initially */
+        max-width: calc(50% - 5px); /* Allow it to take up to half the width minus half the gap */
+        flex-shrink: 1; /* Allow it to shrink if needed */
+        flex-grow: 0; /* Prevent it from growing unnecessarily if not needed */
+        margin-bottom: 0; /* Remove previous margin for column layout */
+        box-sizing: border-box;
+    }
+
+    
+
+     #vehicle-dynamic-area select {
+        width: 360px; /* Set a fixed width for the select box on mobile */
+        max-width: 100%; /* Ensures it doesn't overflow smaller screens */
+        box-sizing: border-box; /* Good practice for consistent sizing */
+        height: 30px;
+    }
+
+    /* Ensure mobile menu button is always visible on all screen sizes to toggle the nav links */
+    .topbar-right #mobile-menu-button {
+        display: block; /* Always show the hamburger icon */
+    }
+}
+
+
+/* Blur Overlay */
+.blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s;
+}
+
+.blur-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Cart Summary */
+#cart-summary {
+    position: fixed;
+    right: -100%; /* Start off-screen */
+    top: 0;
+    height: 100%;
+    width: 80%;
+    background-color: #FFFFFF;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 20px;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+#cart-summary.open {
+    right: 0; /* Slide in */
+}
+
+/* Header section with title and close button */
+    #cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    #cart-title {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.6em;
+        font-weight: 600;
+    }
+
+    #toggle-cart-btn {
+        background: transparent;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #95a5a6;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    #toggle-cart-btn:hover {
+        transform: rotate(90deg);
+        color: #e74c3c;
+    }
+
+    /* Styling for the cart items container (will be populated by JS) */
+    #cart-items {
+        min-height: 50px; /* Ensure some space even when empty */
+        margin-bottom: 15px;
+        color: #555;
+        font-size: 0.95em;
+    }
+
+    /* Styling for the totals section */
+    #totals {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        padding: 15px;
+        line-height: 1.8;
+        font-size: 1em;
+        margin-top: 15px;
+    }
+
+    #totals strong {
+        color: #2c3e50;
+    }
+
+    #subtotal, #tax-amount, #total-amount {
+        font-weight: 600;
+        color: #e67e22; /* A nice accent color */
+    }
+
+    #total-amount {
+        font-size: 1.1em;
+        color: #27ae60; /* A distinct color for the final total */
+    }
+
+    /* Styling for buttons */
+    #proceed-to-booking-btn,
+    #download-pdf-btn {
+        display: block; /* Make buttons stack vertically */
+        width: 100%;
+        padding: 12px 15px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    #proceed-to-booking-btn {
+        background-color: #3498db;
+        color: white;
+    }
+
+    #proceed-to-booking-btn:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    #download-pdf-btn {
+        background-color: #9b59b6;
+        color: white;
+    }
+
+    #download-pdf-btn:hover {
+        background-color: #8e44ad;
+        transform: translateY(-2px);
+    }
+
+/* Slider Section */
+.slider-container {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    height: 300px
+}
+
+.slides {
+    height: 100%;
+}
+
+.slide {
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Accordion */
+.accordion[open] summary .fas {
+    transform: rotate(180deg);
+}
+
+.accordion-content ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+}
+.accordion-content ul li {
+    margin-bottom: 0.5rem;
+}
+.accordion-content p {
+    margin-bottom: 1rem;
+}
+
+/* Trusted Brands Carousel */
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.carousel-track {
+    display: flex;
+    animation: marquee 200s linear infinite;
+    width: calc(2 * (28 * (8rem + 2rem))); /* Duplicated brands calculation */
+}
+
+/* Styles for the container of each brand image */
+.brand-image-wrapper {
+    /* Define the exact box dimensions */
+    width: 130px;
+    /* These properties mimic the original Tailwind classes */
+    flex-shrink: 0; /* Equivalent to flex-shrink-0 */
+    display: block; /* Equivalent to flex */
+    align-items: center; /* Equivalent to items-center */
+    justify-content: center; /* Equivalent to justify-center */
+    padding: 0px 8px 0px 8px; /* Equivalent to p-2 (1 unit = 4px, so 2*4=8px) */
+    margin: 0 16px; /* Equivalent to mx-4 (4*4=16px) */
+
+    /* Crucial: Hide any overflowing parts of the image */
+    overflow: hidden;
+}
+
+/* Styles for the images themselves */
+.brand-image {
+    /* Make the image fill the entire 120x80 container */
+    width: 100%;
+    height: 100%;
+
+    /* This is the key property:
+       - Preserves the aspect ratio of the image.
+       - Fills the entire content box (120x80px).
+       - Crops the image if its aspect ratio does not match the content box.
+    */
+    object-fit: contain;
+}
+
+/* Handling the default/hover visibility for the images */
+/* Initially hide the hover image */
+.brand-image.hover {
+    display: none;
+}
+
+/* On hover of the wrapper, hide the default image */
+.brand-image-wrapper:hover .brand-image.default {
+    display: none;
+}
+
+/* On hover of the wrapper, show the hover image */
+.brand-image-wrapper:hover .brand-image.hover {
+    display: block;
+}
+
+/* Footer */
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul a {
+    display: block;
+}

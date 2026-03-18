@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Login - RideRescue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray300: '#D1D5DB',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.15s ease-in-out;
+        }
+
+        .toggle-password:hover {
+            color: #1F2937;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            color: #4b5563;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .social-button:hover {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .social-button img {
+            height: 20px;
+            width: 20px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body class="bg-white flex flex-col items-center justify-between min-h-screen">
+
+    <div class="topbar" style="display: flex; justify-content: space-between; height: 55px; align-items: center; padding: 8px 16px; background-color: #000000;">
+    
+    <!-- Left: Logo -->
+    <div class="topbar-left" style="flex: 1; display: flex; align-items: center;">
+        <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="/static/logo.png" alt="RideRescue Logo" style="height: 30px;">
+        </a>
+    </div>
+
+    <!-- Center: Slogan -->
+    <div class="topbar-center" style="flex: 1; display: flex; justify-content: center; align-items: center;">
+        <img src="/static/sloganWhite.png" alt="Slogan" style="height: 40px;">
+    </div>
+
+    <!-- Right: Cart -->
+    <div class="topbar-right" style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+        <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+            <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ffffff; margin-right: 10px;"></i>
+            <span id="cart-count" style="
+                position: absolute;
+                top: -8px;
+                right: -10px;
+                background: red;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                border-radius: 50%;
+                padding: 2px 6px;
+                display: none;
+            ">0</span>
+        </div>
+        
+
+<button id="mobile-menu-button"><i class="fa-solid fa-ellipsis-vertical fa-xl" style="color: #ffffff; margin-left: 10px;"></i>
+
+</button>
+
+<div id="mobile-nav-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-[99] flex flex-col items-center justify-center p-8 hidden">    <button id="close-mobile-nav" class="absolute top-4 right-4 text-white text-3xl focus:outline-none">×</button>
+
+    <div class="flex flex-col space-y-6 text-2xl text-white text-center">
+        <a href="/">
+    <img src="{{ url_for('static', filename='icons/home.png') }}" alt="Home icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  Home
+</a>
+        <a href="/about">
+  <img src="{{ url_for('static', filename='icons/about.png') }}" alt="About icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  About
+</a>
+
+        <div class="dropdown w-full">
+            <a href="/services" class="services-toggle">
+  <img src="{{ url_for('static', filename='icons/mechanic.png') }}" alt="Mechanic icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">Services 
+</a>
+            <div class="dropdown-box hidden flex flex-col space-y-4 text-xl">
+          <a href="/services/engine"><img src="{{ url_for('static', filename='icons/carEngine.png') }}" alt="Car engine icon" style="height: 32px;"> Engine</a>
+          <a href="/services/brakes"><img src="{{ url_for('static', filename='icons/discBrake.png') }}" alt="Disc brake icon" style="height: 32px;"> Brakes</a>
+          <a href="/services/diagnostics"><img src="{{ url_for('static', filename='icons/carSuspension.png') }}" alt="Car suspension icon" style="height: 32px;"> Suspension</a>
+          <a href="/services/suspension"><img src="{{ url_for('static', filename='icons/lightning.png') }}" alt="Lightning icon" style="height: 32px;"> Electrical</a>
+          <a href="/maintenance"><img src="{{ url_for('static', filename='icons/wrenchWhite.png') }}" alt="White wrench icon" style="height: 32px;"> Maintenance</a>
+          <a href="/services/diagnostics"><img src="{{ url_for('static', filename='icons/diagnostics.png') }}" alt="Scan tool icon" style="height: 32px;"> Diagnostics</a>
+          <a href="/services/transmission"><img src="{{ url_for('static', filename='icons/transmission.png') }}" alt="Transmission icon" style="height: 32px;"> Transmission</a>
+          <a href="/services/body"><img src="{{ url_for('static', filename='icons/body.png') }}" alt="Car body icon" style="height: 32px;"> Body</a>
+          <a href="/services/steering"><img src="{{ url_for('static', filename='icons/steering.png') }}" alt="Steering wheel icon" style="height: 32px;"> Steering</a>
+          <a href="/services/miscellaneous"><img src="{{ url_for('static', filename='icons/miscellaneous.png') }}" alt="Miscellaneous icon" style="height: 32px;"> Miscellaneous</a>
+            </div>
+        </div>
+        <a href="/maintenance">
+  <img src="{{ url_for('static', filename='icons/wrench.png') }}" alt="Wrench icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">Maintenance
+</a>
+        <a href="/codes">
+  <img src="{{ url_for('static', filename='icons/checkengine.png') }}" alt="Check engine light icon" style="height: 30px; vertical-align: middle; margin-right: 6px;">
+  Codes
+</a>
+        <a href="/contact">
+  <img src="{{ url_for('static', filename='icons/contactUs.png') }}" alt="Contact us icon" style="height: 24px; vertical-align: middle; margin-right: 6px;">
+  Contact Us
+</a>
+    </div>
+</div>
+
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+
+    <div class="bg-white p-8 rounded-lg w-full max-w-md my-auto">
+        <h2 class="text-2xl font-bold mb-0 text-center tracking-tighter text-gray-800">Sign in to your account</h2>
+
+        <p class="tracking-tighter text-center text-sm text-gray-600">
+            New to RideRescue?
+            <a href="/register" class="font-medium text-blue600 hover:text-blue700 transition">Create account</a>
+        </p>
+
+        <div id="message-area" class="mb-4 text-center tracking-tighter text-sm" aria-live="polite"></div>
+
+        <form id="login-form" class="space-y-5">
+            <div>
+                <input type="email" id="email" name="email" required autocomplete="email"
+                    class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent transition"
+                    placeholder="Email">
+                <span id="email-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+            </div>
+
+            <div>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required autocomplete="current-password"
+                        class="w-full px-4 py-3 border tracking-tighter border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue600 focus:border-transparent pr-12 transition"
+                        placeholder="Password">
+                    <span class="toggle-password"
+                        onclick="togglePasswordVisibility('password', 'toggle-icon-password')">
+                        <svg id="toggle-icon-password" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </span>
+                </div>
+                <span id="password-warning" class="text-red-500 text-sm mt-1 hidden"></span>
+                <div class="text-right">
+    <a href="/forgot-password" class="text-sm tracking-tighter text-blue600 hover:text-blue700 transition">
+        Forgot password?
+    </a>
+</div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <label class="flex items-center cursor-pointer -mt-6">
+                    <input id="remember-me" name="remember_me" type="checkbox"
+                        class="h-4 w-4 tracking-tighter text-blue600 focus:ring-blue600 border-gray-300 rounded" checked>
+                    <span class="ml-2 text-sm tracking-tighter text-gray-700">Remember me</span>
+                </label>
+            </div>
+
+            <button type="submit" id="login-button"
+                class="w-full bg-gray300 tracking-tighter text-gray600 font-semibold py-3 rounded-md focus:outline-none focus:shadow-outline transition duration-150 ease-in-out mt-6 cursor-not-allowed"
+                disabled>
+                <i class="fa-solid fa-lg fa-user-check mr-2"></i>
+                Login
+            </button>
+
+            <div class="text-center tracking-tighter my-6 text-gray-500">
+                — or —
+            </div>
+
+            <div class="flex flex-col tracking-tighter space-y-3">
+                <button type="button" class="social-button" onclick="window.location.href='/auth/google'">
+                    <img src="https://www.google.com/favicon.ico" alt="Google icon">
+                    Continue with Google
+                </button>
+                <button type="button" class="social-button" onclick="window.location.href='/auth/facebook'">
+                    <img src="https://www.facebook.com/favicon.ico" alt="Facebook icon">
+                    Continue with Facebook
+                </button>
+                <button type="button" class="social-button" onclick="window.location.href='/auth/apple'">
+                    <img src="https://www.apple.com/favicon.ico" alt="Apple icon">
+                    Continue with Apple
+                </button>
+            </div>
+
+            <div class="flex items-center justify-center mt-6">
+                <label class="flex items-center cursor-pointer">
+                    <input id="stay-signed-in" name="stay_signed_in" type="checkbox" checked
+                        class="h-4 w-4 text-blue600 focus:ring-blue600 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-700">Stay signed in</span>
+                    <span class="ml-1 text-gray-500 text-sm cursor-pointer" onclick="showInfoModal()">
+                    </span>
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <footer class="w-full bg-white py-4 mt-auto">
+        <div class="max-w-md mx-auto tracking-tighter text-center text-gray-500 text-xs">
+            <p>&copy; 2025 RideRescue. All rights reserved.</p>
+            <p class="font-medium">Auto repair. Handled.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to toggle password visibility
+        function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            const isPassword = passwordInput.type === 'password';
+
+            if (isPassword) {
+                passwordInput.type = 'text';
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                </svg>`;
+            } else {
+                passwordInput.type = 'password';
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>`;
+            }
+        }
+
+        // Function to show the info modal for "Stay signed in"
+        function showInfoModal() {
+            alert("Staying signed in makes it easier to use this site on this device. You can turn this off at any time.");
+            // For a more advanced implementation, you'd show a proper modal dialog here
+        }
+
+        // Get all necessary elements once
+        const loginForm = document.getElementById('login-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailWarning = document.getElementById('email-warning');
+        const passwordWarning = document.getElementById('password-warning');
+        const messageArea = document.getElementById('message-area');
+        const loginButton = document.getElementById('login-button');
+
+        // Keep track of which fields have been "interacted" with (blurred at least once)
+        const interactedFields = new Set();
+
+        // Define common valid email endings (you can expand this list)
+        const validEmailEndings = [
+            '.com', '.org', '.net', '.edu', '.gov', '.io', '.co', '.info', '.biz', '.tech',
+            '.app', '.dev', '.blog', '.online', '.store', '.me', '.us', '.ca', '.uk', '.au',
+            '.de', '.fr', '.jp', '.cn', '.in', '.ru', '.br', '.it', '.es', '.nl', '.xyz', '.site'
+        ];
+
+        // Helper to show/hide warning and manage input border
+        function setWarning(inputElement, warningElement, message) {
+            if (message) {
+                warningElement.textContent = message;
+                warningElement.classList.remove('hidden');
+                inputElement.classList.add('border-red-500');
+                return false;
+            } else {
+                warningElement.classList.add('hidden');
+                warningElement.textContent = '';
+                inputElement.classList.remove('border-red-500');
+                return true;
+            }
+        }
+
+        // Validation Functions - now return true/false
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            if (email === '') {
+                return setWarning(emailInput, emailWarning, 'Please enter your email.');
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return setWarning(emailInput, emailWarning, 'Please enter a valid email format (e.g., example@domain.com).');
+            }
+            const domain = email.substring(email.lastIndexOf('@') + 1).toLowerCase();
+            const hasValidEnding = validEmailEndings.some(ending => domain.endsWith(ending));
+            if (!hasValidEnding) {
+                return setWarning(emailInput, emailWarning, 'Email address has an invalid or uncommon domain ending.');
+            }
+            return setWarning(emailInput, emailWarning, '');
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value.trim();
+            if (password === '') {
+                return setWarning(passwordInput, passwordWarning, 'Please enter a password.');
+            } else if (password.length < 8) { // Consistent with register.html
+                return setWarning(passwordInput, passwordWarning, 'Password must be at least 8 characters long.');
+            }
+            return setWarning(passwordInput, passwordWarning, '');
+        }
+
+        // Update the login button's disabled state and styling
+        // This version only checks for content and if client-side validation passes for actual submission.
+        // It does NOT trigger warnings directly.
+        function updateLoginButtonState() {
+            const hasEmailContent = emailInput.value.trim() !== '';
+            const hasPasswordContent = passwordInput.value.trim() !== '';
+
+            const canEnableButton = hasEmailContent && hasPasswordContent && passwordInput.value.length >= 8;
+
+            if (canEnableButton) {
+                loginButton.classList.remove('bg-gray300', 'text-gray600', 'cursor-not-allowed');
+                loginButton.classList.add('bg-blue600', 'hover:bg-blue700', 'text-white');
+                loginButton.disabled = false;
+            } else {
+                loginButton.classList.add('bg-gray300', 'text-gray600', 'cursor-not-allowed');
+                loginButton.classList.remove('bg-blue600', 'hover:bg-blue700', 'text-white');
+                loginButton.disabled = true;
+            }
+        }
+
+        // Add event listeners for blur (to show warnings) and input (to re-check button state)
+        function addValidationListeners(inputElement, validateFunction) {
+            inputElement.addEventListener('blur', () => {
+                interactedFields.add(inputElement.id);
+                validateFunction(); // Run full validation on blur
+                updateLoginButtonState(); // Update button state after validation
+            });
+            inputElement.addEventListener('input', () => {
+                if (interactedFields.has(inputElement.id)) { // Only validate if already interacted
+                    validateFunction(); // Re-validate to clear/update warning
+                }
+                updateLoginButtonState(); // Always update button state on input
+            });
+        }
+
+        addValidationListeners(emailInput, validateEmail);
+        addValidationListeners(passwordInput, validatePassword);
+
+        // Main form submission logic
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Clear general message area
+            messageArea.textContent = '';
+            messageArea.className = 'mb-4 text-center text-sm';
+
+            // On submit, force all fields to be considered "interacted"
+            // and run full validation on all required fields.
+            interactedFields.add(emailInput.id);
+            interactedFields.add(passwordInput.id);
+
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+
+            if (isEmailValid && isPasswordValid) {
+                console.log('Client-side validation passed. Attempting login...');
+
+                const formData = new FormData(loginForm);
+                const data = Object.fromEntries(formData.entries());
+                data.remember_me = document.getElementById('remember-me').checked;
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        messageArea.textContent = result.message;
+                        messageArea.classList.add('text-green-600');
+                        if (result.redirect_url) {
+                            setTimeout(() => { window.location.href = result.redirect_url; }, 1000);
+                        }
+                    } else {
+                        messageArea.textContent = result.message || 'Login failed. Please check your credentials or try again later.';
+                        messageArea.classList.add('text-red-600');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    messageArea.textContent = 'An unexpected error occurred. Please try again.';
+                    messageArea.classList.add('text-red-600');
+                }
+            } else {
+                messageArea.textContent = 'Please correct the errors above.';
+                messageArea.classList.add('text-red-600');
+                updateLoginButtonState(); // Re-evaluate button state
+            }
+        });
+
+        // Initial call to set the button state when the page loads
+        updateLoginButtonState();
+    </script>
+</body>
+
+</html>

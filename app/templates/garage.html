@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Garage | Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444', // Added for warnings
+                        red600: '#DC2626', // Added for warnings
+                        green600: '#16A34A', // Added for success messages
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Simple fade-in animation for elements */
+        .fade-in-slide-up {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Staggered animation delays for list items */
+        .vehicle-item:nth-child(1) { animation-delay: 0.1s; }
+        .vehicle-item:nth-child(2) { animation-delay: 0.15s; }
+        .vehicle-item:nth-child(3) { animation-delay: 0.2s; }
+        .vehicle-item:nth-child(4) { animation-delay: 0.25s; }
+        .vehicle-item:nth-child(5) { animation-delay: 0.3s; }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        /* Simple fade-in animation for cards */
+        .card-animate {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adjust delays for staggered effect */
+        .card-animate:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card-animate:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card-animate:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card-animate:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card-animate:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .card-animate:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        /* Styles for the Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        /* Modal specific styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+        }
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen">
+
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <aside id="sidebar"
+        class="w-80 bg-gray-900 text-white flex flex-col p-4 shadow-xl fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="flex items-center justify-center mb-8">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Vehicle Manager Logo" class="h-10 mr-3">
+            <span class="text-2xl font-bold">Manager</span>
+        </div>
+        <nav class="flex-grow">
+            <ul>
+                <li class="mb-2">
+                    <a href="/dashboard"
+                        class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                        <img src="{{ url_for('static', filename='icons/dashboard.png') }}" alt="Dashboard" style="height: 20px; vertical-align: left; margin-right: 6px;">
+                        Dashboard
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/garage"
+                        class="flex items-center p-3 rounded-lg bg-gray-800 text-blue-300 font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm1.475 2.5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM7.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H7.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM11.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H11.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM15.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H15.5zM3 13.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        My Garage
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/appointments"
+                        class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Appointments
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a href="/history"
+                        class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm1.293 2.293a1 1 0 011.414 0L10 9.586l3.293-3.293a1 1 0 111.414 1.414L11.414 11l3.293 3.293a1 1 0 01-1.414 1.414L10 12.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 11 5.293 7.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        History
+                    </a>
+                </li>
+                <li class="mb-2">
+                        <a href="/codes" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414zM10 2a8 8 0 100 16 8 8 0 000-16z" clip-rule="evenodd" />
+                            </svg>
+                            Error Codes
+                        </a>
+                    </li>
+            </ul>
+        </nav>
+        <div class="mt-auto">
+            <a href="/"
+                class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                <img src="{{ url_for('static', filename='icons/home.png') }}" alt="Logout" style="height: 20px; vertical-align: left; margin-right: 6px;">
+                Home
+            </a>
+            <a href="/settings"
+                class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                <img src="{{ url_for('static', filename='icons/settings.png') }}" alt="Logout" style="height: 20px; vertical-align: left; margin-right: 6px;">
+                Settings
+            </a>
+            <a href="/logout"
+                class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-white-300">
+                <img src="{{ url_for('static', filename='icons/logout.png') }}" alt="Logout" style="height: 20px; vertical-align: left; margin-right: 6px;">
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex-grow flex flex-col">
+        <header class="w-full bg-white p-4 shadow-sm flex items-center z-10">
+            <button id="menu-toggle" class="lg:hidden p-2 mr-4 text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <div class="relative w-full max-w-xs sm:max-w-md">
+                <input type="text" placeholder="Search for vehicles, appointments, services..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <div class="flex items-center ml-auto lg:ml-4">
+                <span id="user-name-display" class="font-medium text-gray-700 mr-3 hidden sm:inline"></span>
+                <img src="{{ url_for('static', filename='icons/carColor.png') }}" alt="Vehicle Color" style="height: 32px; vertical-align: middle; margin-right: 5px;">
+                <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+            </div>
+        </header>
+
+        <main class="p-4 sm:p-8 overflow-y-auto main-content-area">
+    <div id="toast" class="text-white"></div>
+    <h1 class="mb-10 text-2xl font-semibold text-gray-900 flex items-center justify-between" id="garage-header">
+        <div class="flex items-center">
+            <img src="/static/icons/garageColor.png" alt="My Garage" style="height: 38px; vertical-align: middle; margin-right: 20px; display: inline-block;"> My Garage
+        </div>
+        <button id="add-vehicle-icon-btn" class="ml-3 text-green-600 hover:text-green-700 focus:outline-none">
+                                <img src="{{ url_for('static', filename='icons/circlePlus.png') }}" alt="Circle Plus" class="h-6 mr-3">
+                </button>
+    </h1>
+
+    </div>
+
+    <!-- Edit Vehicle Modal -->
+    <div id="editVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditVehicleModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <img src="{{ url_for('static', filename='icons/carColor.png') }}" alt="Vehicle icon" style="height: 32px; vertical-align: middle; margin-right: 20px;">
+                Change Vehicle
+            </h2>
+            <form id="editVehicleForm" class="space-y-4">
+                <input type="hidden" id="editVehicleId" name="id">
+
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="edit-vehicle-dynamic-area">
+                    <!-- The dynamic dropdown will be injected here by JavaScript -->
+                </div>
+                <div>
+                    <label for="editVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="editVehicleVIN" name="vin" required disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="editVehicleLicense" name="license" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div>
+                    <label for="editVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="editVehicleMileage" name="mileage" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button type="submit" id="editVehicleSaveButton" disabled
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="text-white"></div>
+
+    <!-- Add Vehicle Modal -->
+    <div id="addVehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeAddVehicleModal">&times;</span>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Add New Vehicle</h2>
+            <form id="addVehicleForm" class="space-y-4">
+                <!-- Dynamic dropdown for Year, Make, Model, Engine -->
+                <div id="add-vehicle-dynamic-area">
+                    <!-- The dynamic dropdown will be injected here by JavaScript -->
+                </div>
+                <div>
+                    <label for="addVehicleVIN" class="block text-sm font-medium text-gray-700">VIN</label>
+                    <input type="text" id="addVehicleVIN" name="vin" required minlength="17" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="VIN must be 17 alphanumeric characters (excluding I, O, Q)." oninput="this.value = this.value.toUpperCase()">
+                    <span id="vinWarning" class="text-red-500 text-sm mt-1 hidden">VIN must be 17 alphanumeric characters (excluding I, O, Q).</span>
+                </div>
+                <div>
+                    <label for="addVehicleLicense" class="block text-sm font-medium text-gray-700">License Plate (Optional)</label>
+                    <input type="text" id="addVehicleLicense" name="license" placeholder="XXX-XXX" pattern="[A-Z0-9]{3}-[A-Z0-9]{3}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="License plate should be in XXX-XXX format (e.g., ABC-123)." oninput="formatLicensePlate(this)">
+                </div>
+                <div>
+                    <label for="addVehicleMileage" class="block text-sm font-medium text-gray-700">Current Mileage (Optional)</label>
+                    <input type="text" id="addVehicleMileage" name="mileage" placeholder="XXX,XXX" pattern="[0-9]{1,3},[0-9]{3}" disabled
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                        title="Mileage should be in XXX,XXX format (e.g., 123,456)." oninput="formatMileage(this)">
+                </div>
+                <button type="submit" id="addVehicleSaveButton" disabled
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors font-semibold">
+                    Add Vehicle
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for dynamic dropdowns
+        // Unified approach for vehicle selection across Add/Edit modals
+        let currentVehicleSelection = {
+            year: null,
+            make: null,
+            model: null,
+            engine: null
+        };
+        let vehicleOptions = {
+            years: [],
+            makes: {},
+            models: {},
+            engines: {}
+        };
+
+        // Global references to modal input fields and buttons
+        let addVehicleVINInput;
+        let addVehicleLicenseInput;
+        let addVehicleMileageInput;
+        let addVehicleSaveButton;
+        let addVehicleDynamicArea;
+        let editVehicleVINInput;
+        let editVehicleLicenseInput;
+        let editVehicleMileageInput;
+        let editVehicleSaveButton;
+        let editVehicleDynamicArea;
+        let vinWarning; // For VIN validation message
+
+        // --- General Utility Functions ---
+
+        // Function to display toast notifications (success or error)
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (!toast) {
+                console.error("Toast element not found!");
+                return;
+            }
+            toast.textContent = message;
+            toast.classList.remove('bg-green-600', 'bg-red-600', 'bg-blue-600'); // Clear previous colors
+
+            if (type === 'success') {
+                toast.classList.add('bg-green-600');
+            } else if (type === 'error') {
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.add('bg-blue-600'); // Default to info/blue
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Global confirmation modal (instead of alert/confirm)
+        function showConfirmationModal(message) {
+            return new Promise((resolve) => {
+                const modalId = 'confirmationModal'; // Using a fixed ID for the confirmation modal
+                let modal = document.getElementById(modalId);
+
+                if (!modal) {
+                    // Create modal elements if they don't exist
+                    modal = document.createElement('div');
+                    modal.id = modalId;
+                    modal.className = 'modal'; // Reuse existing modal CSS
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-button" data-action="cancel">&times;</span>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4">Confirmation</h2>
+                            <p id="confirmation-message" class="mb-6 text-gray-700"></p>
+                            <div class="flex justify-end space-x-4">
+                                <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md transition-colors" data-action="cancel">Cancel</button>
+                                <button class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition-colors" data-action="confirm">Confirm</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                }
+
+                const messageElement = modal.querySelector('#confirmation-message');
+                const confirmButton = modal.querySelector('button[data-action="confirm"]');
+                const cancelButton = modal.querySelector('button[data-action="cancel"]');
+                const closeButton = modal.querySelector('span[data-action="cancel"]'); // The 'x' button
+
+                messageElement.textContent = message;
+                modal.classList.add('show');
+
+                const cleanup = () => {
+                    confirmButton.removeEventListener('click', onConfirm);
+                    cancelButton.removeEventListener('click', onCancel);
+                    closeButton.removeEventListener('click', onCancel);
+                    modal.classList.remove('show');
+                    // Optional: Remove modal from DOM after a short delay if it's transient
+                    // setTimeout(() => modal.remove(), 300);
+                };
+
+                const onConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const onCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                confirmButton.addEventListener('click', onConfirm);
+                cancelButton.addEventListener('click', onCancel);
+                closeButton.addEventListener('click', onCancel);
+
+                // Close if clicked outside
+                modal.addEventListener('click', function handler(e) {
+                    if (e.target === modal) {
+                        onCancel();
+                        modal.removeEventListener('click', handler); // Remove self to prevent multiple calls
+                    }
+                });
+            });
+        }
+
+        // Helper to capitalize first letter (for element IDs)
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Function to fetch data from API endpoints
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                showToast("Failed to load vehicle data. Please try again.", 'error');
+                return [];
+            }
+        }
+
+        // Helper to create a select element with options
+        function createSelectElement(id, name, options, placeholder, selectedValue = null) {
+            const selectDiv = document.createElement('div');
+            selectDiv.className = 'mb-4'; // Add margin-bottom for spacing
+            selectDiv.innerHTML = `
+                <label for="${id}" class="block text-sm font-medium text-gray-700 capitalize">${name}</label>
+                <select id="${id}" name="${name}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    <option value="">${placeholder}</option>
+                    ${options.map(option => `<option value="${option}" ${selectedValue === option ? 'selected' : ''}>${option}</option>`).join('')}
+                </select>
+            `;
+            return selectDiv;
+        }
+
+        // Function to enable/disable VIN, License, Mileage, and Save button for a specific modal
+        function toggleVehicleDetailsFields(targetAreaId, enable) {
+            let vinInput, licenseInput, mileageInput, saveButton;
+
+            if (targetAreaId === 'add-vehicle-dynamic-area') {
+                vinInput = addVehicleVINInput;
+                licenseInput = addVehicleLicenseInput;
+                mileageInput = addVehicleMileageInput;
+                saveButton = addVehicleSaveButton;
+            } else if (targetAreaId === 'edit-vehicle-dynamic-area') {
+                vinInput = editVehicleVINInput;
+                licenseInput = editVehicleLicenseInput;
+                mileageInput = editVehicleMileageInput;
+                saveButton = editVehicleSaveButton;
+            } else {
+                console.warn("Unknown targetAreaId for toggleVehicleDetailsFields:", targetAreaId);
+                return;
+            }
+
+            if (vinInput) vinInput.disabled = !enable;
+            if (licenseInput) licenseInput.disabled = !enable;
+            if (mileageInput) mileageInput.disabled = !enable;
+            if (saveButton) saveButton.disabled = !enable;
+        }
+
+        // This is the central function that updates the dynamic area for both Add and Edit modals
+        async function updateDynamicVehicleSelectionArea(targetAreaId, initialVehicleData = null) {
+            const targetElement = document.getElementById(targetAreaId);
+            if (!targetElement) return;
+
+            // Clear previous content but keep the structure for progress text/go back button
+            targetElement.innerHTML = '';
+
+            // If initialVehicleData is provided (for edit modal on open), set currentVehicleSelection
+            if (initialVehicleData && !currentVehicleSelection.year && !currentVehicleSelection.make) { // Only set if not already in selection process
+                currentVehicleSelection.year = initialVehicleData.year || null;
+                currentVehicleSelection.make = initialVehicleData.make || null;
+                currentVehicleSelection.model = initialVehicleData.model || null;
+                currentVehicleSelection.engine = initialVehicleData.engine || null;
+            }
+
+            // Display current selection path and Go Back button
+            const selectionPath = [];
+            if (currentVehicleSelection.year) selectionPath.push(currentVehicleSelection.year);
+            if (currentVehicleSelection.make) selectionPath.push(currentVehicleSelection.make);
+            if (currentVehicleSelection.model) selectionPath.push(currentVehicleSelection.model);
+            if (currentVehicleSelection.engine) selectionPath.push(currentVehicleSelection.engine);
+
+            // Show "Selected: ..." and "Go Back" if any part of the vehicle is selected
+            if (selectionPath.length > 0) {
+                const selectedDiv = document.createElement('div');
+                selectedDiv.className = 'mb-2 text-sm text-gray-600 flex items-center justify-between';
+                selectedDiv.innerHTML = `
+                    <span>Selected: <span class="font-medium">${selectionPath.join(' ')}</span></span>
+                    <button id="goBackBtn-${targetAreaId}" class="ml-3 text-primary hover:underline text-xs py-1 px-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">Go Back</button>
+                `;
+                targetElement.appendChild(selectedDiv);
+
+                const goBackBtn = document.getElementById(`goBackBtn-${targetAreaId}`);
+                if (goBackBtn) {
+                    goBackBtn.addEventListener('click', () => handleGoBack(targetAreaId));
+                }
+            }
+
+            // Determine which dropdown to show next
+            let nextDropdownElement = null;
+            let dropdownToRender = '';
+            let optionsToUse = [];
+            let placeholderText = '';
+            let currentLabel = '';
+
+            if (!currentVehicleSelection.year) {
+                dropdownToRender = 'year';
+                optionsToUse = vehicleOptions.years;
+                placeholderText = 'Select Year';
+                currentLabel = 'Year';
+            } else if (!currentVehicleSelection.make) {
+                dropdownToRender = 'make';
+                optionsToUse = vehicleOptions.makes[currentVehicleSelection.year] || [];
+                placeholderText = 'Select Make';
+                currentLabel = 'Make';
+            } else if (!currentVehicleSelection.model) {
+                dropdownToRender = 'model';
+                optionsToUse = vehicleOptions.models[currentVehicleSelection.make] || [];
+                placeholderText = 'Select Model';
+                currentLabel = 'Model';
+            } else if (!currentVehicleSelection.engine) {
+                dropdownToRender = 'engine';
+                optionsToUse = vehicleOptions.engines[currentVehicleSelection.model] || [];
+                placeholderText = 'Select Engine (Optional)';
+                currentLabel = 'Engine';
+            }
+
+            if (dropdownToRender) {
+                const currentSelectedValue = currentVehicleSelection[dropdownToRender];
+                nextDropdownElement = createSelectElement(
+                    `${targetAreaId.replace('-dynamic-area', '')}${capitalizeFirstLetter(dropdownToRender)}`,
+                    dropdownToRender,
+                    optionsToUse,
+                    placeholderText,
+                    currentSelectedValue
+                );
+                targetElement.appendChild(nextDropdownElement);
+
+                // Attach event listener to the newly created select
+                const newSelect = nextDropdownElement.querySelector('select');
+                if (newSelect) {
+                    newSelect.addEventListener('change', async (e) => {
+                        const value = e.target.value;
+                        if (value) {
+                            if (dropdownToRender === 'year') {
+                                currentVehicleSelection.year = value;
+                                currentVehicleSelection.make = null; // Reset subsequent
+                                currentVehicleSelection.model = null;
+                                currentVehicleSelection.engine = null;
+                                vehicleOptions.makes[value] = await fetchData(`/get_makes?year=${value}`);
+                            } else if (dropdownToRender === 'make') {
+                                currentVehicleSelection.make = value;
+                                currentVehicleSelection.model = null; // Reset subsequent
+                                currentVehicleSelection.engine = null;
+                                vehicleOptions.models[value] = await fetchData(`/get_models?year=${currentVehicleSelection.year}&make=${value}`);
+                            } else if (dropdownToRender === 'model') {
+                                currentVehicleSelection.model = value;
+                                currentVehicleSelection.engine = null; // Reset subsequent
+                                vehicleOptions.engines[value] = await fetchData(`/get_engines?year=${currentVehicleSelection.year}&make=${currentVehicleSelection.make}&model=${value}`);
+                            } else if (dropdownToRender === 'engine') {
+                                currentVehicleSelection.engine = value;
+                            }
+                        }
+                        updateDynamicVehicleSelectionArea(targetAreaId); // Re-render the dynamic area
+                    });
+                }
+                toggleVehicleDetailsFields(targetAreaId, false); // Disable VIN/License/Mileage if not all selected
+            } else {
+                // All selections made, enable VIN, License Plate, Mileage, and Add/Save Vehicle button
+                toggleVehicleDetailsFields(targetAreaId, true);
+            }
+        }
+
+        // Handles the "Go Back" button click for dynamic vehicle selection
+        function handleGoBack(targetAreaId) {
+            if (currentVehicleSelection.engine) {
+                currentVehicleSelection.engine = null;
+            } else if (currentVehicleSelection.model) {
+                currentVehicleSelection.model = null;
+            } else if (currentVehicleSelection.make) {
+                currentVehicleSelection.make = null;
+            } else if (currentVehicleSelection.year) {
+                currentVehicleSelection.year = null;
+            }
+            updateDynamicVehicleSelectionArea(targetAreaId);
+            toggleVehicleDetailsFields(targetAreaId, false); // Disable fields when going back
+        }
+
+        // Resets the dynamic dropdowns and selection state for a given modal
+        async function resetDynamicVehicleSelection(targetAreaId) {
+            currentVehicleSelection = {
+                year: null,
+                make: null,
+                model: null,
+                engine: null
+            };
+            vehicleOptions = { // Clear cached options too
+                years: [],
+                makes: {},
+                models: {},
+                engines: {}
+            };
+            const dynamicArea = document.getElementById(targetAreaId);
+            if (dynamicArea) dynamicArea.innerHTML = ''; // Clear the area
+            toggleVehicleDetailsFields(targetAreaId, false); // Disable fields again
+            
+            // Re-fetch years to restart the process for the specific modal
+            vehicleOptions.years = await fetchData('/get_years');
+            updateDynamicVehicleSelectionArea(targetAreaId);
+        }
+
+        // --- Event Listeners and Initializations ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+            if (menuToggle && sidebar && mobileMenuOverlay) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('-translate-x-full');
+                    mobileMenuOverlay.classList.toggle('hidden');
+                });
+
+                mobileMenuOverlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    mobileMenuOverlay.classList.add('hidden');
+                });
+            }
+
+            // Assign global variables for modal elements
+            addVehicleVINInput = document.getElementById('addVehicleVIN');
+            addVehicleLicenseInput = document.getElementById('addVehicleLicense');
+            addVehicleMileageInput = document.getElementById('addVehicleMileage');
+            addVehicleSaveButton = document.getElementById('addVehicleSaveButton');
+            addVehicleDynamicArea = document.getElementById('add-vehicle-dynamic-area');
+            vinWarning = document.getElementById('vinWarning');
+
+            editVehicleVINInput = document.getElementById('editVehicleVIN');
+            editVehicleLicenseInput = document.getElementById('editVehicleLicense');
+            editVehicleMileageInput = document.getElementById('editVehicleMileage');
+            editVehicleSaveButton = document.getElementById('editVehicleSaveButton');
+            editVehicleDynamicArea = document.getElementById('edit-vehicle-dynamic-area');
+
+
+            // --- Vehicle Management Functions ---
+            async function fetchVehicles() {
+                try {
+                    const response = await fetch('/api/vehicles');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error("Error fetching vehicles:", error);
+                    showToast("Failed to load vehicles.", 'error');
+                    return [];
+                }
+            }
+
+            async function displayGarageVehicles() {
+                const garageList = document.getElementById('garage-list');
+                garageList.innerHTML = '<p class="text-gray-500 col-span-full">Loading vehicles...</p>'; // Show loading
+
+                const vehicles = await fetchVehicles();
+                garageList.innerHTML = ''; // Clear loading message
+
+                if (vehicles.length === 0) {
+                    garageList.innerHTML = '<p class="text-gray-600 col-span-full">No vehicles in your garage.</p>';
+                    return;
+                }
+
+                vehicles.forEach(vehicle => {
+                    const listItem = document.createElement('li'); // Keep as <li> as it's a list of vehicles
+                    // Apply all card-specific classes directly to the <li> element
+                    listItem.className = 'bg-white p-6 rounded-xl shadow-lg border border-gray-200 card-animate flex flex-col h-full vehicle-item fade-in-slide-up';
+
+                    // The innerHTML now just contains the content of the card, not wrapped in another <div>
+                    listItem.innerHTML = `
+    <div class="flex items-start mb-4">
+        <div>
+            <p class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="fa-solid fa-car fa-xl mr-4" style="color: #2563eb;"></i>
+                ${vehicle.year} ${vehicle.make} ${vehicle.model}
+            </p>
+            <div class="text-base text-gray-600">
+                <p><span class="font-medium">Engine:</span> ${vehicle.engine}</p>
+                <p class="text-base text-gray-700 font-mono mt-2"><span class="font-medium">VIN:</span> ${vehicle.vin}</p>
+            </div>
+        </div>
+    </div>
+    <div class="space-y-2 text-gray-700 flex-grow">
+        <p><span class="font-medium">License Plate:</span> ${vehicle.license ? vehicle.license : 'N/A'}</p>
+        <p><span class="font-medium">Mileage:</span> ${vehicle.mileage ? vehicle.mileage.toLocaleString() + ' miles' : 'N/A'}</p>
+    </div>
+    <div class="flex space-x-3 mt-6">
+        <button data-vehicle-id="${vehicle.id}"
+            class="edit-vehicle-btn bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+            <i class="fa-solid fa-pen-to-square fa-lg mr-2"></i> Edit
+        </button>
+        <button data-vehicle-id="${vehicle.id}"
+            class="remove-vehicle-btn bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 px-4 rounded-md transition-colors shadow-sm flex items-center justify-center flex-1">
+            <i class="fa-solid fa-trash-can fa-lg mr-2"></i> Remove
+        </button>
+    </div>
+                    `;
+                    garageList.appendChild(listItem);
+                });
+
+                // Attach event listeners after elements are added to DOM
+                document.querySelectorAll('.remove-vehicle-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const vehicleId = event.target.dataset.vehicleId;
+                        removeVehicle(vehicleId);
+                    });
+                });
+
+                document.querySelectorAll('.edit-vehicle-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const vehicleId = event.target.dataset.vehicleId;
+                        const vehicleToEdit = vehicles.find(v => v.id == vehicleId);
+                        if (vehicleToEdit) {
+                            openEditVehicleModal(vehicleToEdit);
+                        }
+                    });
+                });
+            }
+
+            async function removeVehicle(vehicleIdToRemove) {
+                const modalConfirmed = await showConfirmationModal("Are you sure you want to remove this vehicle from your garage?");
+                if (!modalConfirmed) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/vehicles/${vehicleIdToRemove}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        showToast(result.message, 'success');
+                        displayGarageVehicles(); // Refresh display
+                    } else {
+                        showToast(result.message || "Failed to remove vehicle.", 'error');
+                    }
+                } catch (error) {
+                    console.error("Error removing vehicle:", error);
+                    showToast("An error occurred while removing the vehicle.", 'error');
+                }
+            }
+
+            // --- Edit Vehicle Modal Logic ---
+            const editVehicleModal = document.getElementById('editVehicleModal');
+            const closeEditVehicleModal = document.getElementById('closeEditVehicleModal');
+            const editVehicleForm = document.getElementById('editVehicleForm');
+            
+            async function openEditVehicleModal(vehicleData) {
+                // Reset current selection state for a fresh start in the edit modal
+                currentVehicleSelection = {
+                    year: null,
+                    make: null,
+                    model: null,
+                    engine: null
+                };
+                vehicleOptions = { // Clear cached options
+                    years: [],
+                    makes: {},
+                    models: {},
+                    engines: {}
+                };
+
+                // Populate VIN, License, Mileage fields from vehicleData
+                editVehicleVINInput.value = vehicleData.vin || '';
+                editVehicleLicenseInput.value = vehicleData.license || '';
+                editVehicleMileageInput.value = vehicleData.mileage || '';
+
+                // Set the hidden input field for vehicle ID
+                const editVehicleIdHiddenInput = document.getElementById('editVehicleId');
+                if (editVehicleIdHiddenInput) {
+                    editVehicleIdHiddenInput.value = vehicleData.id;
+                }
+
+                editVehicleModal.classList.add('show');
+
+                // Initialize dynamic dropdowns for edit modal with existing vehicle data
+                // This will pre-select the existing vehicle's details and show the "Selected: ..." summary
+                vehicleOptions.years = await fetchData('/get_years');
+                if (vehicleData.year) {
+                    currentVehicleSelection.year = vehicleData.year;
+                    vehicleOptions.makes[vehicleData.year] = await fetchData(`/get_makes?year=${vehicleData.year}`);
+                }
+                if (vehicleData.make) {
+                    currentVehicleSelection.make = vehicleData.make;
+                    vehicleOptions.models[vehicleData.make] = await fetchData(`/get_models?year=${vehicleData.year}&make=${vehicleData.make}`);
+                }
+                if (vehicleData.model) {
+                    currentVehicleSelection.model = vehicleData.model;
+                    vehicleOptions.engines[vehicleData.model] = await fetchData(`/get_engines?year=${vehicleData.year}&make=${vehicleData.make}&model=${vehicleData.model}`);
+                }
+                if (vehicleData.engine) {
+                    currentVehicleSelection.engine = vehicleData.engine;
+                }
+                
+                updateDynamicVehicleSelectionArea('edit-vehicle-dynamic-area');
+
+                // Initially disable VIN/License/Mileage fields and Save button.
+                // They will be enabled by updateDynamicVehicleSelectionArea if a full vehicle is selected.
+                toggleVehicleDetailsFields('edit-vehicle-dynamic-area', false);
+            }
+
+            // Close Edit Modal
+            if (closeEditVehicleModal) {
+                closeEditVehicleModal.addEventListener('click', () => {
+                    editVehicleModal.classList.remove('show');
+                    editVehicleForm.reset();
+                    resetDynamicVehicleSelection('edit-vehicle-dynamic-area'); // Reset dropdown states
+                });
+            }
+
+            // Close modal if clicked outside content
+            if (editVehicleModal) {
+                editVehicleModal.addEventListener('click', (e) => {
+                    if (e.target === editVehicleModal) {
+                        editVehicleModal.classList.remove('show');
+                        editVehicleForm.reset();
+                        resetDynamicVehicleSelection('edit-vehicle-dynamic-area');
+                    }
+                });
+            }
+
+            if (editVehicleForm) {
+                editVehicleForm.addEventListener('submit', async (event) => {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Check if all vehicle details are selected
+                    if (!currentVehicleSelection.year || !currentVehicleSelection.make || !currentVehicleSelection.model || !currentVehicleSelection.engine) {
+                        showToast("Please select the complete vehicle details (Year, Make, Model, Engine).", 'error');
+                        return;
+                    }
+
+                    const vehicleId = document.getElementById('editVehicleId').value;
+                    const updatedVehicleData = {
+                        year: currentVehicleSelection.year, // Use the values from global selections
+                        make: currentVehicleSelection.make,
+                        model: currentVehicleSelection.model,
+                        engine: currentVehicleSelection.engine || null, // Optional
+                        vin: editVehicleVINInput.value,
+                        license: editVehicleLicenseInput.value || null, // Optional
+                        mileage: editVehicleMileageInput.value || null // Optional
+                    };
+                    
+                    try {
+                        const response = await fetch(`/api/vehicles/${vehicleId}`, {
+                            method: 'PUT', // Use PUT for updates
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedVehicleData)
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            showToast(result.message || "Vehicle updated successfully!", 'success');
+                            editVehicleModal.classList.remove('show'); // Close the modal
+                            editVehicleForm.reset(); // Reset form fields
+                            resetDynamicVehicleSelection('edit-vehicle-dynamic-area'); // Reset dropdown states
+                            displayGarageVehicles(); // Refresh the list of vehicles
+                        } else {
+                            showToast(result.message || "Failed to update vehicle.", 'error');
+                        }
+                    } catch (error) {
+                        console.error("Error updating vehicle:", error);
+                        showToast("An error occurred while updating the vehicle.", 'error');
+                    }
+                });
+            }
+            
+            // Initial load of vehicles
+            displayGarageVehicles();
+
+            // Set a dummy user name for display
+            const userNameDisplay = document.getElementById('user-name-display');
+            if (userNameDisplay) {
+                userNameDisplay.textContent = "John Doe"; // Replace with actual user name from backend
+            }
+
+            // Add new vehicle button logic
+            const addVehicleIconBtn = document.getElementById('add-vehicle-icon-btn');
+            const addVehicleModal = document.getElementById('addVehicleModal');
+            const closeAddVehicleModal = document.getElementById('closeAddVehicleModal');
+            
+            if (addVehicleIconBtn) {
+                addVehicleIconBtn.addEventListener('click', async () => {
+                    if (addVehicleModal) {
+                        addVehicleModal.classList.add('show');
+                        addVehicleForm.reset(); // Reset form fields
+                        // Reset selections and start dynamic dropdown for new vehicle
+                        await resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                    }
+                });
+            }
+
+            if (closeAddVehicleModal) {
+                closeAddVehicleModal.addEventListener('click', () => {
+                    if (addVehicleModal) {
+                        addVehicleModal.classList.remove('show');
+                        addVehicleForm.reset();
+                        resetDynamicVehicleSelection('add-vehicle-dynamic-area'); // Reset on close
+                    }
+                });
+            }
+
+            if (addVehicleModal) {
+                addVehicleModal.addEventListener('click', (e) => {
+                    if (e.target === addVehicleModal) {
+                        addVehicleModal.classList.remove('show');
+                        addVehicleForm.reset();
+                        resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                    }
+                });
+            }
+            
+            // Handle Add Vehicle Form Submission
+            if (addVehicleForm) {
+                addVehicleForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    // Check if all vehicle details are selected
+                    if (!currentVehicleSelection.year || !currentVehicleSelection.make || !currentVehicleSelection.model || !currentVehicleSelection.engine) {
+                        showToast("Please select the complete vehicle details (Year, Make, Model, Engine).", 'error');
+                        return;
+                    }
+
+                    const vehicleData = {
+                        year: currentVehicleSelection.year, // Use the values from global selections
+                        make: currentVehicleSelection.make,
+                        model: currentVehicleSelection.model,
+                        engine: currentVehicleSelection.engine || null, // Optional
+                        vin: addVehicleVINInput.value,
+                        license: addVehicleLicenseInput.value || null, // Optional
+                        mileage: addVehicleMileageInput.value || null // Optional
+                    };
+
+                    try {
+                        const response = await fetch('/api/vehicles', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(vehicleData)
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            showToast(result.message, 'success');
+                            if (addVehicleModal) addVehicleModal.classList.remove('show');
+                            addVehicleForm.reset();
+                            resetDynamicVehicleSelection('add-vehicle-dynamic-area');
+                            displayGarageVehicles(); // Refresh the garage list
+                        } else {
+                            showToast(result.message || "Failed to add vehicle.", 'error');
+                        }
+                    } catch (error) {
+                        console.error("Error adding vehicle:", error);
+                        showToast("An error occurred while adding the vehicle.", 'error');
+                    }
+                });
+            }
+
+        });
+
+        // Function to validate VIN input and show/hide warning
+    function validateVinInput() {
+        // This function is currently not attached to an event listener for editVehicleVINInput
+        // but can be if you wish to add real-time validation for it.
+        // For addVehicleVINInput, it's used with oninput in HTML.
+        const vinInput = addVehicleVINInput || editVehicleVINInput; // Use whichever is relevant
+        const warningElement = vinWarning; // Assuming vinWarning is global or passed
+
+        if (!vinInput || !warningElement) return;
+
+        const vin = vinInput.value;
+        const isValidLength = vin.length === 17;
+        // checkValidity() will return false if pattern or minlength/maxlength is violated.
+        const isValidPattern = vinInput.checkValidity();
+
+        if (!isValidLength || !isValidPattern) {
+            warningElement.classList.remove('hidden');
+            if (!isValidLength) {
+                warningElement.textContent = 'VIN must be exactly 17 characters.';
+            } else if (!isValidPattern) {
+                warningElement.textContent = 'VIN contains invalid characters. (Exclude I, O, Q)';
+            }
+        } else {
+            warningElement.classList.add('hidden');
+        }
+    }
+
+    // Function to format License Plate input
+    function formatLicensePlate(input) {
+        let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); // Uppercase and remove non-alphanumeric
+        let formattedValue = '';
+
+        if (value.length > 3) {
+            formattedValue = value.substring(0, 3) + '-' + value.substring(3, 6); // Max 6 chars for XXX-XXX
+        } else {
+            formattedValue = value;
+        }
+        input.value = formattedValue;
+    }
+
+    // Function to format Mileage input
+    function formatMileage(input) {
+        let value = input.value.replace(/[^0-9]/g, ''); // Only allow digits
+        let formattedValue = '';
+
+        if (value.length > 3) {
+            formattedValue = value.substring(0, 3) + ',' + value.substring(3, 6); // Max 6 digits for XXX,XXX
+        } else {
+            formattedValue = value;
+        }
+        input.value = formattedValue;
+    }
+
+    </script>
+</body>
+
+</html>

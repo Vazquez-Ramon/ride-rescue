@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Vehicle Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563EB', // blue-600
+                        accent: '#1D4ED8', // blue-700 (used for hover)
+                        blue600: '#2563EB',
+                        blue700: '#1D4ED8',
+                        gray50: '#F9FAFB',
+                        gray100: '#F3F4F6',
+                        gray200: '#E5E7EB',
+                        gray300: '#D1D5DB',
+                        gray400: '#9CA3AF',
+                        gray500: '#6B7280',
+                        gray600: '#4B5563',
+                        gray700: '#374151',
+                        gray800: '#1F2937',
+                        gray900: '#111827',
+                        red500: '#EF4444',
+                        red600: '#DC2626',
+                        green600: '#16A34A',
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #000000;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+        /* ... (Include your topbar-left, topbar-right, etc. styles from dashboard.html) ... */
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .topbar-left a {
+            display: flex;
+            align-items: center;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .topbar-right a {
+            display: flex;
+            align-items: center;
+            color: #4B5563; /* gray-600 */
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+        .topbar-right a:hover {
+            color: #2563EB; /* primary blue */
+        }
+
+        @media (max-width: 1023px) { /* Tailind's 'lg' breakpoint is 1024px */
+            .topbar-right a:not(#cart-icon-wrapper):not([href="/login"]) {
+                display: none;
+            }
+            .topbar #search-bar-container {
+                display: none;
+            }
+            .topbar #search-magnifier-icon {
+                display: block;
+            }
+            body {
+                padding-top: 72px;
+            }
+            #dashboard-header {
+                margin-top: 0;
+            }
+            .main-content-area {
+                padding-top: 0;
+            }
+        }
+
+        @media (max-width: 556px) {
+            .topbar #search-bar-container {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                padding: 0.75rem 1.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                animation: slideDown 0.3s ease-out forwards;
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .topbar #search-bar-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .topbar #search-bar-container input {
+                width: 100%;
+            }
+
+            .topbar #search-magnifier-icon {
+                display: block;
+                cursor: pointer;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s linear 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s, visibility 0s linear 0s;
+        }
+
+        .mobile-menu-overlay-blurred {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        #menu-toggle {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #menu-toggle.is-open {
+            transform: translateX(40px) rotate(45deg);
+        }
+
+        #main-content-wrapper {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #main-content-wrapper.sidebar-open {
+            transform: translateX(16rem);
+        }
+
+        body.sidebar-open {
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 1023px) {
+            .topbar {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex bg-gray-100 min-h-screen flex-col">
+
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <div class="topbar" id="main-topbar">
+        <div class="topbar-left">
+            <button id="menu-toggle" class="text-gray-600 focus:outline-none focus:bg-gray-200 rounded-md lg:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+            <a href="/">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="RideRescue Logo" style="height: 40px;">
+            </a>
+        </div>
+
+        <div class="topbar-right">
+            <button id="search-magnifier-icon" class="p-2 text-gray-600 focus:outline-none hidden">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+
+            <div id="search-bar-container" class="relative hidden sm:block">
+                <input type="text" placeholder="Search..."
+                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition w-64">
+                <svg class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <div onclick="toggleCartVisibility()" id="cart-icon-wrapper" style="position: relative; cursor: pointer;">
+                <img src="{{ url_for('static', filename='icons/cart.png') }}" alt="Cart" style="height: 22px; vertical-align: middle; margin-right: 6px;">
+                <span id="cart-count" style="
+                        position: absolute;
+                        top: -8px;
+                        right: -10px;
+                        background: red;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        padding: 2px 6px;
+                        display: none;
+                    ">0</span>
+            </div>
+            <a href="/dashboard">
+                <img src="{{ url_for('static', filename='icons/user.png') }}" alt="User" style="height: 20px; vertical-align: middle; margin-right: 6px;">
+            </a>
+            <img id="topbar-avatar" src="{{ url_for('static', filename='avatars/' + (user.profile_image or 'default_avatar.png')) }}" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-primary object-cover">
+            <input type="file" id="avatar-input" accept="image/*" class="mb-4" style="display: none;">
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col lg:flex-row">
+        <aside id="sidebar" class="w-80 bg-gray-900 text-white flex flex-col p-4 shadow-xl fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-center mb-8">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Vehicle Manager Logo" class="h-10 mr-3">
+                <span class="text-2xl font-bold">Manager</span>
+            </div>
+            <button id="close-sidebar-button" class="text-gray-400 hover:text-white focus:outline-none focus:bg-gray-700 rounded-md lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <nav class="flex-grow">
+                <ul>
+                    <li class="mb-2">
+                        <a href="/dashboard" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <img src="{{ url_for('static', filename='icons/dashboard.png') }}" alt="Dashboard" style="height: 20px; vertical-align: left; margin-right: 6px;">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/garage" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm1.475 2.5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM7.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H7.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM11.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H11.5zm3 .5a.75.75 0 000 1.5h.01a.75.75 0 000-1.5h-.01zM15.5 7a.5.5 0 00-.5.5v.01a.5.5 0 00.5.5h.01a.5.5 0 00.5-.5V7.5a.5.5 0 00-.5-.5H15.5zM3 13.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5z" clip-rule="evenodd" />
+                            </svg>
+                            My Garage
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/appointments" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                            </svg>
+                            Appointments
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/history" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M11.49 3.17c-.325-.317-.767-.51-1.25-.51-.483 0-.925.193-1.25.51L3 8.34v5.32c0 .828.672 1.5 1.5 1.5h11c.828 0 1.5-.672 1.5-1.5V8.34l-5.06-5.17zM10 13a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                            </svg>
+                            History
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/codes" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.293 6.293a1 1 0 011.414 0L10 8.586l2.293-2.293a1 1 0 111.414 1.414L11.414 10l2.293 2.293a1 1 0 01-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 01-1.414-1.414L8.586 10 6.293 7.707a1 1 0 010-1.414zM10 2a8 8 0 100 16 8 8 0 000-16z" clip-rule="evenodd" />
+                            </svg>
+                            Error Codes
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <a href="/logout" class="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h5a1 1 0 000-2H4V4h4a1 1 0 100-2H3zm13.293 7.293a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L17 7.586V4a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3z" clip-rule="evenodd" />
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <main id="main-content-wrapper" class="flex-grow p-6 transition-transform duration-300 ease-in-out">
+            <div id="toast" class="toast"></div>
+
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">Account Settings</h1>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Personal Information</h2>
+                    <form id="profileInfoForm">
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" id="name" name="name" value="{{ user.name }}"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="email" name="email" value="{{ user.email }}"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        </div>
+
+                        Change searchbar icon, make clicking on avatar pop up upload to change image, remove login icon, fix cart.
+
+                        <div class="mb-4">
+                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <input type="text" id="address" name="address" value="{{ user.address or '' }}"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div class="mb-4 flex gap-4">
+                            <div class="flex-1">
+                                <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                <input type="text" id="city" name="city" value="{{ user.city or '' }}"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                            </div>
+                            Drop Down For State, add billing details check mark for if billing and shipping are the same, tick box
+                            for phone number to acknowledge receving texts
+                            <div class="mb-4">
+                            <label for="address" class="block text-sm font-medium text-gray-700">State</label>
+                            <input type="text" id="address" name="address" value="{{ user.address or '' }}"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        </div>
+                            <div class="flex-1">
+                                <label for="zip" class="block text-sm font-medium text-gray-700">Zip Code</label>
+                                <input type="text" id="zip" name="zip" value="{{ user.zip or '' }}"
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                            <input type="tel" id="phone" name="phone" value="{{ user.phone or '' }}"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent transition-colors duration-300 shadow-md">Update Profile</button>
+                    </form>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Change Password</h2>
+                        <form id="passwordForm">
+                            <div class="mb-4">
+                                <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                                <input type="password" id="current_password" name="current_password" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                            </div>
+                            <div class="mb-4">
+                                <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                <input type="password" id="new_password" name="new_password" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                            </div>
+                            <div class="mb-6">
+                                <label for="confirm_new_password" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                                <input type="password" id="confirm_new_password" name="confirm_new_password" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
+                            </div>
+                            <button type="submit"
+                                class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-accent transition-colors duration-300 shadow-md">Change Password</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">Profile Avatar</h2>
+                        <div class="flex flex-col items-center mb-4">
+                            <img id="profile-avatar" src="{{ url_for('static', filename='avatars/' + (user.profile_image or 'default_avatar.png')) }}" alt="User Avatar"
+                                class="w-32 h-32 rounded-full object-cover border-4 border-gray-200 mb-4">
+                            <input type="file" id="avatar-input" accept="image/*" class="mb-4">
+                            <button id="upload-avatar-btn"
+                                class="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors duration-300 shadow-md">Upload Avatar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="blur-overlay" id="blur-overlay"></div>
+
+    <div id="cart-summary">
+        <div id="cart-header">
+            <h3 id="cart-title">My Cart:</h3>
+            <button id="toggle-cart-btn" onclick="toggleCartVisibility()">❌</button>
+        </div>
+        <div id="cart-items"></div>
+        <br>
+        <div id="totals">
+            <strong>Subtotal:</strong> $<span id="subtotal">0.00</span><br>
+            <strong>Tax (5.6%):</strong> $<span id="tax-amount">0.00</span><br>
+            <strong>Total:</strong> $<span id="total-amount">0.00</span>
+        </div>
+        <br>
+        <button id="proceed-to-booking-btn" onclick="proceedToBooking()">📅 Proceed to Book a Service Call</button>
+        <button id="download-pdf-btn" onclick="downloadPDF()">📄 Download as PDF</button>
+    </div>
+
+    <audio id="cart-sound" src="{{ url_for('static', filename='swipe.mp3') }}" preload="auto"></audio>
+
+    <script>
+        // Toast Notification Function (re-used from dashboard.html)
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+
+            if (type === 'success') {
+                toast.style.backgroundColor = tailwind.config.theme.extend.colors.green600;
+            } else if (type === 'error') {
+                toast.style.backgroundColor = tailwind.config.theme.extend.colors.red600;
+            } else {
+                toast.style.backgroundColor = tailwind.config.theme.extend.colors.gray800;
+            }
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- Sidebar/Mobile Menu Toggle Logic (re-used from dashboard.html) ---
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileMenuOverlay.classList.toggle('hidden');
+            mobileMenuOverlay.classList.toggle('mobile-menu-overlay-blurred');
+            menuToggle.classList.toggle('is-open');
+            document.body.classList.toggle('overflow-hidden');
+            mainContentWrapper.classList.toggle('sidebar-open');
+        }
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleMobileMenu);
+        }
+
+        if (mobileMenuOverlay) {
+            mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.add('-translate-x-full');
+                    if (menuToggle) {
+                        menuToggle.classList.remove('is-open');
+                    }
+                    if (mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.add('hidden');
+                        mobileMenuOverlay.classList.remove('mobile-menu-overlay-blurred');
+                    }
+                    if (mainContentWrapper) {
+                        mainContentWrapper.classList.remove('sidebar-open');
+                    }
+                    if (document.body) {
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                }
+            }
+        });
+
+        const searchMagnifierIcon = document.getElementById('search-magnifier-icon');
+        const searchBarContainer = document.getElementById('search-bar-container');
+
+        if (searchMagnifierIcon) {
+            searchMagnifierIcon.addEventListener('click', () => {
+                searchBarContainer.classList.toggle('active');
+            });
+        }
+
+        const closeSidebarButton = document.getElementById('close-sidebar-button');
+        if (closeSidebarButton) {
+            closeSidebarButton.addEventListener('click', () => {
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileMenu();
+                }
+            });
+        }
+
+        // --- Settings Page Specific JavaScript ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle Profile Information Form Submission
+            const profileInfoForm = document.getElementById('profileInfoForm');
+            if (profileInfoForm) {
+                profileInfoForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(profileInfoForm);
+                    const data = Object.fromEntries(formData.entries());
+
+                    try {
+                        const response = await fetch('/api/profile', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            showToast(result.message, 'success');
+                            // Update topbar avatar if profile info includes avatar update logic
+                            const topbarAvatar = document.getElementById('topbar-avatar');
+                            if (topbarAvatar && result.user && result.user.profile_image) {
+                                // Important: Append a timestamp to force browser to reload image
+                                const newAvatarUrl = `{{ url_for('static', filename='avatars/') }}${result.user.profile_image}?t=${new Date().getTime()}`;
+                                topbarAvatar.src = newAvatarUrl;
+                            }
+
+                        } else {
+                            showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        showToast('An error occurred while updating profile.', 'error');
+                    }
+                });
+            }
+
+            // Handle Password Change Form Submission
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const currentPassword = document.getElementById('current_password').value;
+                    const newPassword = document.getElementById('new_password').value;
+                    const confirmNewPassword = document.getElementById('confirm_new_password').value;
+
+                    if (newPassword !== confirmNewPassword) {
+                        showToast('New passwords do not match.', 'error');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/api/password', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            showToast(result.message, 'success');
+                            passwordForm.reset(); // Clear form on success
+                        } else {
+                            showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error changing password:', error);
+                        showToast('An error occurred while changing password.', 'error');
+                    }
+                });
+            }
+
+            // Handle Avatar Upload
+            const avatarInput = document.getElementById('avatar-input');
+            const uploadAvatarBtn = document.getElementById('upload-avatar-btn');
+            const profileAvatar = document.getElementById('profile-avatar');
+            const topbarAvatar = document.getElementById('topbar-avatar'); // Get the topbar avatar element
+
+            if (uploadAvatarBtn && avatarInput && profileAvatar && topbarAvatar) {
+                uploadAvatarBtn.addEventListener('click', async () => {
+                    if (avatarInput.files.length === 0) {
+                        showToast('Please select an image to upload.', 'info');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('avatar', avatarInput.files[0]);
+
+                    try {
+                        const response = await fetch('/api/avatar', {
+                            method: 'POST',
+                            body: formData // FormData sets Content-Type to multipart/form-data automatically
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            showToast(result.message, 'success');
+                            // Update avatar image source
+                            // Append a timestamp to the URL to bypass browser cache
+                            profileAvatar.src = `${result.avatar_url}?t=${new Date().getTime()}`;
+                            topbarAvatar.src = `${result.avatar_url}?t=${new Date().getTime()}`;
+                            avatarInput.value = ''; // Clear file input
+                        } else {
+                            showToast(result.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error uploading avatar:', error);
+                        showToast('An error occurred during avatar upload.', 'error');
+                    }
+                });
+            }
+        });
+    </script>
+        <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+</body>
+
+</html>
