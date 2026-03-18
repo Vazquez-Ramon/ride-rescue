@@ -233,28 +233,70 @@ def init_routes(app):
     @app.route('/api/vehicles', methods=['GET'])
     @login_required
     def get_vehicles():
-        user_id = session['user_id']
-        vehicles = UserVehicle.query.filter_by(user_id=user_id).all()
-        return jsonify([v.to_dict() for v in vehicles])
-    
+        try:
+            user_id = session.get('user_id')
+
+            # 🔒 Safety check (production ready)
+            if not user_id:
+                return jsonify([]), 401
+
+            vehicles = UserVehicle.query.filter_by(user_id=user_id).all()
+
+            # ✅ Ensure safe serialization
+            result = []
+            for v in vehicles:
+                try:
+                    result.append(v.to_dict())
+                except Exception as e:
+                    print(f"[ERROR] Vehicle serialization failed: {e}")
+
+            return jsonify(result)
+
+        except Exception as e:
+            print(f"[ERROR] /api/vehicles: {e}")
+            return jsonify([]), 500
+        
     @app.route('/api/appointments', methods=['GET'])
     @login_required
     def get_appointments():
-        user_id = session['user_id']
-        appointments = UserAppointment.query.filter_by(user_id=user_id).all()
+        try:
+            user_id = session.get('user_id')
 
-        return jsonify([
-            {
-                'id': a.id,
-                'appointmentDate': a.appointment_date,
-                'appointmentTime': a.appointment_time,
-                'services': json.loads(a.services_needed) if a.services_needed else [],
-                'vehicleInfo': a.vehicle_info,
-                'status': a.status,
-                'total': a.total_cost
-            }
-            for a in appointments
-        ])
+            # 🔒 Safety check
+            if not user_id:
+                return jsonify([]), 401
+
+            appointments = UserAppointment.query.filter_by(user_id=user_id).all()
+
+            result = []
+
+            for a in appointments:
+                services = []
+
+                # ✅ SAFELY HANDLE MIXED DATA (THIS FIXES YOUR ISSUE)
+                if a.services_needed:
+                    try:
+                        # Case 1: Proper JSON
+                        services = json.loads(a.services_needed)
+                    except Exception:
+                        # Case 2: Old comma-separated string
+                        services = [{"name": s.strip()} for s in a.services_needed.split(',') if s.strip()]
+
+                result.append({
+                    'id': a.id,
+                    'appointmentDate': a.appointment_date,
+                    'appointmentTime': a.appointment_time,
+                    'services': services,
+                    'vehicleInfo': a.vehicle_info,
+                    'status': a.status or "Pending",
+                    'total': float(a.total_cost) if a.total_cost else 0.0
+                })
+
+            return jsonify(result)
+
+        except Exception as e:
+            print(f"[ERROR] /api/appointments: {e}")
+            return jsonify([]), 500
 
     # =========================
     # OTHER PAGES
