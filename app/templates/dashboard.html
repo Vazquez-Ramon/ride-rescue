@@ -766,7 +766,7 @@ async function populateServices(){
     if (idPrefix.toLowerCase().includes('make')) {
       // Build safe filename from make name (lowercase, underscores for spaces)
       const fileName = opt.toLowerCase().replace(/\s+/g, '_') + '.png';
-      const imgPath = `/static/icons/makes/${fileName}`;
+      const imgPath = `/static/makes/${fileName}`;
     li.innerHTML = `<img src="${imgPath}" class="w-9 h-9 inline-block mr-2 object-contain"> <span class="font-semibold">${opt}</span>`;
     } else {
       li.textContent = opt;
@@ -775,7 +775,7 @@ async function populateServices(){
     li.onclick = () => {
       document.getElementById(`${idPrefix}Label`).innerHTML =
         idPrefix.toLowerCase().includes('make')
-          ? `<img src="/static/icons/makes/${opt.toLowerCase().replace(/\s+/g, '_')}.png" class="w-9 h-9 inline-block mr-2 object-contain"> ${opt}`
+          ? `<img src="/static/makes/${opt.toLowerCase().replace(/\s+/g, '_')}.png" class="w-9 h-9 inline-block mr-2 object-contain"> ${opt}`
           : opt;
       document.getElementById(`${idPrefix}Label`).classList.remove('text-placeholder');
       ul.classList.add('hidden');
@@ -948,7 +948,7 @@ existing.classList.add('hidden'); newSec.classList.remove('hidden'); goBack.clas
     const card = document.createElement('div');
     card.className = 'p-4 border border-gray-200 rounded-md bg-white text-center';
 
-    const makeIconPath = `/static/icons/makes/${(v.make||'').toLowerCase().replace(/\s+/g,'_')}.png`;
+    const makeIconPath = `/static/makes/${(v.make||'').toLowerCase().replace(/\s+/g,'_')}.png`;
 
     const chips = `
       ${v.engine  ? `<span class="inline-flex items-center text-xs bg-gray-100 border border-gray-200 px-2 py-0.5 rounded">${v.engine}</span>` : ''}
@@ -1066,7 +1066,7 @@ if (_dashIdx > -1) {
 const matchedVeh   = findVehicleByLabel(vehicles, vehicleLabel);
 const vin          = a.vin || parsedVin || (matchedVeh && matchedVeh.vin) || '';
 const make         = a.make || (matchedVeh && matchedVeh.make) || extractMakeFromLabel(vehicleLabel);
-const makeIconPath = make ? `/static/icons/makes/${make.toLowerCase().replace(/\s+/g,'_')}.png` : '';
+const makeIconPath = make ? `/static/makes/${make.toLowerCase().replace(/\s+/g,'_')}.png` : '';
 const engine       = a.engine || parsedEngine || (matchedVeh && matchedVeh.engine) || '';
 
     
@@ -1292,7 +1292,7 @@ function renderVehiclesModalCards(vehicles) {
     li.className =
       'rounded-xl border border-gray-200 p-4 bg-white shadow-sm hover:shadow-md transition card-animate';
 
-    const makeIconPath = `/static/icons/makes/${(v.make || '')
+    const makeIconPath = `/static/makes/${(v.make || '')
       .toLowerCase()
       .replace(/\s+/g, '_')}.png`;
 
@@ -2164,7 +2164,7 @@ function renderAppointmentsModalCards(appts = [], vehicles = []) {
     const engine = a.engine || '';
     const vin = a.vin || '';
     const makeIconPath = (a.make)
-      ? `/static/icons/makes/${String(a.make).toLowerCase().replace(/\s+/g,'_')}.png`
+      ? `/static/makes/${String(a.make).toLowerCase().replace(/\s+/g,'_')}.png`
       : '';
 
     const servicesHTML = Array.isArray(a.services)
