@@ -911,13 +911,27 @@ existing.classList.add('hidden'); newSec.classList.remove('hidden'); goBack.clas
       try{
         const vs = await fetchJSON('/api/vehicles') || [];
         const ap = await fetchJSON('/api/appointments') || [];
+
         return {
-          vehicles: vs,
-          upcomingAppointments: ap.filter(a=> new Date(a.appointmentDate) >= new Date()),
-          totalSpentYTD: (ap.reduce((sum, a)=> sum + (parseFloat(a.total)||0), 0)),
-          maintenanceAlerts: vs.length ? 1 : 0
+          vehicles: Array.isArray(vs) ? vs : [],
+          upcomingAppointments: Array.isArray(ap) ? ap : [],
+          totalSpentYTD: (Array.isArray(ap) ? ap : []).reduce(
+            (sum, a)=> sum + (parseFloat(a.total)||0), 0
+          ),
+          maintenanceAlerts: (Array.isArray(vs) && vs.length) ? 1 : 0
         };
-      }catch(e){ console.error(e); showToast('Failed to load dashboard data','error'); return {vehicles:[], upcomingAppointments:[], totalSpentYTD:0, maintenanceAlerts:0}; }
+
+      }catch(e){
+        console.error('Dashboard fetch error:', e);
+        showToast('Failed to load dashboard data','error');
+
+        return {
+          vehicles: [],
+          upcomingAppointments: [],
+          totalSpentYTD: 0,
+          maintenanceAlerts: 0
+        };
+      }
     }
 
     function updateQuickStats(data){
@@ -1340,7 +1354,7 @@ function renderVehiclesModalCards(vehicles) {
     async function handleCancelAppointment(id){
       showToast('Cancelling appointment...','info');
       const res = await fetch(`/api/appointments/${id}`, { method:'DELETE' });
-      if(res && res.ok){ showToast('Appointment cancelled.', 'success'); await initDashboard(); }
+      if(res && res.ok){ showToast('Appointment cancelled.', 'success'); await refreshDashboard(); }
       else { try{ const j=await res.json(); showToast(j.message||'Failed to cancel.','error'); }catch{ showToast('Failed to cancel.','error'); } }
     }
 
@@ -1359,7 +1373,7 @@ function renderVehiclesModalCards(vehicles) {
     async function handleRemoveVehicle(id){
       if(!confirm('Remove this vehicle?')) return;
       const res = await fetch(`/api/vehicles/${id}`, { method:'DELETE' });
-      if(res.ok){ showToast('Vehicle removed.','success'); hideModal('vehiclesModal'); await initDashboard(); }
+      if(res.ok){ showToast('Vehicle removed.','success'); hideModal('vehiclesModal'); await refreshDashboard(); }
       else { const j=await res.json().catch(()=>({})); showToast(j.message||'Failed to remove vehicle.','error'); }
     }
 
@@ -1376,7 +1390,7 @@ function renderVehiclesModalCards(vehicles) {
       if(!year||!make||!model||!vin){ showToast('Year, Make, Model, VIN required.','error'); return; }
       const payload = { year:Number(year), make, model, engine, vin, license, mileage };
       const data = await fetchJSON('/api/vehicles', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      if(!data) return; if(data.success){ showToast('Vehicle added!'); hideModal('addVehicleModal'); await initDashboard(); } else { showToast(data.message||'Failed to add vehicle.','error'); }
+      if(!data) return; if(data.success){ showToast('Vehicle added!'); hideModal('addVehicleModal'); await refreshDashboard(); } else { showToast(data.message||'Failed to add vehicle.','error'); }
     }
 
     async function submitEditVehicleForm(e){
@@ -1387,7 +1401,7 @@ function renderVehiclesModalCards(vehicles) {
       const mileage = document.getElementById('editVehicleMileage').value.trim();
       const payload = {}; if(vin) payload.vin=vin; if(license!==undefined) payload.license=license; if(mileage!==undefined) payload.mileage=mileage;
       const data = await fetchJSON(`/api/vehicles/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      if(!data) return; if(data.success){ showToast('Vehicle updated.'); hideModal('editVehicleModal'); await initDashboard();  hideModal('editVehicleModal'); const vehicles = await fetchJSON('/api/vehicles') || []; try{ updateGarageList(vehicles); }catch(_e){} try{ if (document.getElementById('vehiclesModal') && document.getElementById('vehiclesModal').classList.contains('show')) { renderVehiclesModalCards(vehicles); } }catch(_e){} } else { showToast(data.message||'Failed to update vehicle.','error'); }
+      if(!data) return; if(data.success){ showToast('Vehicle updated.'); hideModal('editVehicleModal'); await refreshDashboard();  hideModal('editVehicleModal'); const vehicles = await fetchJSON('/api/vehicles') || []; try{ updateGarageList(vehicles); }catch(_e){} try{ if (document.getElementById('vehiclesModal') && document.getElementById('vehiclesModal').classList.contains('show')) { renderVehiclesModalCards(vehicles); } }catch(_e){} } else { showToast(data.message||'Failed to update vehicle.','error'); }
     }
 
     function buildSelectedVehicleDisplay(){
@@ -1438,7 +1452,7 @@ function renderVehiclesModalCards(vehicles) {
       const payload = { customerName, appointmentDate, appointmentTime, vehicleInfo, services, notes, total };
 
       const data = await fetchJSON('/api/appointments', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      if(!data) return; if(data.success){ showToast('Appointment booked!'); hideModal('appointmentModal'); await initDashboard(); } else { showToast(data.message||'Failed to book appointment.','error'); }
+      if(!data) return; if(data.success){ showToast('Appointment booked!'); hideModal('appointmentModal'); await refreshDashboard(); } else { showToast(data.message||'Failed to book appointment.','error'); }
     }
 
     async function submitEditAppointmentForm(e){
@@ -1449,7 +1463,15 @@ function renderVehiclesModalCards(vehicles) {
       const services=(document.getElementById('editAppointmentServices').value||'').split(',').map(s=>s.trim()).filter(Boolean).map(n=>({name:n}));
       const vehicleInfo=document.getElementById('editAppointmentVehicle').value;
       const data = await fetchJSON(`/api/appointments/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ appointmentDate, appointmentTime, services, vehicleInfo }) });
-      if(!data) return; if(data.message){ showToast('Appointment updated.'); hideModal('editAppointmentModal'); await initDashboard(); } else { showToast('Failed to update appointment.','error'); }
+      if(!data) return; if(data.success){ showToast('Appointment updated.'); hideModal('editAppointmentModal'); await refreshDashboard(); } else { showToast('Failed to update appointment.','error'); }
+    }
+
+    async function refreshDashboard(){
+      const data = await fetchDashboardData();
+
+      updateQuickStats(data);
+      updateGarageList(data.vehicles);
+      updateAppointmentsList(data.upcomingAppointments, data.vehicles);
     }
 
     // ========= Init + wiring =========
@@ -1570,7 +1592,7 @@ document.getElementById('manageVehiclesBtn').addEventListener('click', openGarag
           const data = await res.json();
           showToast(data.message || 'All data cleared.');
           hideModal('clearDataModal');
-          resetAfterClear(); await initDashboard();
+          resetAfterClear(); await refreshDashboard();
         } catch (err) {
           console.error(err);
           showToast('Network error calling /api/clear_user_data', 'error');
@@ -1578,7 +1600,7 @@ document.getElementById('manageVehiclesBtn').addEventListener('click', openGarag
       });
 
       await fetchAndDisplayUser();
-      await initDashboard();
+      await refreshDashboard();
     });
 
     // Profile modal functions (defined outside DOMContentLoaded)
@@ -1765,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
           saveCart();
           closeCart();
           if (typeof hideModal==='function') hideModal('appointmentModal');
-          if (typeof initDashboard==='function') await initDashboard();
+          if (typeof initDashboard==='function') await refreshDashboard();
           if (typeof showToast==='function') showToast('Appointment(s) booked!');
         } catch (err) {
           console.error(err);
